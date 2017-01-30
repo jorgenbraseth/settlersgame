@@ -1,4 +1,4 @@
-const ZOOM = .8;
+var ZOOM = .8;
 const COLORS = {
     "FOREST":"#007700","MOUNTAIN":"#666666","WATER":"blue","PASTURE":"#66aa00","DESERT":"#aa8800"
 }
@@ -18,7 +18,7 @@ function render(context, data){
 }
 
 function renderTile(context, tile) {
-    context.fillStyle = "rgba(0,0,0,1)"
+    context.fillStyle = "rgba(0,0,0,1)";
     context.fillRect(0,0,100,100);
 
     context.fillStyle = COLORS[tile.type] || "#ff00ff";
