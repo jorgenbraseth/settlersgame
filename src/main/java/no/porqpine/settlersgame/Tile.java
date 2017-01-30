@@ -13,14 +13,16 @@ public class Tile {
     private Tile tileToTheWest;
     private Tile tilToTheEast;
     public int timer;
-    private double tickChance = 0.25;
+    private double tickChance = 1;
+    private int maxTime;
 
     public Tile(int id, int x, int y) {
         this.id = id;
         this.x = x;
         this.y = y;
         type = TileType.sample();
-        this.timer = 10;
+        this.maxTime = (int)(Math.random()*50)+50;
+        this.timer = maxTime;
     }
 
     public void tick(int ticks){
@@ -28,8 +30,12 @@ public class Tile {
             timer -= ticks;
         }
         if(timer < 0){
-            timer = 10;
+            timer = maxTime;
         }
+    }
+
+    public double getProduction(){
+        return (1.0-(timer/(double)maxTime));
     }
 
     public void setNorth(Tile tileToTheNorth){

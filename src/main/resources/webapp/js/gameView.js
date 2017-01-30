@@ -18,20 +18,20 @@ function render(context, data){
 }
 
 function renderTile(context, tile) {
-    context.fillStyle = COLORS[tile.type] || "#ff00ff";
+    context.fillStyle = "rgba(0,0,0,1)"
     context.fillRect(0,0,100,100);
-    context.fillStyle = "#000000";
-    context.font = '18px Calibri';
-    var textSize = context.measureText(tile.timer);
-    context.fillText(tile.timer,100/2-textSize.width/2,100/2+9,100);
 
-    context.lineWidth = 5;
-    if(tile.timer == 0){
-        context.strokeStyle = "rgba(250,250,0,0.5)";
-    }else{
-        context.strokeStyle = "rgba(0,0,0,0.5)"
-    }
-    context.strokeRect(0,0,100,100);
+    context.fillStyle = COLORS[tile.type] || "#ff00ff";
+    context.fillRect(4,4,92,92);
+
+    context.fillStyle = "rgba(250,250,250,0.75)";
+    context.beginPath();
+    context.moveTo(80,80);
+    context.arc(80,80,10,0, 2 * Math.PI * (1-tile.production), false);
+    context.closePath();
+    context.fill();
+
+
 }
 var connect = function (renderContext) {
     var socket = new WebSocket("ws://localhost:8080/game-state");
