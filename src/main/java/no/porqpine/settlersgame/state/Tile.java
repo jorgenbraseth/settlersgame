@@ -1,4 +1,4 @@
-package no.porqpine.settlersgame;
+package no.porqpine.settlersgame.state;
 
 import java.util.Random;
 
@@ -8,10 +8,15 @@ public class Tile {
     public final int x;
     public final int y;
     public final TileType type;
-    private Tile tileToTheNorth;
-    private Tile tileToTheSouth;
-    private Tile tileToTheWest;
-    private Tile tilToTheEast;
+    private Edge N;
+    private Edge S;
+    private Edge W;
+    private Edge E;
+
+    private Crossing NW;
+    private Crossing NE;
+    private Crossing SW;
+    private Crossing SE;
     public int timer;
     private double tickChance = 1;
     private int maxTime;
@@ -38,20 +43,37 @@ public class Tile {
         return (1.0-(timer/(double)maxTime));
     }
 
-    public void setNorth(Tile tileToTheNorth){
-        this.tileToTheNorth = tileToTheNorth;
-    }
-    public void setSouth(Tile tileToTheSouth){
-        this.tileToTheSouth = tileToTheSouth;
-    }
-    public void setWest(Tile tileToTheWest){
-        this.tileToTheWest = tileToTheWest;
-    }
-    public void setEast(Tile tilToTheEast){
-        this.tilToTheEast = tilToTheEast;
+    public void setN(Edge n) {
+        N = n;
     }
 
+    public void setS(Edge s) {
+        S = s;
+    }
 
+    public void setW(Edge w) {
+        W = w;
+    }
+
+    public void setE(Edge e) {
+        E = e;
+    }
+
+    public void setNW(Crossing NW) {
+        this.NW = NW;
+    }
+
+    public void setNE(Crossing NE) {
+        this.NE = NE;
+    }
+
+    public void setSW(Crossing SW) {
+        this.SW = SW;
+    }
+
+    public void setSE(Crossing SE) {
+        this.SE = SE;
+    }
 
     public enum TileType {
         FOREST,PASTURE,MOUNTAIN,WATER,DESERT;

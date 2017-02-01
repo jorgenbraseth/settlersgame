@@ -8,7 +8,7 @@ function render(context, data){
     context.fillRect(0,0,800,800);
     context.save();
     context.scale(ZOOM,ZOOM);
-    data.forEach((t)=> {
+    data.tiles.forEach((t)=> {
         context.save();
         context.translate(t.x*100,t.y*100);
         renderTile(context, t);
@@ -22,7 +22,7 @@ function renderTile(context, tile) {
     context.fillRect(0,0,100,100);
 
     context.fillStyle = COLORS[tile.type] || "#ff00ff";
-    context.fillRect(4,4,92,92);
+    context.fillRect(1,1,98,98);
 
     context.fillStyle = "rgba(250,250,250,0.75)";
     context.beginPath();

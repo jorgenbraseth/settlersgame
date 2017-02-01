@@ -2,43 +2,43 @@ package no.porqpine.settlersgame;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.eclipse.jetty.websocket.api.CloseStatus;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import no.porqpine.settlersgame.state.GameState;
+import no.porqpine.settlersgame.state.Tile;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class GameState implements Runnable {
+public class GameLogic implements Runnable {
 
-    public static final GameState GAME_STATE = new GameState();
+    public static final GameLogic GAME = new GameLogic();
     public boolean running = true;
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    static {
+        OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false);
+    }
+    private GameState state;
 
-    List<Tile> tiles = new ArrayList<>();
 
-    private GameState() {
+    private GameLogic() {
         init();
 
     }
 
     private void init() {
-        Random random = new Random();
-        IntStream.range(0,100).boxed()
-                .forEach(i -> tiles.add(new Tile(i, i%10, i/10)));
+        this.state = new GameState();
     }
 
     List<Session> listeningConnections = new ArrayList<>();
 
     public void addPlayer(Session player) {
         listeningConnections.add(player);
-//        sendToAllPlayers("Player joined!");
-
     }
 
     public void run() {
@@ -56,12 +56,12 @@ public class GameState implements Runnable {
     }
 
     private void tick() {
-        tiles.forEach(tile -> tile.tick(1));
+        state.getTiles().forEach(tile -> tile.tick(1));
     }
 
     private void publishGameState() {
         try {
-            sendToAllPlayers(OBJECT_MAPPER.writeValueAsString(tiles));
+            sendToAllPlayers(OBJECT_MAPPER.writeValueAsString(state));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -89,7 +89,7 @@ public class GameState implements Runnable {
     public void stop() {
         listeningConnections.forEach(session -> session.close(0, "Server shutting down."));
 
-        while(listeningConnections.stream().filter(session -> session.isOpen()).findAny().isPresent()){
+        while (listeningConnections.stream().filter(session -> session.isOpen()).findAny().isPresent()) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {

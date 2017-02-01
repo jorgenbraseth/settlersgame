@@ -4,7 +4,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
-import static no.porqpine.settlersgame.GameState.GAME_STATE;
+import static no.porqpine.settlersgame.GameLogic.GAME;
 
 @WebSocket
 public class GameStateSocket extends WebSocketAdapter {
@@ -12,13 +12,13 @@ public class GameStateSocket extends WebSocketAdapter {
     @Override
     public void onWebSocketConnect(Session sess) {
         super.onWebSocketConnect(sess);
-        GAME_STATE.addPlayer(getSession());
+        GAME.addPlayer(getSession());
     }
 
     @Override
     public void onWebSocketClose(int statusCode, String reason) {
         super.onWebSocketClose(statusCode, reason);
-        GAME_STATE.clearDeadConnections();
-        GAME_STATE.sendToAllPlayers("Player Left");
+        GAME.clearDeadConnections();
+        GAME.sendToAllPlayers("Player Left");
     }
 }

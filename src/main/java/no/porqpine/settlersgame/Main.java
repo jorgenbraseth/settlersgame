@@ -24,7 +24,7 @@ public class Main {
         ServletHolder holderEvents = new ServletHolder("ws-events", gameStateServlet);
         context.addServlet(holderEvents, "/game-state/*");
 
-        GameState gameState = GameState.GAME_STATE;
+        GameLogic gameState = GameLogic.GAME;
         Thread gameLoop = new Thread(gameState);
         gameLoop.start();
 
