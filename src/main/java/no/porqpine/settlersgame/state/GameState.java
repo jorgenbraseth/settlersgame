@@ -1,10 +1,13 @@
 package no.porqpine.settlersgame.state;
 
+import no.porqpine.settlersgame.api.MessageType;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static no.porqpine.settlersgame.api.MessageType.GAME_STATE;
 import static no.porqpine.settlersgame.state.Edge.Orientation.HORIZONTAL;
 import static no.porqpine.settlersgame.state.Edge.Orientation.VERTICAL;
 
@@ -16,6 +19,7 @@ public class GameState {
     public List<Player> players = new ArrayList<>();
     public List<Edge> edges = new ArrayList<>();
     public List<Crossing> crossings = new ArrayList<>();
+    public MessageType type = GAME_STATE;
 
     public GameState() {
         createMap();
@@ -76,5 +80,13 @@ public class GameState {
 
     public List<Tile> getTiles() {
         return Stream.of(tiles).flatMap(row -> Stream.of(row)).collect(Collectors.toList());
+    }
+
+    public GameObject find(int id) {
+        List<GameObject> allObjects = new ArrayList<>();
+        allObjects.addAll(getTiles());
+        allObjects.addAll(edges);
+        allObjects.addAll(crossings);
+        return allObjects.stream().filter(tile -> tile.id == id).findFirst().orElseThrow(() -> new RuntimeException("No gameObject exists with id: "+id));
     }
 }

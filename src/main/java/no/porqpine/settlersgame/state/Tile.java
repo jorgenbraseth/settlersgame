@@ -1,13 +1,13 @@
 package no.porqpine.settlersgame.state;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import no.porqpine.settlersgame.api.ShapeClicked;
 
 import java.util.Random;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-public class Tile {
+public class Tile extends GameObject{
 
-    public final int id;
     public final int x;
     public final int y;
     public final TileType type;
@@ -30,7 +30,7 @@ public class Tile {
     }
 
     public Tile(int id, int x, int y, TileType type) {
-        this.id = id;
+        super(id);
         this.x = x;
         this.y = y;
         this.type = type;
@@ -114,6 +114,11 @@ public class Tile {
 
     public Crossing getSE() {
         return SE;
+    }
+
+    @Override
+    public void click(ShapeClicked event) {
+
     }
 
     public enum TileType {

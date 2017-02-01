@@ -2,13 +2,14 @@ package no.porqpine.settlersgame.state;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import no.porqpine.settlersgame.api.ShapeClicked;
 
 import java.util.Optional;
 
 import static no.porqpine.settlersgame.state.Edge.Orientation.VERTICAL;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-public class Crossing {
+public class Crossing extends GameObject {
 
     @JsonBackReference
     public final Optional<Tile> NW;
@@ -18,9 +19,9 @@ public class Crossing {
     public final Optional<Tile> SW;
     @JsonBackReference
     public final Optional<Tile> SE;
-    public final int id;
 
     public Crossing(int id, Tile se, Tile sw, Tile ne, Tile nw) {
+        super(id);
         NW = Optional.ofNullable(nw);
         NE = Optional.ofNullable(ne);
         SW = Optional.ofNullable(sw);
@@ -30,8 +31,6 @@ public class Crossing {
         NE.ifPresent(tile -> tile.setSW(this));
         SW.ifPresent(tile -> tile.setNE(this));
         SE.ifPresent(tile -> tile.setNW(this));
-
-        this.id = id;
     }
 
     public Integer getNW() {
@@ -55,5 +54,10 @@ public class Crossing {
     }
     public Integer getY() {
         return SE.get().y;
+    }
+
+    @Override
+    public void click(ShapeClicked event) {
+
     }
 }

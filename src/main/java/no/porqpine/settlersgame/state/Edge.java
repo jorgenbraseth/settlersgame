@@ -2,23 +2,23 @@ package no.porqpine.settlersgame.state;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import no.porqpine.settlersgame.api.ShapeClicked;
 
 import static no.porqpine.settlersgame.state.Edge.Orientation.HORIZONTAL;
 import static no.porqpine.settlersgame.state.Edge.Orientation.VERTICAL;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-public class Edge {
+public class Edge extends GameObject{
 
-    public final int id;
     @JsonBackReference
     public final Tile t1;
     @JsonBackReference
     public final Tile t2;
     public final Orientation orientation;
+    public String owner;
 
     public Edge(int id, Tile t1, Tile t2, Orientation orientation) {
-
-        this.id = id;
+        super(id);
         this.t1 = t1;
         this.t2 = t2;
         this.orientation = orientation;
@@ -68,10 +68,13 @@ public class Edge {
         }
     }
 
+    @Override
+    public void click(ShapeClicked event) {
+        this.owner = event.player;
+    }
 
-
-    public enum Orientation {
-        VERTICAL,HORIZONTAL;
+    enum Orientation {
+        VERTICAL,HORIZONTAL
     }
 
 }

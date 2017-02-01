@@ -3,6 +3,8 @@ package no.porqpine.settlersgame;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import no.porqpine.settlersgame.api.ShapeClicked;
+import no.porqpine.settlersgame.state.GameObject;
 import no.porqpine.settlersgame.state.GameState;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketException;
@@ -17,7 +19,7 @@ public class GameLogic implements Runnable {
     public static final GameLogic GAME = new GameLogic();
     public boolean running = true;
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     static {
         OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false);
     }
@@ -95,5 +97,9 @@ public class GameLogic implements Runnable {
             }
         }
         running = false;
+    }
+
+    public void shapeClicked(ShapeClicked event) {
+        state.find(event.id).click(event);
     }
 }

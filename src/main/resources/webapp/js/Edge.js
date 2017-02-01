@@ -19,7 +19,7 @@ class Edge {
         context.save();
         context.translate(this.x, this.y);
 
-        context.fillStyle = "rgba(0,0,0,0.9)";
+        context.fillStyle = this.data.owner || "rgba(0,0,0,0.9)";
         context.strokeStyle = "rgba(250,250,250,0.75)";
 
         if (this.isMouseOver) {
