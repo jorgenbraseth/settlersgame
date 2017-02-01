@@ -1,4 +1,4 @@
-var ZOOM = .8;
+var ZOOM = .4;
 const COLORS = {
     "FOREST":"#007700","MOUNTAIN":"#666666","WATER":"blue","PASTURE":"#66aa00","DESERT":"#aa8800"
 }
@@ -8,12 +8,29 @@ function render(context, data){
     context.fillRect(0,0,800,800);
     context.save();
     context.scale(ZOOM,ZOOM);
+
     data.tiles.forEach((t)=> {
         context.save();
         context.translate(t.x*100,t.y*100);
         renderTile(context, t);
         context.restore();
     });
+
+    data.edges.forEach((t)=> {
+        renderEdge(context, t);
+    });
+
+    context.restore();
+}
+
+function renderEdge(context, edge) {
+    context.save();
+    context.translate(edge.x*100,edge.y*100);
+    if("VERTICAL" === edge.orientation){
+        context.fillRect(-2,25,4,50);
+    }else{
+        context.fillRect(25,-2,50,4);
+    }
     context.restore();
 }
 
