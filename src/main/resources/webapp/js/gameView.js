@@ -1,7 +1,8 @@
-var ZOOM = .4;
+
+var ZOOM = 0.8;
 const COLORS = {
     "FOREST":"#007700","MOUNTAIN":"#666666","WATER":"blue","PASTURE":"#66aa00","DESERT":"#aa8800"
-}
+};
 
 function render(context, data){
     context.fillStyle = "#ffffff";
@@ -16,37 +17,33 @@ function render(context, data){
         context.restore();
     });
 
-    data.edges.forEach((t)=> {
-        renderEdge(context, t);
+    data.edges.map(e=> new Edge(e)).forEach((e)=> {
+        e.render(context);
+    });
+
+    data.crossings.map((c) => {return new Crossing(c)}).forEach((c)=> {
+        c.render(context);
     });
 
     context.restore();
 }
 
-function renderEdge(context, edge) {
-    context.save();
-    context.translate(edge.x*100,edge.y*100);
-    if("VERTICAL" === edge.orientation){
-        context.fillRect(-2,25,4,50);
-    }else{
-        context.fillRect(25,-2,50,4);
-    }
-    context.restore();
-}
 
 function renderTile(context, tile) {
-    context.fillStyle = "rgba(0,0,0,1)";
+    context.fillStyle = COLORS[tile.type] || "#ff00ff";
+    context.fillRect(0,0,100,100);
+    context.fillStyle = "rgba(0,0,0,0.3)";
     context.fillRect(0,0,100,100);
 
     context.fillStyle = COLORS[tile.type] || "#ff00ff";
     context.fillRect(1,1,98,98);
 
-    context.fillStyle = "rgba(250,250,250,0.75)";
-    context.beginPath();
-    context.moveTo(80,80);
-    context.arc(80,80,10,0, 2 * Math.PI * (1-tile.production), false);
-    context.closePath();
-    context.fill();
+    // context.fillStyle = "rgba(250,250,250,0.75)";
+    // context.beginPath();
+    // context.moveTo(80,80);
+    // context.arc(80,80,10,0, 2 * Math.PI * (1-tile.production), false);
+    // context.closePath();
+    // context.fill();
 
 
 }

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Optional;
 
+import static no.porqpine.settlersgame.state.Edge.Orientation.VERTICAL;
+
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 public class Crossing {
 
@@ -46,5 +48,12 @@ public class Crossing {
 
     public Integer getSE() {
         return SE.map(tile -> tile.id).orElse(null);
+    }
+
+    public Integer getX() {
+        return SE.get().x;
+    }
+    public Integer getY() {
+        return SE.get().y;
     }
 }

@@ -9,8 +9,8 @@ import static no.porqpine.settlersgame.state.Edge.Orientation.HORIZONTAL;
 import static no.porqpine.settlersgame.state.Edge.Orientation.VERTICAL;
 
 public class GameState {
-    private static final int WIDTH = 20;
-    private static final int HEIGHT = 20;
+    private static final int WIDTH = 10;
+    private static final int HEIGHT = 10;
 
     private Tile[][] tiles = new Tile[WIDTH][HEIGHT];
     public List<Player> players = new ArrayList<>();
@@ -18,12 +18,20 @@ public class GameState {
     public List<Crossing> crossings = new ArrayList<>();
 
     public GameState() {
+        createMap();
+    }
+
+    private void createMap() {
         int id = 0;
 
         //Create tiles
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
-                tiles[x][y] = new Tile(id++, x, y);
+                if(x == 0 || y == 0 || x == WIDTH-1 || y == HEIGHT -1){
+                    tiles[x][y] = new Tile(id++, x, y, Tile.TileType.WATER);
+                }else{
+                    tiles[x][y] = new Tile(id++, x, y);
+                }
             }
         }
 
@@ -37,21 +45,27 @@ public class GameState {
                 Tile southEast = null;
                 if (x < WIDTH - 1) {
                     east = tiles[x + 1][y];
-                    Edge edge = new Edge(id++, currentTile, east, VERTICAL);
-                    edges.add(edge);
-                    currentTile.setE(edge);
-                    east.setW(edge);
+                    if(!(east.type == Tile.TileType.WATER && currentTile.type == Tile.TileType.WATER)){
+                        Edge edge = new Edge(id++, currentTile, east, VERTICAL);
+                        edges.add(edge);
+                        currentTile.setE(edge);
+                        east.setW(edge);
+                    }
                 }
 
                 if (y > 0) {
                     Tile north = tiles[x][y - 1];
-                    Edge edge = new Edge(id++, north, currentTile, HORIZONTAL);
-                    edges.add(edge);
-                    currentTile.setN(edge);
-                    north.setS(edge);
+                    if(!(north.type == Tile.TileType.WATER && currentTile.type == Tile.TileType.WATER)){
+                        Edge edge = new Edge(id++, north, currentTile, HORIZONTAL);
+                        edges.add(edge);
+                        currentTile.setN(edge);
+                        north.setS(edge);
+                    }
                 }
 
                 if (x < WIDTH - 1 && y < HEIGHT - 1) {
+                    southEast = tiles[x + 1][y + 1];
+                    south = tiles[x][y + 1];
                     Crossing crossing = new Crossing(id++, southEast, south, east, currentTile);
                     crossings.add(crossing);
                 }

@@ -26,10 +26,15 @@ public class Tile {
     private int maxTime;
 
     public Tile(int id, int x, int y) {
+        this(id,x,y,TileType.sample());
+    }
+
+    public Tile(int id, int x, int y, TileType type) {
         this.id = id;
         this.x = x;
         this.y = y;
-        type = TileType.sample();
+        this.type = type;
+
         this.maxTime = (int) (Math.random() * 50) + 50;
         this.timer = maxTime;
     }
