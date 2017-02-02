@@ -15,7 +15,7 @@ class Crossing {
     render(context) {
         context.save();
         context.translate(this.data.x * TILE_SIZE, this.data.y * TILE_SIZE);
-        context.fillStyle = "rgba(0,0,0,0.8)";
+        context.fillStyle = this.data.owner || "rgba(0,0,0,0.8)";
         context.strokeStyle = "rgba(250,250,250,0.55)";
 
         if (this.isMouseOver) {

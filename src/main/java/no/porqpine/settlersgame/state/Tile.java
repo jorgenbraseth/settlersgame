@@ -49,6 +49,9 @@ public class Tile extends GameObject{
     }
 
     public double getProduction() {
+        if(type == TileType.WATER){
+            return 1;
+        }
         return 1.0 - (timer / (double) maxTime);
     }
 

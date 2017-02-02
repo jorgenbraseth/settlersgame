@@ -19,6 +19,7 @@ public class Crossing extends GameObject {
     public final Optional<Tile> SW;
     @JsonBackReference
     public final Optional<Tile> SE;
+    public String owner;
 
     public Crossing(int id, Tile se, Tile sw, Tile ne, Tile nw) {
         super(id);
@@ -58,6 +59,6 @@ public class Crossing extends GameObject {
 
     @Override
     public void click(ShapeClicked event) {
-
+        this.owner = event.player;
     }
 }

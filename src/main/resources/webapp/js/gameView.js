@@ -1,7 +1,5 @@
 var ZOOM = 0.8;
-const COLORS = {
-    "FOREST": "#007700", "MOUNTAIN": "#666666", "WATER": "blue", "PASTURE": "#66aa00", "DESERT": "#aa8800"
-};
+
 
 var socket;
 var mouseX, mouseY;
@@ -21,12 +19,8 @@ function render(context) {
             .forEach(shape => shape.mouseIsOver());
 
         tiles.forEach((t)=> {
-            context.save();
-            context.translate(t.x * 100, t.y * 100);
-            renderTile(context, t);
-            context.restore();
+            t.render(context);
         });
-
 
         edges.forEach((e)=> {
             e.render(context);
@@ -44,26 +38,6 @@ function render(context) {
 
 }
 
-
-function renderTile(context, tile) {
-    context.fillStyle = COLORS[tile.type] || "#ff00ff";
-    context.fillRect(0, 0, 100, 100);
-    context.fillStyle = "rgba(0,0,0,0.3)";
-    context.fillRect(0, 0, 100, 100);
-
-    context.fillStyle = COLORS[tile.type] || "#ff00ff";
-    context.fillRect(1, 1, 98, 98);
-
-    // context.fillStyle = "rgba(250,250,250,0.75)";
-    // context.beginPath();
-    // context.moveTo(80,80);
-    // context.arc(80,80,10,0, 2 * Math.PI * (1-tile.production), false);
-    // context.closePath();
-    // context.fill();
-
-
-}
-
 function connect() {
     socket = new WebSocket("ws://localhost:8080/game-state");
     socket.onmessage = (message) => {
@@ -71,10 +45,10 @@ function connect() {
         if (message.data) {
             gameData = JSON.parse(message.data);
             edges = gameData.edges.map(e=> new Edge(e));
+            tiles = gameData.tiles.map(t=> new Tile(t));
             crossings = gameData.crossings.map((c) => {
                 return new Crossing(c)
             });
-            tiles = gameData.tiles;
         }
     };
     socket.onclose = () => setTimeout(()=> {
