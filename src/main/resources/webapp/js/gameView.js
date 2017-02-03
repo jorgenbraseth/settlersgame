@@ -60,7 +60,8 @@ function connect(playerInfo) {
     }, 500);
 };
 
-function joinGame() {
+function joinGame(e) {
+    e.preventDefault();
     var playerName = document.getElementById('playerName').value;
     var color = document.getElementById("playerColor").value;
     player = {
@@ -69,8 +70,9 @@ function joinGame() {
     };
 
     var joinGameMessage = Object.assign({}, player, {type: "JOIN_GAME"});
-    console.log(joinGameMessage);
     connect(joinGameMessage);
+    var joinForm = document.getElementById("joinForm");
+    joinForm.parentNode.removeChild(joinForm);
 }
 
 function start() {

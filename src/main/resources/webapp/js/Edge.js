@@ -19,8 +19,14 @@ class Edge {
         context.save();
         context.translate(this.x, this.y);
 
-        context.fillStyle = this.data.owner || "rgba(0,0,0,0.9)";
+        context.fillStyle = "rgba(0,0,0,0.9)";
         context.strokeStyle = "rgba(250,250,250,0.75)";
+
+        if(this.data.owner){
+            var owningPlayer = gameData.players.filter(p => p.name == this.data.owner)[0];
+            console.log(owningPlayer);
+            context.fillStyle = owningPlayer.color;
+        }
 
         if (this.isMouseOver) {
             context.fillStyle = "rgba(0,150,150,0.9)";
