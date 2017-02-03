@@ -6,6 +6,7 @@ var mouseX, mouseY;
 var gameData;
 var edges, tiles, crossings;
 var shapeInFocus = null;
+var player;
 
 function render(context) {
     if (gameData) {
@@ -38,7 +39,7 @@ function render(context) {
 
 }
 
-function connect() {
+function connect(playerInfo) {
     socket = new WebSocket("ws://localhost:8080/game-state");
     socket.onmessage = (message) => {
 
@@ -51,18 +52,36 @@ function connect() {
             });
         }
     };
+    socket.onopen = () => {
+        socket.send(JSON.stringify(playerInfo))
+    };
     socket.onclose = () => setTimeout(()=> {
-        connect()
+        connect(playerInfo)
     }, 500);
 };
+
+function joinGame() {
+    var playerName = document.getElementById('playerName').value;
+    var color = document.getElementById("playerColor").value;
+    player = {
+        name: playerName,
+        color: color
+    };
+
+    var joinGameMessage = Object.assign({}, player, {type: "JOIN_GAME"});
+    console.log(joinGameMessage);
+    connect(joinGameMessage);
+}
 
 function start() {
 
     var canvas = document.getElementById('gameScreen');
     var renderContext = canvas.getContext("2d");
 
-    connect();
     render(renderContext);
+
+    var joinGameButton = document.getElementById('joinGame');
+    joinGameButton.onclick = joinGame;
 
     canvas.onmousemove = (e) => {
         if (gameData) {
@@ -103,7 +122,7 @@ function start() {
             socket.send(JSON.stringify({
                 type: "SHAPE_CLICKED",
                 id: shapeInFocus.data.id,
-                player: document.getElementById("playerColor").value
+                player: player.name
             }))
         }
     }

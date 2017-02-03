@@ -1,5 +1,6 @@
 package no.porqpine.settlersgame.api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import no.porqpine.settlersgame.GameLogic;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
@@ -12,10 +13,12 @@ import static no.porqpine.settlersgame.GameLogic.GAME;
 @WebSocket
 public class GameApi extends WebSocketAdapter {
 
+
+
     @Override
     public void onWebSocketConnect(Session sess) {
         super.onWebSocketConnect(sess);
-        GAME.addPlayer(getSession());
+//        GAME.addPlayer(getSession(), name, color);
     }
 
     @Override
@@ -29,11 +32,26 @@ public class GameApi extends WebSocketAdapter {
     public void onWebSocketText(String message) {
 
         try {
-            ShapeClicked event = GameLogic.OBJECT_MAPPER.readValue(message, ShapeClicked.class);
-            GAME.shapeClicked(event);
+            MessageWithOnlyType typeMessage = GameLogic.OBJECT_MAPPER.readValue(message, MessageWithOnlyType.class);
+            switch (typeMessage.type){
+                case SHAPE_CLICKED:
+                    ShapeClicked shapeClicked = GameLogic.OBJECT_MAPPER.readValue(message, ShapeClicked.class);
+                    GAME.shapeClicked(shapeClicked);
+                    break;
+                case JOIN_GAME:
+                    JoinGame joinGame = GameLogic.OBJECT_MAPPER.readValue(message, JoinGame.class);
+                    GAME.addPlayer(getSession(),joinGame.name,joinGame.color);
+                    break;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    static class MessageWithOnlyType {
+        public MessageType type;
+
+        public MessageWithOnlyType() {}
     }
 }

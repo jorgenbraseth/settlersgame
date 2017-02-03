@@ -1,18 +1,17 @@
 package no.porqpine.settlersgame;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import no.porqpine.settlersgame.api.ShapeClicked;
-import no.porqpine.settlersgame.state.GameObject;
 import no.porqpine.settlersgame.state.GameState;
+import no.porqpine.settlersgame.state.Player;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 public class GameLogic implements Runnable {
 
@@ -20,25 +19,35 @@ public class GameLogic implements Runnable {
     public boolean running = true;
 
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     static {
-        OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false);
+        OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
+
     private GameState state;
 
 
     private GameLogic() {
         init();
-
     }
 
     private void init() {
         this.state = new GameState();
     }
 
-    List<Session> listeningConnections = new ArrayList<>();
 
-    public void addPlayer(Session player) {
-        listeningConnections.add(player);
+    public void addPlayer(Session connection, String name, String color) {
+        Optional<Player> playerWithSameName = state.players.stream()
+                .filter(p -> p.name.equals(name))
+                .findFirst();
+
+        if(playerWithSameName.isPresent()){
+            playerWithSameName.get().session = connection;
+        }else{
+            Player player = new Player(name, color, connection);
+            state.players.add(player);
+        }
     }
 
     public void run() {
@@ -68,7 +77,7 @@ public class GameLogic implements Runnable {
     }
 
     public void sendToAllPlayers(String text) {
-        listeningConnections.stream().filter(Session::isOpen)
+        state.players.stream().map(p -> p.session).filter(Session::isOpen)
                 .forEach(session -> {
                     try {
                         session.getRemote().sendString(text);
@@ -79,17 +88,18 @@ public class GameLogic implements Runnable {
     }
 
     public void clearDeadConnections() {
-        ArrayList<Session> remainingConnections = new ArrayList<>();
-        remainingConnections.addAll(
-                listeningConnections.stream().filter(Session::isOpen).collect(Collectors.toList())
-        );
-        listeningConnections = remainingConnections;
+
+//        ArrayList<Session> remainingConnections = new ArrayList<>();
+//        remainingConnections.addAll(
+//                state.players.stream().map(p -> p.session).filter(Session::isOpen).collect(Collectors.toList())
+//        );
+//        players = remainingConnections;
     }
 
     public void stop() {
-        listeningConnections.forEach(session -> session.close(0, "Server shutting down."));
+        state.players.forEach(player -> player.session.close(0, "Server shutting down."));
 
-        while (listeningConnections.stream().filter(session -> session.isOpen()).findAny().isPresent()) {
+        while (state.players.stream().filter(p -> p.session.isOpen()).findAny().isPresent()) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
