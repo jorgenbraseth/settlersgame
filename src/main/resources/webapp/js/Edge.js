@@ -1,15 +1,17 @@
+const EDGE_LENGTH = TILE_SIZE / 2;
+const EDGE_WIDTH = TILE_SIZE/12;
 class Edge {
     constructor(e) {
         this.data = e;
 
         if ("VERTICAL" === this.data.orientation) {
-            this.width = 8;
-            this.height = 50;
+            this.width = EDGE_WIDTH;
+            this.height = EDGE_LENGTH;
             this.x = e.x * TILE_SIZE - this.width / 2;
             this.y = e.y * TILE_SIZE + (TILE_SIZE - this.height) / 2;
         } else {
-            this.width = 50;
-            this.height = 8;
+            this.width = EDGE_LENGTH;
+            this.height = EDGE_WIDTH;
             this.x = e.x * TILE_SIZE + (TILE_SIZE - this.width) / 2;
             this.y = (e.y * TILE_SIZE) - this.height / 2;
         }
@@ -24,7 +26,6 @@ class Edge {
 
         if(this.data.owner){
             var owningPlayer = gameData.players.filter(p => p.name == this.data.owner)[0];
-            console.log(owningPlayer);
             context.fillStyle = owningPlayer.color;
         }
 

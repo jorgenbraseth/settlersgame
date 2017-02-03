@@ -1,6 +1,5 @@
-
-const WIDTH = 30;
-const HEIGHT = 30;
+const WIDTH = TILE_SIZE/3;
+const HEIGHT = WIDTH;
 
 class Crossing {
     constructor(d) {
@@ -20,7 +19,6 @@ class Crossing {
 
         if(this.data.owner){
             var owningPlayer = gameData.players.filter(p => p.name == this.data.owner)[0];
-            console.log(owningPlayer);
             context.fillStyle = owningPlayer.color;
         }
 

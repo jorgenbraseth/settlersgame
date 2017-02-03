@@ -21,8 +21,8 @@ class Tile {
 
         context.fillStyle = "rgba(250,250,250,0.75)";
         context.beginPath();
-        context.moveTo(80,80);
-        context.arc(80,80,10,0, 2 * Math.PI * (1-this.data.production), false);
+        context.moveTo(TILE_SIZE*0.8,TILE_SIZE*0.8);
+        context.arc(TILE_SIZE*0.8,TILE_SIZE*0.8,TILE_SIZE/10,0, 2 * Math.PI * (1-this.data.production), false);
         context.closePath();
         context.fill();
         
