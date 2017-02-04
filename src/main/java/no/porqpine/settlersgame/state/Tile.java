@@ -16,7 +16,7 @@ public class Tile extends GameObject {
     public final int x;
     public final int y;
     public final TileType type;
-    public final int resourceOn;
+    public final Integer resourceOn;
 
     private Edge N;
     private Edge S;
@@ -37,11 +37,15 @@ public class Tile extends GameObject {
         this.x = x;
         this.y = y;
         this.type = type;
-        this.resourceOn = 1+rnd.nextInt(11);
+        if(type != TileType.WATER){
+            this.resourceOn = 1+rnd.nextInt(11);
+        }else{
+            this.resourceOn = null;
+        }
     }
 
     public void tick(int ticks) {
-        if (GameLogic.GAME.state.currentRoll == resourceOn) {
+        if (resourceOn != null && GameLogic.GAME.state.currentRoll == resourceOn) {
             giveResources();
         }
     }

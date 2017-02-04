@@ -28,16 +28,18 @@ class Tile {
         context.fill();
         context.restore();
 
-        var fontSize = 24 - 2 * Math.abs(7 - this.data.resourceOn);
-        context.font = fontSize + "px arial";
-        var textWidth = context.measureText(this.data.resourceOn).width;
-        context.translate(TILE_SIZE / 2, TILE_SIZE / 2);
-        context.translate(-textWidth / 2, fontSize/3);
-        context.fillStyle = "rgba(0,0,0,0.7)";
-        context.fillText(this.data.resourceOn, 0, 0);
-        context.translate(-1, -1);
-        context.fillStyle = "rgba(255,255,255,1)";
-        context.fillText(this.data.resourceOn, 0, 0);
+        if (this.data.resourceOn) {
+            var fontSize = 24 - 2 * Math.abs(7 - this.data.resourceOn);
+            context.font = fontSize + "px arial";
+            var textWidth = context.measureText(this.data.resourceOn).width;
+            context.translate(TILE_SIZE / 2, TILE_SIZE / 2);
+            context.translate(-textWidth / 2, fontSize / 3);
+            context.fillStyle = "rgba(0,0,0,0.7)";
+            context.fillText(this.data.resourceOn, 0, 0);
+            context.translate(-1, -1);
+            context.fillStyle = "rgba(255,255,255,1)";
+            context.fillText(this.data.resourceOn, 0, 0);
+        }
 
         context.restore();
     }
