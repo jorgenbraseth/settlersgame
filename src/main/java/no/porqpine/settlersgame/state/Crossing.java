@@ -2,8 +2,12 @@ package no.porqpine.settlersgame.state;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import no.porqpine.settlersgame.GameLogic;
 import no.porqpine.settlersgame.api.ShapeClicked;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
@@ -19,6 +23,9 @@ public class Crossing extends GameObject {
     public final Optional<Tile> SE;
     public String owner;
 
+    public final Map<String, Long> cost;
+    public Structure structure;
+
     public Crossing(int id, Tile se, Tile sw, Tile ne, Tile nw) {
         super(id);
         NW = Optional.ofNullable(nw);
@@ -30,6 +37,12 @@ public class Crossing extends GameObject {
         NE.ifPresent(tile -> tile.setSW(this));
         SW.ifPresent(tile -> tile.setNE(this));
         SE.ifPresent(tile -> tile.setNW(this));
+
+        Map<String, Long> costMap = new HashMap<>();
+        costMap.put(Tile.TileType.FOREST.name(), 2L);
+        costMap.put(Tile.TileType.PASTURE.name(), 2L);
+
+        cost = Collections.unmodifiableMap(costMap);
     }
 
     public Integer getNW() {
@@ -58,6 +71,13 @@ public class Crossing extends GameObject {
 
     @Override
     public void click(ShapeClicked event) {
-        this.owner = event.playerName;
+        Player player = GameLogic.GAME.findPlayer(event.playerName);
+        build(new House(0, player));
+    }
+
+    public void build(Structure structure) {
+        if(owner == null && structure.owner.canAfford(structure)){
+            this.structure = structure;
+        }
     }
 }

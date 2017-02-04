@@ -32,4 +32,8 @@ public class Player {
         resources.putIfAbsent(resource, 0L);
         resources.computeIfPresent(resource, (s, currentValue) -> currentValue + amount);
     }
+
+    public boolean canAfford(Structure structure) {
+        return true;
+    }
 }

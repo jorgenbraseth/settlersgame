@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import no.porqpine.settlersgame.api.ShapeClicked;
+import no.porqpine.settlersgame.state.Crossing;
 import no.porqpine.settlersgame.state.GameState;
 import no.porqpine.settlersgame.state.Player;
+import no.porqpine.settlersgame.state.Structure;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketException;
 
@@ -107,6 +109,10 @@ public class GameLogic implements Runnable {
             }
         }
         running = false;
+    }
+
+    public void build(Structure structure, Crossing crossing){
+        crossing.build(structure);
     }
 
     public void shapeClicked(ShapeClicked event) {
