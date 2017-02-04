@@ -19,17 +19,18 @@ class Crossing {
 
         if (this.data.structure) {
             context.fillStyle = this.data.structure.owner.color;
+        }else{
+            context.beginPath();
+            context.arc(0, 0, this.width / 2, 0, 2 * Math.PI);
+            context.fill();
+            context.stroke();
+            context.closePath();
         }
 
         if (this.isMouseOver) {
             context.fillStyle = "rgba(0,150,150,0.9)";
         }
 
-        context.beginPath();
-        context.arc(0, 0, this.width / 2, 0, 2 * Math.PI);
-        context.fill();
-        context.stroke();
-        context.closePath();
 
         if (this.data.structure) {
             IMAGE_MAP[this.data.structure.type].render(context, this.width*1.2);

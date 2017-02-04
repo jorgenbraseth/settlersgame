@@ -34,6 +34,18 @@ public class Player {
     }
 
     public boolean canAfford(Structure structure) {
+        Map<String, Long> cost = structure.cost;
+        for (String resource : cost.keySet()) {
+            if(resources.get(resource) < cost.get(resource)){
+                return false;
+            }
+        }
         return true;
+    }
+
+    public void payCost(Map<String, Long> cost) {
+        for (String resource : cost.keySet()) {
+            resources.computeIfPresent(resource, (s, currentValue) -> currentValue - cost.get(resource));
+        }
     }
 }

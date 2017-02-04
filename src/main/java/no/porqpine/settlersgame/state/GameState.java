@@ -4,6 +4,7 @@ import no.porqpine.settlersgame.api.MessageType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,11 +16,14 @@ public class GameState {
     private static final int WIDTH = 10;
     private static final int HEIGHT = 10;
 
+    private static Random rnd = new Random();
+
     private Tile[][] tiles = new Tile[WIDTH][HEIGHT];
     public List<Player> players = new ArrayList<>();
     public List<Edge> edges = new ArrayList<>();
     public List<Crossing> crossings = new ArrayList<>();
     public MessageType type = GAME_STATE;
+    public int currentRoll;
 
     public GameState() {
         createMap();
@@ -92,5 +96,9 @@ public class GameState {
         allObjects.addAll(edges);
         allObjects.addAll(crossings);
         return allObjects.stream().filter(tile -> tile.id == id).findFirst().orElseThrow(() -> new RuntimeException("No gameObject exists with id: "+id));
+    }
+
+    public void roll() {
+        this.currentRoll = rnd.nextInt(6) + rnd.nextInt(6);
     }
 }

@@ -1,8 +1,11 @@
 package no.porqpine.settlersgame.state;
 
-public abstract class Structure extends GameObject{
+import java.util.Map;
+
+public abstract class Structure extends GameObject {
     public final Player owner;
     public StructureType type;
+    public Map<String, Long> cost;
 
     public Structure(int id, Player owner, StructureType type) {
         super(id);

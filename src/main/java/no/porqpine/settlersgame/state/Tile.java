@@ -4,27 +4,29 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import no.porqpine.settlersgame.GameLogic;
 import no.porqpine.settlersgame.api.ShapeClicked;
 
+import java.util.Optional;
 import java.util.Random;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 public class Tile extends GameObject {
 
+    private static Random rnd = new Random();
+
+    public static final int PAYOUT = 1;
     public final int x;
     public final int y;
     public final TileType type;
+    public final int resourceOn;
 
     private Edge N;
     private Edge S;
     private Edge W;
     private Edge E;
 
-    private Crossing NW;
-    private Crossing NE;
-    private Crossing SW;
-    private Crossing SE;
-    public int timer;
-    private double tickChance = 1;
-    private int maxTime;
+    private Optional<Crossing> NW = Optional.empty();
+    private Optional<Crossing> NE = Optional.empty();
+    private Optional<Crossing> SW = Optional.empty();
+    private Optional<Crossing> SE = Optional.empty();
 
     public Tile(int id, int x, int y) {
         this(id, x, y, TileType.sample());
@@ -35,35 +37,34 @@ public class Tile extends GameObject {
         this.x = x;
         this.y = y;
         this.type = type;
-
-        this.maxTime = 15;//(int) (Math.random() * 50) + 50;
-        this.timer = maxTime;
+        this.resourceOn = 1+rnd.nextInt(11);
     }
 
     public void tick(int ticks) {
-        if (timer == 0 || Math.random() < tickChance) {
-            timer -= ticks;
-        }
-        if (timer < 0) {
-            timer = maxTime;
+        if (GameLogic.GAME.state.currentRoll == resourceOn) {
             giveResources();
         }
     }
 
     private void giveResources() {
-        if (NW != null) {
-            Player player = GameLogic.GAME.findPlayer(NW.owner);
-            if(player != null){
-                player.addResource(this.type.name(), 1);
-            }
+        NW.ifPresent(this::payout);
+        NE.ifPresent(this::payout);
+        SW.ifPresent(this::payout);
+        SE.ifPresent(this::payout);
+    }
+
+    private void payout(Crossing crossing) {
+        Structure structure = crossing.structure;
+        if(structure != null){
+            structure.owner.addResource(this.type.name(), PAYOUT);
         }
     }
 
-    public double getProduction() {
+    public Double getProduction() {
         if (type == TileType.WATER) {
-            return 1;
+            return null;
         }
-        return 1.0 - (timer / (double) maxTime);
+        return GameLogic.GAME.state.currentRoll == resourceOn ? 1d : 0d;
     }
 
     public void setN(Edge n) {
@@ -82,20 +83,20 @@ public class Tile extends GameObject {
         E = e;
     }
 
-    public void setNW(Crossing NW) {
-        this.NW = NW;
+    public void setNW(Crossing crossing) {
+        this.NW = Optional.ofNullable(crossing);
     }
 
-    public void setNE(Crossing NE) {
-        this.NE = NE;
+    public void setNE(Crossing crossing) {
+        this.NE = Optional.ofNullable(crossing);
     }
 
-    public void setSW(Crossing SW) {
-        this.SW = SW;
+    public void setSW(Crossing crossing) {
+        this.SW = Optional.ofNullable(crossing);
     }
 
-    public void setSE(Crossing SE) {
-        this.SE = SE;
+    public void setSE(Crossing crossing) {
+        this.SE = Optional.ofNullable(crossing);
     }
 
     public Edge getN() {
@@ -114,19 +115,19 @@ public class Tile extends GameObject {
         return E;
     }
 
-    public Crossing getNW() {
+    public Optional<Crossing> getNW() {
         return NW;
     }
 
-    public Crossing getNE() {
+    public Optional<Crossing> getNE() {
         return NE;
     }
 
-    public Crossing getSW() {
+    public Optional<Crossing> getSW() {
         return SW;
     }
 
-    public Crossing getSE() {
+    public Optional<Crossing> getSE() {
         return SE;
     }
 

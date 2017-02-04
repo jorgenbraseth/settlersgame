@@ -27,7 +27,7 @@ public class GameLogic implements Runnable {
         OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    private GameState state;
+    public GameState state;
 
 
     private GameLogic() {
@@ -67,6 +67,7 @@ public class GameLogic implements Runnable {
     }
 
     private void tick() {
+        state.roll();
         state.getTiles().forEach(tile -> tile.tick(1));
     }
 
@@ -109,10 +110,6 @@ public class GameLogic implements Runnable {
             }
         }
         running = false;
-    }
-
-    public void build(Structure structure, Crossing crossing){
-        crossing.build(structure);
     }
 
     public void shapeClicked(ShapeClicked event) {
