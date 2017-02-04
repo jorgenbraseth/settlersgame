@@ -1,6 +1,5 @@
 var ZOOM = 0.8;
 
-
 var socket;
 var mouseX, mouseY;
 var gameData;
@@ -8,6 +7,53 @@ var edges, tiles, crossings;
 var shapeInFocus = null;
 var player;
 
+var renderTiles = function (context) {
+    tiles.forEach((t)=> {
+        t.render(context);
+    });
+};
+var renderEdges = function (context) {
+    edges.forEach((e)=> {
+        e.render(context);
+    });
+};
+var renderCrossings = function (context) {
+    crossings.forEach((c)=> {
+        c.render(context);
+    });
+};
+var renderPlayerPanel = function (context) {
+    context.save();
+    context.font = "20px Arial";
+    context.fillStyle = "black";
+    context.fillRect(0, 0, 800, 100);
+
+    gameData.players.forEach(p => {
+        context.translate(0, 24);
+        context.fillStyle = p.color;
+        context.fillText(p.name, 0, 0);
+
+        var textWidth = context.measureText(p.name).width;
+        context.save();
+        context.translate(textWidth + 10, 0);
+
+        for(var resource in p.resources){
+            if(p.resources.hasOwnProperty(resource)){
+                var text = resource+":";
+                context.fillText(text,0,0);
+                context.translate(context.measureText(text).width+5,0);
+
+                var amount = p.resources[resource];
+                context.fillText(amount,0,0);
+                context.translate(context.measureText(amount).width+10,0)
+            }
+        }
+
+
+        context.restore();
+    });
+    context.restore();
+};
 function render(context) {
     if (gameData) {
         context.fillStyle = "#ffffff";
@@ -19,21 +65,14 @@ function render(context) {
             .filter(e => e.containsPoint(mouseX, mouseY))
             .forEach(shape => shape.mouseIsOver());
 
-        tiles.forEach((t)=> {
-            t.render(context);
-        });
+        renderTiles(context);
+        renderEdges(context);
+        renderCrossings(context);
 
-        edges.forEach((e)=> {
-            e.render(context);
-        });
-
-
-        crossings.forEach((c)=> {
-            c.render(context);
-        });
+        context.translate(0, TILE_SIZE * 10);
+        renderPlayerPanel(context);
 
         context.restore();
-
     }
     requestAnimationFrame(()=>render(context));
 
@@ -120,11 +159,11 @@ function start() {
     };
 
     canvas.onclick = (e) => {
-        if(shapeInFocus){
+        if (shapeInFocus) {
             socket.send(JSON.stringify({
                 type: "SHAPE_CLICKED",
                 id: shapeInFocus.data.id,
-                player: player.name
+                playerName: player.name
             }))
         }
     }

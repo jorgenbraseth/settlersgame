@@ -6,8 +6,6 @@ import no.porqpine.settlersgame.api.ShapeClicked;
 
 import java.util.Optional;
 
-import static no.porqpine.settlersgame.state.Edge.Orientation.VERTICAL;
-
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 public class Crossing extends GameObject {
 
@@ -53,12 +51,13 @@ public class Crossing extends GameObject {
     public Integer getX() {
         return SE.get().x;
     }
+
     public Integer getY() {
         return SE.get().y;
     }
 
     @Override
     public void click(ShapeClicked event) {
-        this.owner = event.player;
+        this.owner = event.playerName;
     }
 }

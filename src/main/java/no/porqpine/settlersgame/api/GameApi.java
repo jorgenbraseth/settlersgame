@@ -33,6 +33,7 @@ public class GameApi extends WebSocketAdapter {
 
         try {
             MessageWithOnlyType typeMessage = GameLogic.OBJECT_MAPPER.readValue(message, MessageWithOnlyType.class);
+            System.out.println("Got message: "+message);
             switch (typeMessage.type){
                 case SHAPE_CLICKED:
                     ShapeClicked shapeClicked = GameLogic.OBJECT_MAPPER.readValue(message, ShapeClicked.class);

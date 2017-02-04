@@ -82,6 +82,10 @@ public class GameState {
         return Stream.of(tiles).flatMap(row -> Stream.of(row)).collect(Collectors.toList());
     }
 
+    public Player getPlayer(String playerName){
+        return players.stream().filter(p -> p.name.equals(playerName)).findFirst().orElse(null);
+    }
+
     public GameObject find(int id) {
         List<GameObject> allObjects = new ArrayList<>();
         allObjects.addAll(getTiles());

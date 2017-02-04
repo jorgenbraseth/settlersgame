@@ -1,12 +1,13 @@
 package no.porqpine.settlersgame.state;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import no.porqpine.settlersgame.GameLogic;
 import no.porqpine.settlersgame.api.ShapeClicked;
 
 import java.util.Random;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-public class Tile extends GameObject{
+public class Tile extends GameObject {
 
     public final int x;
     public final int y;
@@ -26,7 +27,7 @@ public class Tile extends GameObject{
     private int maxTime;
 
     public Tile(int id, int x, int y) {
-        this(id,x,y,TileType.sample());
+        this(id, x, y, TileType.sample());
     }
 
     public Tile(int id, int x, int y, TileType type) {
@@ -35,7 +36,7 @@ public class Tile extends GameObject{
         this.y = y;
         this.type = type;
 
-        this.maxTime = (int) (Math.random() * 50) + 50;
+        this.maxTime = 15;//(int) (Math.random() * 50) + 50;
         this.timer = maxTime;
     }
 
@@ -45,11 +46,21 @@ public class Tile extends GameObject{
         }
         if (timer < 0) {
             timer = maxTime;
+            giveResources();
+        }
+    }
+
+    private void giveResources() {
+        if (NW != null) {
+            Player player = GameLogic.GAME.findPlayer(NW.owner);
+            if(player != null){
+                player.addResource(this.type.name(), 1);
+            }
         }
     }
 
     public double getProduction() {
-        if(type == TileType.WATER){
+        if (type == TileType.WATER) {
             return 1;
         }
         return 1.0 - (timer / (double) maxTime);

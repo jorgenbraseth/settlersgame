@@ -70,7 +70,7 @@ public class Edge extends GameObject{
 
     @Override
     public void click(ShapeClicked event) {
-        this.owner = event.player;
+        this.owner = event.playerName;
     }
 
     enum Orientation {

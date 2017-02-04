@@ -112,4 +112,8 @@ public class GameLogic implements Runnable {
     public void shapeClicked(ShapeClicked event) {
         state.find(event.id).click(event);
     }
+
+    public Player findPlayer(String playerName) {
+        return state.players.stream().filter(p -> p.name.equals(playerName)).findFirst().orElse(null);
+    }
 }
