@@ -20,7 +20,6 @@ function render(context) {
         context.save();
         context.scale(ZOOM, ZOOM);
 
-        console.log(mouseX, mouseY);
         tiles.filter(e => e.containsPoint(mouseX, mouseY))
             .forEach(shape => shape.mouseIsOver());
 
@@ -107,11 +106,27 @@ function start() {
         }
     };
 
+    canvas.oncontextmenu = (e) => {
+        e.preventDefault();
+        var containingShape = tiles.filter(e => e.containsPoint(mouseX, mouseY));
+        if (containingShape.length >= 1) {
+            var clickedShape = containingShape[0];
+            socket.send(JSON.stringify({
+                type: "SHAPE_RIGHT_CLICKED",
+                id: clickedShape.data.id,
+                coords: [clickedShape.data.x, clickedShape.data.y],
+                playerName: player.name
+            }))
+        }
+    }
     canvas.onclick = (e) => {
-        if (shapeInFocus) {
+        var containingShape = tiles.filter(e => e.containsPoint(mouseX, mouseY));
+        if (containingShape.length >= 1) {
+            var clickedShape = containingShape[0];
             socket.send(JSON.stringify({
                 type: "SHAPE_CLICKED",
-                id: shapeInFocus.data.id,
+                id: clickedShape.data.id,
+                coords: [clickedShape.data.x, clickedShape.data.y],
                 playerName: player.name
             }))
         }

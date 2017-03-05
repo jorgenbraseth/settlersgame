@@ -1,8 +1,8 @@
 package no.porqpine.settlersgame.state;
 
 public class FreeTile extends Tile {
-    public FreeTile(int id, int x, int y) {
-        super(id, x, y);
+    public FreeTile(int x, int y) {
+        super(x, y);
     }
 
     @Override

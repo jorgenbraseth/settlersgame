@@ -61,15 +61,19 @@ class Tile {
 
 
     render(ctx) {
-        if ("BLOCKER" === this.type) {
-            ctx.fillStyle = "gray";
-        } else {
-            var fillGrade = this.data.pheromoneAmount / 25;
-            ctx.fillStyle = "rgba(110,200,110," + fillGrade + ")";
-        }
-
         ctx.save();
         ctx.translate(this.x, this.y);
+
+        if ("BLOCKER" === this.type) {
+            ctx.fillStyle = "#222222";
+        } else if (this.data.type == "PRODUCER") {
+            ctx.fillStyle = "#0099ff";
+        } else if (this.data.type == "CONSUMER") {
+            ctx.fillStyle = "#aa0000";
+        } else {
+            var fillGrade = this.data.pheromoneAmount / 25;
+            ctx.fillStyle = "rgba(0,50,250," + fillGrade + ")";
+        }
 
         ctx.beginPath();
         ctx.moveTo(hexRadius, 0);
@@ -82,41 +86,44 @@ class Tile {
 
         ctx.fill();
 
+
+        ctx.translate(hexRadius, hexRectangleHeight / 2);
+        ctx.scale(0.9, 0.9);
+        ctx.translate(-hexRadius, -hexRectangleHeight / 2);
+        ctx.beginPath();
+        ctx.moveTo(hexRadius, 0);
+        ctx.lineTo(hexRectangleWidth, hexHeight);
+        ctx.lineTo(hexRectangleWidth, hexHeight + sideLength);
+        ctx.lineTo(hexRadius, hexRectangleHeight);
+        ctx.lineTo(0, sideLength + hexHeight);
+        ctx.lineTo(0, hexHeight);
+        ctx.closePath();
+        ctx.fill();
+
+
+        ctx.lineWidth = 2;
         if (this.hover) {
             ctx.strokeStyle = "yellow";
+        } else if (this.data.owner) {
+            ctx.strokeStyle = this.data.owner.color;
         } else {
-            ctx.strokeStyle = "gray";
+            ctx.strokeStyle = "#222222";
         }
         ctx.stroke();
 
-        ctx.fillStyle = "green";
 
-        if (this.data.type == "PRODUCER") {
-            ctx.fillRect(
-                hexRectangleWidth / 2 - hexRadius / 2,
-                hexRectangleHeight / 2 - hexRadius / 2,
-                hexRadius, hexRadius
-            )
+        if (this.data.type !== "PRODUCER") {
             ctx.fillStyle = "white";
+
+            var text = this.data.pheromoneAmount;
+            if (this.data.type == "CONSUMER") {
+                text = this.data.storedPheromone;
+            }
+            var textWidth = ctx.measureText(text).width;
+            if (text) {
+                ctx.fillText(text, hexRectangleWidth / 2 - textWidth / 2, hexRectangleHeight / 2);
+            }
         }
-
-        if (this.data.type == "CONSUMER") {
-            ctx.fillStyle = "RED";
-            ctx.fillRect(
-                hexRectangleWidth / 2 - hexRadius / 2,
-                hexRectangleHeight / 2 - hexRadius / 2,
-                hexRadius, hexRadius
-            )
-            ctx.fillStyle = "white";
-        }
-
-        // var text = this.data.pheromoneAmount;
-        // if(this.data.type == "CONSUMER"){
-        //     text = this.data.storedPheromone;
-        // }
-        // var textWidth = ctx.measureText(text).width;
-        // ctx.fillText(text, hexRectangleWidth/2-textWidth/2, hexRectangleHeight/2);
-
 
         ctx.restore();
     }

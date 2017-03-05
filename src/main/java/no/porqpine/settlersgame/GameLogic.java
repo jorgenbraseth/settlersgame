@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import no.porqpine.settlersgame.api.ShapeClicked;
-import no.porqpine.settlersgame.state.GameState;
-import no.porqpine.settlersgame.state.Player;
+import no.porqpine.settlersgame.state.*;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketException;
 
@@ -57,7 +56,7 @@ public class GameLogic implements Runnable {
             publishGameState();
 
             try {
-                Thread.sleep(250);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -112,7 +111,25 @@ public class GameLogic implements Runnable {
     }
 
     public void shapeClicked(ShapeClicked event) {
-        state.find(event.id).click(event);
+        Tile clickedShape = (Tile)state.find(event.id);
+        int x = event.coords[0];
+        int y = event.coords[1];
+        Player player = findPlayer(event.playerName);
+        switch (clickedShape.getType()){
+            case "FREE":
+                state.build(new BlockerTile(x,y));
+                break;
+            case "BLOCKER":
+                state.build(new ProducerTile(x,y, player));
+                break;
+            case "PRODUCER":
+                state.build(new ConsumerTile(x,y, player));
+                break;
+            case "CONSUMER":
+                state.build(new FreeTile(x,y));
+                break;
+        }
+
     }
 
     public Player findPlayer(String playerName) {

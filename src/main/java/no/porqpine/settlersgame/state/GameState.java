@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 import static no.porqpine.settlersgame.api.MessageType.GAME_STATE;
 
 public class GameState {
-    private static final int WIDTH = 10;
-    private static final int HEIGHT = 10;
+    private static final int WIDTH = 20;
+    private static final int HEIGHT = 20;
 
     private static Random rnd = new Random();
 
@@ -20,37 +20,20 @@ public class GameState {
     public List<Player> players = new ArrayList<>();
     public MessageType type = GAME_STATE;
     public int currentRoll;
+    private int nextTileId;
 
     public GameState() {
         createMap();
     }
 
     private void createMap() {
-        int id = 0;
+        nextTileId = 0;
 
         //Create tiles
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
 
-                Tile newTile;
-                if (y == 4 && x == 4 || y == 8 && x == 8) {
-                    newTile = new ProducerTile(id++, x, y);
-//                } else if (y == 4 && x == 7) {
-//                    newTile = new ConsumerTile(id++, x, y);
-//                } else if (y == 5 && x == 7) {
-//                    newTile = new ConsumerTile(id++, x, y);
-                } else if (y == 4 && x == 5) {
-                    newTile = new BlockerTile(id++, x, y);
-                } else if (y == 4 && x == 3) {
-                    newTile = new BlockerTile(id++, x, y);
-                } else if (y == 3 && x == 3) {
-                    newTile = new BlockerTile(id++, x, y);
-                } else if (y == 3 && x == 4) {
-                    newTile = new BlockerTile(id++, x, y);
-                } else {
-                    newTile = new FreeTile(id++, x, y);
-                }
-
+                Tile newTile = new FreeTile(x, y);
                 tiles[x][y] = newTile;
             }
         }
@@ -111,5 +94,18 @@ public class GameState {
 
     public void roll() {
         this.currentRoll = rnd.nextInt(6) + rnd.nextInt(6);
+    }
+
+    private void replaceTile(Tile tile, Tile newTile) {
+        Tile oldTile = tile;
+        oldTile.neighbours.forEach(n -> {
+            newTile.addNeighbour(n);
+            n.replaceNeighbour(oldTile, newTile);
+        });
+        tiles[newTile.x][newTile.y] = newTile;
+    }
+
+    public void build(Tile newTile) {
+        replaceTile(tiles[newTile.x][newTile.y], newTile);
     }
 }

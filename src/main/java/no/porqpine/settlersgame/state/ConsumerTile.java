@@ -1,10 +1,10 @@
 package no.porqpine.settlersgame.state;
 
-public class ConsumerTile extends Tile {
+public class ConsumerTile extends OwnedTile {
     public int storedPheromone;
 
-    public ConsumerTile(int id, int x, int y) {
-        super(id, x, y);
+    public ConsumerTile(int x, int y, Player owner) {
+        super(x, y, owner);
     }
 
     @Override

@@ -39,6 +39,10 @@ public class GameApi extends WebSocketAdapter {
                     ShapeClicked shapeClicked = GameLogic.OBJECT_MAPPER.readValue(message, ShapeClicked.class);
                     GAME.shapeClicked(shapeClicked);
                     break;
+                case SHAPE_RIGHT_CLICKED:
+//                    ShapeClicked shapeClicked = GameLogic.OBJECT_MAPPER.readValue(message, ShapeClicked.class);
+//                    GAME.shapeClicked(shapeClicked);
+                    break;
                 case JOIN_GAME:
                     JoinGame joinGame = GameLogic.OBJECT_MAPPER.readValue(message, JoinGame.class);
                     GAME.addPlayer(getSession(),joinGame.name,joinGame.color);

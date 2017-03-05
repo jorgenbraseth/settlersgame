@@ -1,13 +1,14 @@
 package no.porqpine.settlersgame.state;
 
-public class ProducerTile extends Tile {
+public class ProducerTile extends OwnedTile {
 
-    private static final int PRODUCE_EVERY_N_TICK = 15;
-    public static final int PRODUCTION = 300;
+    private static final int PRODUCE_EVERY_N_TICK = 30;
+    public static final int PRODUCTION = 800;
     private int timeSinceLastProduction;
 
-    public ProducerTile(int id, int x, int y) {
-        super(id, x, y);
+    public ProducerTile(int x, int y, Player owner) {
+        super(x, y, owner);
+        timeSinceLastProduction = (int) (Math.random() * PRODUCE_EVERY_N_TICK);
     }
 
     @Override

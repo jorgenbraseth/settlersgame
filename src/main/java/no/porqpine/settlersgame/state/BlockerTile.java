@@ -1,8 +1,8 @@
 package no.porqpine.settlersgame.state;
 
 public class BlockerTile extends Tile {
-    public BlockerTile(int id, int x, int y) {
-        super(id, x, y);
+    public BlockerTile(int x, int y) {
+        super(x, y);
     }
 
     @Override
