@@ -60,18 +60,27 @@ class Tile {
     };
 
 
-    render(ctx, gameData) {
+    render(ctx, player) {
         ctx.save();
         ctx.translate(this.x, this.y);
-        
-        if (this.hover) {
+
+        var bg = "rgba(250,250,250,0.1)";
+        if (this.data.highestPheromonePlayer) {
+            var playerName = this.data.highestPheromonePlayer.name;
+            var color = this.data.highestPheromonePlayer.color;
+            var r = parseInt(color.substr(1,2),16);
+            var g = parseInt(color.substr(3,2),16);
+            var b = parseInt(color.substr(5,2),16);
+            var o = this.data.pAmounts[playerName]/100 + 0.1;
+            bg = `rgba(${r},${g},${b},${o})`;
+        }
+
+        if (this.hover && this.data.highestPheromonePlayer && this.data.highestPheromonePlayer.name == player.name) {
             ctx.fillStyle = "yellow";
         } else if (this.data.owner) {
             ctx.fillStyle = this.data.owner.color;
-        } else if (this.data.highestPheromonePlayer) {
-            ctx.fillStyle = this.data.highestPheromonePlayer.color;
         } else {
-            ctx.fillStyle = "rgba(250,250,250,0.1)";
+            ctx.fillStyle = bg;
         }
 
 
@@ -98,11 +107,13 @@ class Tile {
         ctx.lineTo(0, hexHeight);
         ctx.closePath();
 
-        ctx.fillStyle = "black";
+        ctx.fillStyle = bg;
+        ctx.fill();
+        ctx.fillStyle = "rgba(0,0,0,0.8";
         ctx.fill();
 
         if ("BLOCKER" === this.type) {
-            ctx.fillStyle = "rgba(250,250,250,0.1)";
+            ctx.fillStyle = "rgba(250,250,250,0.9)";
         } else if (this.data.type == "PRODUCER") {
             ctx.fillStyle = "#0099ff";
         } else if (this.data.type == "CONSUMER") {

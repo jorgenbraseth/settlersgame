@@ -18,4 +18,9 @@ public class BlockerTile extends Tile {
     @Override
     public void diffuse() {
     }
+
+    @Override
+    public void degrade() {
+        pAmounts.keySet().forEach(pheromoneType -> adjustPheromone(pheromoneType, -pAmounts.get(pheromoneType)));
+    }
 }

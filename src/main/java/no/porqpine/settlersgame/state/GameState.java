@@ -33,6 +33,9 @@ public class GameState {
             for (int y = 0; y < HEIGHT; y++) {
 
                 Tile newTile = new FreeTile(x, y);
+                if (Math.random() < 0.01) {
+                    newTile = new ProducerTile(x, y);
+                }
                 tiles[x][y] = newTile;
             }
         }
@@ -111,7 +114,7 @@ public class GameState {
     public void addPlayer(Player player) {
         players.add(player);
         Tile tile = tiles[(int) (Math.random() * WIDTH)][(int) (Math.random() * HEIGHT)];
-        while(tile instanceof OwnedTile){
+        while (tile instanceof OwnedTile) {
             tile = tiles[(int) (Math.random() * WIDTH)][(int) (Math.random() * HEIGHT)];
         }
 

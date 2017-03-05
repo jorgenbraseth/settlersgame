@@ -1,4 +1,4 @@
-var ZOOM = 1;
+var ZOOM = 0.8;
 
 var socket;
 var mouseX, mouseY;
@@ -9,7 +9,7 @@ var player;
 
 var renderTiles = function (context) {
     tiles.forEach((t)=> {
-        t.render(context, gameData);
+        t.render(context, player);
     });
 };
 function render(context) {
