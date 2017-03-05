@@ -105,6 +105,8 @@ class Tile {
             ctx.fillStyle = "#0099ff";
         } else if (this.data.type == "CONSUMER") {
             ctx.fillStyle = "#aa0000";
+        } else if (this.data.type == "OWNERSHIP_SPREADER") {
+            ctx.fillStyle = this.data.owner.color;
         } else {
             var fillGrade = this.data.pheromoneAmount / 25;
             ctx.fillStyle = "rgba(0,50,250," + fillGrade + ")";
