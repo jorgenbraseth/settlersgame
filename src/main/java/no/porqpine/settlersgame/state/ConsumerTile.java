@@ -20,7 +20,7 @@ public class ConsumerTile extends OwnedTile {
     @Override
     public void acceptQueuedPheromone() {
         super.acceptQueuedPheromone();
-        storedPheromone += pheromoneAmount;
-        pheromoneAmount = 0;
+        storedPheromone += pAmounts.get(PheromoneType.RESOURCE);
+        pAmounts.put(PheromoneType.RESOURCE, 0L);
     }
 }

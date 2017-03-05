@@ -1,4 +1,4 @@
-var ZOOM = 0.8;
+var ZOOM = 0.4;
 
 var socket;
 var mouseX, mouseY;

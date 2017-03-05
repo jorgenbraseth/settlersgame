@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import no.porqpine.settlersgame.api.ShapeClicked;
+import no.porqpine.settlersgame.api.ShapeRightClicked;
 import no.porqpine.settlersgame.state.*;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketException;
@@ -87,7 +88,7 @@ public class GameLogic implements Runnable {
                 .forEach(session -> {
                     try {
                         session.getRemote().sendString(text);
-                    } catch (IOException | WebSocketException e) {
+                    } catch (IOException | WebSocketException | NullPointerException e) {
                         e.printStackTrace();
                     }
                 });
@@ -107,7 +108,7 @@ public class GameLogic implements Runnable {
 
         while (state.players.stream().filter(p -> p.session.isOpen()).findAny().isPresent()) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(330);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -115,6 +116,23 @@ public class GameLogic implements Runnable {
         running = false;
     }
 
+    public void shapeRightClicked(ShapeRightClicked event) {
+        Tile clickedTile = (Tile) state.find(event.id);
+        int x = event.coords[0];
+        int y = event.coords[1];
+        Player player = findPlayer(event.playerName);
+
+        Player highestPheromonePlayer = clickedTile.getHighestPheromonePlayer();
+        if (highestPheromonePlayer == player || clickedTile instanceof OwnedTile && (((OwnedTile) clickedTile).owner == player)) {
+            switch (clickedTile.getType()) {
+                case "BLOCKER":
+                    state.build(new FreeTile(x, y));
+                    break;
+                default:
+                    state.build(new BlockerTile(x, y, player));
+            }
+        }
+    }
     public void shapeClicked(ShapeClicked event) {
         Tile clickedTile = (Tile) state.find(event.id);
         int x = event.coords[0];
@@ -125,9 +143,6 @@ public class GameLogic implements Runnable {
         if (highestPheromonePlayer == player) {
             switch (clickedTile.getType()) {
                 case "FREE":
-                    state.build(new BlockerTile(x, y));
-                    break;
-                case "BLOCKER":
                     state.build(new ProducerTile(x, y));
                     break;
                 case "PRODUCER":

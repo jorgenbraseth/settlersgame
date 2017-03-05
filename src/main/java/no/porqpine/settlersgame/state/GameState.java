@@ -13,8 +13,8 @@ import static no.porqpine.settlersgame.api.MessageType.GAME_STATE;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 public class GameState {
-    private static final int WIDTH = 20;
-    private static final int HEIGHT = 20;
+    private static final int WIDTH = 30;
+    private static final int HEIGHT = 30;
 
     private static Random rnd = new Random();
 

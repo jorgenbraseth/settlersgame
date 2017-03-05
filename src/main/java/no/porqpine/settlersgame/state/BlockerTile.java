@@ -1,8 +1,8 @@
 package no.porqpine.settlersgame.state;
 
-public class BlockerTile extends Tile {
-    public BlockerTile(int x, int y) {
-        super(x, y);
+public class BlockerTile extends OwnedTile {
+    public BlockerTile(int x, int y, Player owner) {
+        super(x, y, owner);
     }
 
     @Override
@@ -12,7 +12,7 @@ public class BlockerTile extends Tile {
 
     @Override
     public boolean acceptsPheromone(PheromoneType pheromoneType) {
-        return pheromoneType != PheromoneType.RESOURCE;
+        return false;
     }
 
     @Override

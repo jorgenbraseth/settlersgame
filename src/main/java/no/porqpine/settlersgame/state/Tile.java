@@ -9,16 +9,11 @@ import java.util.stream.Collectors;
 @SuppressWarnings("WeakerAccess")
 public abstract class Tile extends GameObject {
 
-    public static final double PHEROMONE_DEGRADATION = 0.05;
-    public static final double DIFFUSION_RATE = .5;
     public final int x;
     public final int y;
 
     @JsonIgnore
     public List<Tile> neighbours = new ArrayList<>();
-
-    public long pheromoneAmount = 0;
-    private double queuedPheromone;
 
     public Map<PheromoneType, Long> pAmounts = new HashMap<>();
     public Map<PheromoneType, Long> pQueued = new HashMap<>();
