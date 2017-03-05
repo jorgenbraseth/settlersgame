@@ -22,25 +22,11 @@ public class Player {
         this.color = color;
         this.name = name;
         this.id = NEXT_PLAYER_ID++;
-
-        addResource(Tile.TileType.FOREST.name(),5);
-        addResource(Tile.TileType.PASTURE.name(),5);
-        addResource(Tile.TileType.MOUNTAIN.name(),2);
     }
 
     public void addResource(String resource, long amount) {
         resources.putIfAbsent(resource, 0L);
         resources.computeIfPresent(resource, (s, currentValue) -> currentValue + amount);
-    }
-
-    public boolean canAfford(Structure structure) {
-        Map<String, Long> cost = structure.cost;
-        for (String resource : cost.keySet()) {
-            if(resources.get(resource) < cost.get(resource)){
-                return false;
-            }
-        }
-        return true;
     }
 
     public void payCost(Map<String, Long> cost) {

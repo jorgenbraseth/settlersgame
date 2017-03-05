@@ -1,138 +1,68 @@
 package no.porqpine.settlersgame.state;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import no.porqpine.settlersgame.GameLogic;
 import no.porqpine.settlersgame.api.ShapeClicked;
 
-import java.util.Optional;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-public class Tile extends GameObject {
+@SuppressWarnings("WeakerAccess")
+public abstract class Tile extends GameObject {
 
-    private static Random rnd = new Random();
-
-    public static final int PAYOUT = 1;
+    public static final double PHEROMONE_DEGRADATION = 0.01;
+    public static final double DIFFUSION_RATE = 1;
     public final int x;
     public final int y;
-    public final TileType type;
-    public final Integer resourceOn;
 
-    private Edge N;
-    private Edge S;
-    private Edge W;
-    private Edge E;
+    private List<Tile> neighbours = new ArrayList<>();
 
-    private Optional<Crossing> NW = Optional.empty();
-    private Optional<Crossing> NE = Optional.empty();
-    private Optional<Crossing> SW = Optional.empty();
-    private Optional<Crossing> SE = Optional.empty();
+    public int pheromoneAmount = 0;
+    private double queuedPheromone;
 
     public Tile(int id, int x, int y) {
-        this(id, x, y, TileType.sample());
-    }
-
-    public Tile(int id, int x, int y, TileType type) {
         super(id);
         this.x = x;
         this.y = y;
-        this.type = type;
-        if(type != TileType.WATER){
-            this.resourceOn = 1+rnd.nextInt(11);
-        }else{
-            this.resourceOn = null;
-        }
+    }
+
+    public void addNeighbour(Tile t) {
+        neighbours.add(t);
     }
 
     public void tick(int ticks) {
-        if (resourceOn != null && GameLogic.GAME.state.currentRoll == resourceOn) {
-            giveResources();
+        diffuse();
+        degrade();
+    }
+
+    public void acceptQueuedPheromone() {
+        pheromoneAmount += queuedPheromone;
+        queuedPheromone = 0;
+
+        pheromoneAmount = Math.max(0, pheromoneAmount);
+    }
+
+    private void degrade() {
+        adjustPheromone((int) (-1 * pheromoneAmount * PHEROMONE_DEGRADATION));
+    }
+
+    private void diffuse() {
+        if (acceptsPheromone()) {
+            long acceptingNeighbours = neighbours.stream().filter(Tile::acceptsPheromone).count();
+            int totalPheromone = pheromoneAmount + neighbours.stream()
+                    .filter(Tile::spreadsPheromone)
+                    .map(tile -> tile.pheromoneAmount)
+                    .reduce((integer, integer2) -> integer + integer2)
+                    .orElse(0);
+
+            long avgAmount = totalPheromone / (acceptingNeighbours+1);
+            adjustPheromone((long) ((avgAmount - pheromoneAmount) * DIFFUSION_RATE));
         }
     }
 
-    private void giveResources() {
-        NW.ifPresent(this::payout);
-        NE.ifPresent(this::payout);
-        SW.ifPresent(this::payout);
-        SE.ifPresent(this::payout);
-    }
+    void adjustPheromone(long amount) {
+        this.queuedPheromone += amount;
 
-    private void payout(Crossing crossing) {
-        Structure structure = crossing.structure;
-        if(structure != null){
-            structure.owner.addResource(this.type.name(), PAYOUT);
-        }
-    }
-
-    public Double getProduction() {
-        if (type == TileType.WATER) {
-            return null;
-        }
-        return GameLogic.GAME.state.currentRoll == resourceOn ? 1d : 0d;
-    }
-
-    public void setN(Edge n) {
-        N = n;
-    }
-
-    public void setS(Edge s) {
-        S = s;
-    }
-
-    public void setW(Edge w) {
-        W = w;
-    }
-
-    public void setE(Edge e) {
-        E = e;
-    }
-
-    public void setNW(Crossing crossing) {
-        this.NW = Optional.ofNullable(crossing);
-    }
-
-    public void setNE(Crossing crossing) {
-        this.NE = Optional.ofNullable(crossing);
-    }
-
-    public void setSW(Crossing crossing) {
-        this.SW = Optional.ofNullable(crossing);
-    }
-
-    public void setSE(Crossing crossing) {
-        this.SE = Optional.ofNullable(crossing);
-    }
-
-    public Edge getN() {
-        return N;
-    }
-
-    public Edge getS() {
-        return S;
-    }
-
-    public Edge getW() {
-        return W;
-    }
-
-    public Edge getE() {
-        return E;
-    }
-
-    public Optional<Crossing> getNW() {
-        return NW;
-    }
-
-    public Optional<Crossing> getNE() {
-        return NE;
-    }
-
-    public Optional<Crossing> getSW() {
-        return SW;
-    }
-
-    public Optional<Crossing> getSE() {
-        return SE;
     }
 
     @Override
@@ -140,13 +70,9 @@ public class Tile extends GameObject {
 
     }
 
-    public enum TileType {
-        FOREST, PASTURE, MOUNTAIN, WATER, DESERT;
+    public abstract String getType();
 
-        private static Random rnd = new Random();
+    public abstract boolean acceptsPheromone();
 
-        public static TileType sample() {
-            return TileType.values()[rnd.nextInt(TileType.values().length)];
-        }
-    }
+    public abstract boolean spreadsPheromone();
 }

@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static no.porqpine.settlersgame.api.MessageType.GAME_STATE;
-import static no.porqpine.settlersgame.state.Edge.Orientation.HORIZONTAL;
-import static no.porqpine.settlersgame.state.Edge.Orientation.VERTICAL;
 
 public class GameState {
     private static final int WIDTH = 10;
@@ -20,8 +18,6 @@ public class GameState {
 
     private Tile[][] tiles = new Tile[WIDTH][HEIGHT];
     public List<Player> players = new ArrayList<>();
-    public List<Edge> edges = new ArrayList<>();
-    public List<Crossing> crossings = new ArrayList<>();
     public MessageType type = GAME_STATE;
     public int currentRoll;
 
@@ -35,67 +31,82 @@ public class GameState {
         //Create tiles
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
-                if(x == 0 || y == 0 || x == WIDTH-1 || y == HEIGHT -1){
-                    tiles[x][y] = new Tile(id++, x, y, Tile.TileType.WATER);
-                }else{
-                    tiles[x][y] = new Tile(id++, x, y);
+
+                Tile newTile;
+                if (y == 4 && x == 4 || y == 8 && x == 8) {
+                    newTile = new ProducerTile(id++, x, y);
+//                } else if (y == 4 && x == 7) {
+//                    newTile = new ConsumerTile(id++, x, y);
+//                } else if (y == 5 && x == 7) {
+//                    newTile = new ConsumerTile(id++, x, y);
+                } else if (y == 4 && x == 5) {
+                    newTile = new BlockerTile(id++, x, y);
+                } else if (y == 4 && x == 3) {
+                    newTile = new BlockerTile(id++, x, y);
+                } else if (y == 3 && x == 3) {
+                    newTile = new BlockerTile(id++, x, y);
+                } else if (y == 3 && x == 4) {
+                    newTile = new BlockerTile(id++, x, y);
+                } else {
+                    newTile = new FreeTile(id++, x, y);
                 }
+
+                tiles[x][y] = newTile;
             }
         }
-
-        //Add Crossings and Edges
 
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
                 Tile currentTile = tiles[x][y];
-                Tile east = null;
-                Tile south = null;
-                Tile southEast = null;
+                if (x > 0) {
+                    currentTile.addNeighbour(tiles[x - 1][y]);
+                }
                 if (x < WIDTH - 1) {
-                    east = tiles[x + 1][y];
-                    if(!(east.type == Tile.TileType.WATER && currentTile.type == Tile.TileType.WATER)){
-                        Edge edge = new Edge(id++, currentTile, east, VERTICAL);
-                        edges.add(edge);
-                        currentTile.setE(edge);
-                        east.setW(edge);
-                    }
+                    currentTile.addNeighbour(tiles[x + 1][y]);
                 }
 
                 if (y > 0) {
-                    Tile north = tiles[x][y - 1];
-                    if(!(north.type == Tile.TileType.WATER && currentTile.type == Tile.TileType.WATER)){
-                        Edge edge = new Edge(id++, north, currentTile, HORIZONTAL);
-                        edges.add(edge);
-                        currentTile.setN(edge);
-                        north.setS(edge);
-                    }
+                    currentTile.addNeighbour(tiles[x][y - 1]);
+                }
+                if (y < HEIGHT - 1) {
+                    currentTile.addNeighbour(tiles[x][y + 1]);
                 }
 
-                if (x < WIDTH - 1 && y < HEIGHT - 1) {
-                    southEast = tiles[x + 1][y + 1];
-                    south = tiles[x][y + 1];
-                    Crossing crossing = new Crossing(id++, southEast, south, east, currentTile);
-                    crossings.add(crossing);
+                if (y % 2 == 0 && x > 0) { //Partallsrader, samme og -1
+                    if (y > 0) {
+                        currentTile.addNeighbour(tiles[x - 1][y - 1]);
+                    }
+                    if (y < HEIGHT - 1) {
+                        currentTile.addNeighbour(tiles[x - 1][y + 1]);
+                    }
+                }
+                if (y % 2 == 1 && x < WIDTH - 1) {  //Oddetallsrader, samme og +1
+                    if (y > 0) {
+                        currentTile.addNeighbour(tiles[x + 1][y - 1]);
+                    }
+                    if (y < HEIGHT - 1) {
+                        currentTile.addNeighbour(tiles[x + 1][y + 1]);
+                    }
                 }
 
             }
         }
+
+
     }
 
     public List<Tile> getTiles() {
         return Stream.of(tiles).flatMap(row -> Stream.of(row)).collect(Collectors.toList());
     }
 
-    public Player getPlayer(String playerName){
+    public Player getPlayer(String playerName) {
         return players.stream().filter(p -> p.name.equals(playerName)).findFirst().orElse(null);
     }
 
     public GameObject find(int id) {
         List<GameObject> allObjects = new ArrayList<>();
         allObjects.addAll(getTiles());
-        allObjects.addAll(edges);
-        allObjects.addAll(crossings);
-        return allObjects.stream().filter(tile -> tile.id == id).findFirst().orElseThrow(() -> new RuntimeException("No gameObject exists with id: "+id));
+        return allObjects.stream().filter(tile -> tile.id == id).findFirst().orElseThrow(() -> new RuntimeException("No gameObject exists with id: " + id));
     }
 
     public void roll() {
