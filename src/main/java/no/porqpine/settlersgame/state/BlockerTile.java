@@ -12,6 +12,10 @@ public class BlockerTile extends Tile {
 
     @Override
     public boolean acceptsPheromone(PheromoneType pheromoneType) {
-        return false;
+        return pheromoneType != PheromoneType.RESOURCE;
+    }
+
+    @Override
+    public void diffuse() {
     }
 }

@@ -60,14 +60,16 @@ class Tile {
     };
 
 
-    render(ctx) {
+    render(ctx, gameData) {
         ctx.save();
         ctx.translate(this.x, this.y);
-
+        
         if (this.hover) {
             ctx.fillStyle = "yellow";
         } else if (this.data.owner) {
             ctx.fillStyle = this.data.owner.color;
+        } else if (this.data.highestPheromonePlayer) {
+            ctx.fillStyle = this.data.highestPheromonePlayer.color;
         } else {
             ctx.fillStyle = "rgba(250,250,250,0.1)";
         }

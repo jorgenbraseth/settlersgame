@@ -1,5 +1,6 @@
 package no.porqpine.settlersgame.state;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import no.porqpine.settlersgame.api.MessageType;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.stream.Stream;
 
 import static no.porqpine.settlersgame.api.MessageType.GAME_STATE;
 
+@JsonInclude(JsonInclude.Include.NON_ABSENT)
 public class GameState {
     private static final int WIDTH = 20;
     private static final int HEIGHT = 20;
@@ -100,5 +102,19 @@ public class GameState {
 
     public void build(Tile newTile) {
         replaceTile(tiles[newTile.x][newTile.y], newTile);
+    }
+
+    public Tile tileAt(int x, int y) {
+        return tiles[x][y];
+    }
+
+    public void addPlayer(Player player) {
+        players.add(player);
+        Tile tile = tiles[(int) (Math.random() * WIDTH)][(int) (Math.random() * HEIGHT)];
+        while(tile instanceof OwnedTile){
+            tile = tiles[(int) (Math.random() * WIDTH)][(int) (Math.random() * HEIGHT)];
+        }
+
+        replaceTile(tile, new OwnerShipSpreaderTile(tile.x, tile.y, player));
     }
 }

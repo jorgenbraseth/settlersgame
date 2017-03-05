@@ -9,7 +9,7 @@ var player;
 
 var renderTiles = function (context) {
     tiles.forEach((t)=> {
-        t.render(context);
+        t.render(context, gameData);
     });
 };
 function render(context) {

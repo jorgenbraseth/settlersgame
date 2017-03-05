@@ -1,15 +1,11 @@
 package no.porqpine.settlersgame.state;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import no.porqpine.settlersgame.api.ShapeClicked;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
-@JsonInclude(JsonInclude.Include.NON_ABSENT)
 @SuppressWarnings("WeakerAccess")
 public abstract class Tile extends GameObject {
 
@@ -38,11 +34,6 @@ public abstract class Tile extends GameObject {
         neighbours.add(t);
     }
 
-    public void tick(int ticks) {
-        diffuseAll();
-        degradeAll();
-    }
-
     public void acceptQueuedPheromone() {
         pQueued.forEach((pheromoneType, queuedAmount) -> {
             Long currentAmount = pAmounts.getOrDefault(pheromoneType, 0L);
@@ -52,7 +43,7 @@ public abstract class Tile extends GameObject {
         pQueued.clear();
     }
 
-    private void degradeAll() {
+    public void degrade() {
         pAmounts.keySet().forEach(this::degrade);
     }
 
@@ -60,7 +51,7 @@ public abstract class Tile extends GameObject {
         adjustPheromone(pheromoneType, (int) (-1 * Math.ceil(pAmounts.getOrDefault(pheromoneType, 0L) * pheromoneType.degradationRate)));
     }
 
-    private void diffuseAll() {
+    public void diffuse() {
         pAmounts.keySet().forEach(this::diffuse);
     }
 
@@ -89,6 +80,19 @@ public abstract class Tile extends GameObject {
 
     }
 
+    public Player getHighestPheromonePlayer() {
+        List<PheromoneType> playerPheromonesPresent = pAmounts.keySet().stream()
+                .filter(pheromoneType -> pheromoneType != PheromoneType.RESOURCE)
+                .filter(pheromoneType -> pAmounts.get(pheromoneType) > 0)
+                .collect(Collectors.toList());
+
+        Optional<PheromoneType> playerWithMostPheromone = playerPheromonesPresent.stream()
+                .max((o1, o2) -> pAmounts.get(o1).compareTo(pAmounts.get(o2)));
+
+        return playerWithMostPheromone.map(pheromoneType -> pheromoneType.player.get()).orElse(null);
+
+    }
+
     public abstract String getType();
 
     public abstract boolean acceptsPheromone(PheromoneType pheromoneType);
@@ -101,4 +105,7 @@ public abstract class Tile extends GameObject {
     private void removeNeighbour(Tile oldTile) {
         neighbours.remove(oldTile);
     }
+
+    /* Overridable by sub-classes. Called every render loop */
+    public void tick(int i){};
 }

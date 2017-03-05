@@ -41,11 +41,14 @@ public class GameLogic implements Runnable {
                 .filter(p -> p.name.equals(name))
                 .findFirst();
 
-        if(playerWithSameName.isPresent()){
+        if (playerWithSameName.isPresent()) {
             playerWithSameName.get().session = connection;
-        }else{
+        } else {
             Player player = new Player(name, color, connection);
-            state.players.add(player);
+            player.setPheromone(PheromoneType.playerPheromone(player));
+
+            state.addPlayer(player);
+
         }
     }
 
@@ -66,6 +69,8 @@ public class GameLogic implements Runnable {
     private void tick() {
         state.roll();
         state.getTiles().forEach(tile -> tile.tick(1));
+        state.getTiles().forEach(tile -> tile.diffuse());
+        state.getTiles().forEach(tile -> tile.degrade());
         state.getTiles().forEach(tile -> tile.acceptQueuedPheromone());
     }
 
@@ -111,26 +116,30 @@ public class GameLogic implements Runnable {
     }
 
     public void shapeClicked(ShapeClicked event) {
-        Tile clickedShape = (Tile)state.find(event.id);
+        Tile clickedTile = (Tile) state.find(event.id);
         int x = event.coords[0];
         int y = event.coords[1];
         Player player = findPlayer(event.playerName);
-        switch (clickedShape.getType()){
-            case "FREE":
-                state.build(new BlockerTile(x,y));
-                break;
-            case "BLOCKER":
-                state.build(new ProducerTile(x,y));
-                break;
-            case "PRODUCER":
-                state.build(new ConsumerTile(x,y, player));
-                break;
-            case "CONSUMER":
-                state.build(new OwnerShipSpreaderTile(x,y, player));
-                break;
-            case "OWNERSHIP_SPREADER":
-                state.build(new FreeTile(x,y));
-                break;
+
+        Player highestPheromonePlayer = clickedTile.getHighestPheromonePlayer();
+        if (highestPheromonePlayer == player) {
+            switch (clickedTile.getType()) {
+                case "FREE":
+                    state.build(new BlockerTile(x, y));
+                    break;
+                case "BLOCKER":
+                    state.build(new ProducerTile(x, y));
+                    break;
+                case "PRODUCER":
+                    state.build(new ConsumerTile(x, y, player));
+                    break;
+                case "CONSUMER":
+                    state.build(new OwnerShipSpreaderTile(x, y, player));
+                    break;
+                case "OWNERSHIP_SPREADER":
+                    state.build(new FreeTile(x, y));
+                    break;
+            }
         }
 
     }
