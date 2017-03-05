@@ -64,16 +64,14 @@ class Tile {
         ctx.save();
         ctx.translate(this.x, this.y);
 
-        if ("BLOCKER" === this.type) {
-            ctx.fillStyle = "#222222";
-        } else if (this.data.type == "PRODUCER") {
-            ctx.fillStyle = "#0099ff";
-        } else if (this.data.type == "CONSUMER") {
-            ctx.fillStyle = "#aa0000";
+        if (this.hover) {
+            ctx.fillStyle = "yellow";
+        } else if (this.data.owner) {
+            ctx.fillStyle = this.data.owner.color;
         } else {
-            var fillGrade = this.data.pheromoneAmount / 25;
-            ctx.fillStyle = "rgba(0,50,250," + fillGrade + ")";
+            ctx.fillStyle = "rgba(250,250,250,0.1)";
         }
+
 
         ctx.beginPath();
         ctx.moveTo(hexRadius, 0);
@@ -85,7 +83,6 @@ class Tile {
         ctx.closePath();
 
         ctx.fill();
-
 
         ctx.translate(hexRadius, hexRectangleHeight / 2);
         ctx.scale(0.9, 0.9);
@@ -98,19 +95,21 @@ class Tile {
         ctx.lineTo(0, sideLength + hexHeight);
         ctx.lineTo(0, hexHeight);
         ctx.closePath();
+
+        ctx.fillStyle = "black";
         ctx.fill();
 
-
-        ctx.lineWidth = 2;
-        if (this.hover) {
-            ctx.strokeStyle = "yellow";
-        } else if (this.data.owner) {
-            ctx.strokeStyle = this.data.owner.color;
+        if ("BLOCKER" === this.type) {
+            ctx.fillStyle = "rgba(250,250,250,0.1)";
+        } else if (this.data.type == "PRODUCER") {
+            ctx.fillStyle = "#0099ff";
+        } else if (this.data.type == "CONSUMER") {
+            ctx.fillStyle = "#aa0000";
         } else {
-            ctx.strokeStyle = "#222222";
+            var fillGrade = this.data.pheromoneAmount / 25;
+            ctx.fillStyle = "rgba(0,50,250," + fillGrade + ")";
         }
-        ctx.stroke();
-
+        ctx.fill();
 
         if (this.data.type !== "PRODUCER") {
             ctx.fillStyle = "white";

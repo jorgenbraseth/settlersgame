@@ -20,15 +20,12 @@ public class GameState {
     public List<Player> players = new ArrayList<>();
     public MessageType type = GAME_STATE;
     public int currentRoll;
-    private int nextTileId;
 
     public GameState() {
         createMap();
     }
 
     private void createMap() {
-        nextTileId = 0;
-
         //Create tiles
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
@@ -80,10 +77,6 @@ public class GameState {
 
     public List<Tile> getTiles() {
         return Stream.of(tiles).flatMap(row -> Stream.of(row)).collect(Collectors.toList());
-    }
-
-    public Player getPlayer(String playerName) {
-        return players.stream().filter(p -> p.name.equals(playerName)).findFirst().orElse(null);
     }
 
     public GameObject find(int id) {
