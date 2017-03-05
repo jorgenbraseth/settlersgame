@@ -120,7 +120,7 @@ public class GameLogic implements Runnable {
                 state.build(new BlockerTile(x,y));
                 break;
             case "BLOCKER":
-                state.build(new ProducerTile(x,y, player));
+                state.build(new ProducerTile(x,y));
                 break;
             case "PRODUCER":
                 state.build(new ConsumerTile(x,y, player));

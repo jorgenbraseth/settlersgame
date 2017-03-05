@@ -13,7 +13,7 @@ public class ConsumerTile extends OwnedTile {
     }
 
     @Override
-    public boolean acceptsPheromone() {
+    public boolean acceptsPheromone(PheromoneType pheromoneType) {
         return true;
     }
 
@@ -22,10 +22,5 @@ public class ConsumerTile extends OwnedTile {
         super.acceptQueuedPheromone();
         storedPheromone += pheromoneAmount;
         pheromoneAmount = 0;
-    }
-
-    @Override
-    public boolean spreadsPheromone() {
-        return false;
     }
 }

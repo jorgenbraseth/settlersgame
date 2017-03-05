@@ -11,12 +11,7 @@ public class BlockerTile extends Tile {
     }
 
     @Override
-    public boolean acceptsPheromone() {
-        return false;
-    }
-
-    @Override
-    public boolean spreadsPheromone() {
+    public boolean acceptsPheromone(PheromoneType pheromoneType) {
         return false;
     }
 }

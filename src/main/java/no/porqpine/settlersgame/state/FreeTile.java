@@ -11,12 +11,8 @@ public class FreeTile extends Tile {
     }
 
     @Override
-    public boolean acceptsPheromone() {
+    public boolean acceptsPheromone(PheromoneType pheromoneType) {
         return true;
     }
 
-    @Override
-    public boolean spreadsPheromone() {
-        return true;
-    }
 }

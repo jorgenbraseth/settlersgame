@@ -108,7 +108,7 @@ class Tile {
         } else if (this.data.type == "OWNERSHIP_SPREADER") {
             ctx.fillStyle = this.data.owner.color;
         } else {
-            var fillGrade = this.data.pheromoneAmount / 25;
+            var fillGrade = this.data.pAmounts.resource / 25;
             ctx.fillStyle = "rgba(0,50,250," + fillGrade + ")";
         }
         ctx.fill();
