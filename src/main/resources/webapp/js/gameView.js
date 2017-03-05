@@ -1,4 +1,4 @@
-var ZOOM = .9;
+var ZOOM = 1;
 
 var socket;
 var mouseX, mouseY;
@@ -20,8 +20,9 @@ function render(context) {
         context.save();
         context.scale(ZOOM, ZOOM);
 
-        // tiles.filter(e => e.containsPoint(mouseX, mouseY))
-        //     .forEach(shape => shape.mouseIsOver());
+        console.log(mouseX, mouseY);
+        tiles.filter(e => e.containsPoint(mouseX, mouseY))
+            .forEach(shape => shape.mouseIsOver());
 
         renderTiles(context);
         context.restore();
@@ -74,13 +75,13 @@ function start() {
 
     canvas.onmousemove = (e) => {
         if (gameData) {
-            // var x = e.offsetX;
-            // var y = e.offsetY;
-            //
-            // mouseX = x / ZOOM;
-            // mouseY = y / ZOOM;
-            //
-            // var containingShapes = edges.concat(crossings).filter(e => e.containsPoint(mouseX, mouseY));
+            var x = e.offsetX;
+            var y = e.offsetY;
+
+            mouseX = x / ZOOM;
+            mouseY = y / ZOOM;
+
+            // var containingShapes = tiles.filter(e => e.containsPoint(mouseX, mouseY));
             // if (containingShapes.length > 0) {
             //     var oneOfTheContainingShapes = containingShapes[0];
             //     if (shapeInFocus != oneOfTheContainingShapes) {
