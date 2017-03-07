@@ -1,5 +1,7 @@
 package no.porqpine.settlersgame.state;
 
+import java.util.Random;
+
 public class ProducerTile extends Tile {
 
     private static final int TIME_ON = 10;
@@ -11,6 +13,7 @@ public class ProducerTile extends Tile {
 
     public ProducerTile(int x, int y) {
         super(x, y);
+        timeInCurrentState = new Random().nextInt(TIME_OFF);
     }
 
     @Override
