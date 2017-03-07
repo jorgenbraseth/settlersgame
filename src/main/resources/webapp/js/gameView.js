@@ -1,4 +1,4 @@
-var ZOOM = 0.4;
+var ZOOM = 0.9;
 
 var socket;
 var mouseX, mouseY;
@@ -79,30 +79,6 @@ function start() {
 
             mouseX = x / ZOOM;
             mouseY = y / ZOOM;
-
-            // var containingShapes = tiles.filter(e => e.containsPoint(mouseX, mouseY));
-            // if (containingShapes.length > 0) {
-            //     var oneOfTheContainingShapes = containingShapes[0];
-            //     if (shapeInFocus != oneOfTheContainingShapes) {
-            //         oneOfTheContainingShapes.mouseIsOver();
-            //         if (shapeInFocus) {
-            //             shapeInFocus.mouseIsNotOver();
-            //         }
-            //
-            //     }
-            //     shapeInFocus = oneOfTheContainingShapes;
-            //
-            // } else {
-            //     if (shapeInFocus != null) {
-            //         shapeInFocus = null;
-            //     }
-            // }
-            //
-            // if (shapeInFocus != null) {
-            //     canvas.style.cursor = "pointer";
-            // } else {
-            //     canvas.style.cursor = "auto";
-            // }
         }
     };
 
@@ -132,6 +108,17 @@ function start() {
         }
     }
 
+    canvas.onmousewheel = (e)=> {
+        var zoomIn = e.deltaY < 0;
+
+        if (zoomIn) {
+            ZOOM = Math.min(2, ZOOM + 0.1);
+        } else {
+            ZOOM = Math.max(0.5, ZOOM - 0.1);
+        }
+
+
+    };
 
 }
 
