@@ -5,5 +5,7 @@ const COLORS = {
 };
 
 const IMAGE_MAP = {
-    HOUSE: new PreloadedImage("img/house.png", 64, 80)
+    HOUSE: new PreloadedImage("img/house.png", 64, 80),
+    EMITTER: new PreloadedImage("img/emitter.png", 256, 256),
+    CONSUMER: new PreloadedImage("img/consumer.png", 256,170),
 };
