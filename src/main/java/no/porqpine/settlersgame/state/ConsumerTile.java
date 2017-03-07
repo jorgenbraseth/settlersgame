@@ -1,5 +1,6 @@
 package no.porqpine.settlersgame.state;
 
+//TODO: make this drain neighbouring tiles instead?
 public class ConsumerTile extends OwnedTile {
     public int storedPheromone;
 

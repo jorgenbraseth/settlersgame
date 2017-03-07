@@ -102,5 +102,14 @@ public abstract class Tile extends GameObject {
     }
 
     /* Overridable by sub-classes. Called every render loop */
-    public void tick(int i){};
+    public void tick(int i) {
+    }
+
+    @Override
+    public String toString() {
+        return "Tile{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

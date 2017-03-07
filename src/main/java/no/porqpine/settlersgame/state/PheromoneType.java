@@ -3,7 +3,7 @@ package no.porqpine.settlersgame.state;
 import java.util.Optional;
 
 public class PheromoneType {
-    public static final PheromoneType RESOURCE = new PheromoneType("resource", 0.05, 0.5);
+    public static final PheromoneType RESOURCE = new PheromoneType("resource", 0.001, 1.0);
 
     public final String type;
     public final double degradationRate;

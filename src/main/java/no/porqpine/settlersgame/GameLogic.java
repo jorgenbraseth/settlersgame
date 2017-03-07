@@ -26,6 +26,7 @@ public class GameLogic implements Runnable {
     }
 
     public GameState state;
+    private long lastPublishTime;
 
 
     private GameLogic() {
@@ -76,11 +77,17 @@ public class GameLogic implements Runnable {
     }
 
     private void publishGameState() {
-        try {
-            sendToAllPlayers(OBJECT_MAPPER.writeValueAsString(state));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+
+        long timeSinceLastPublish = System.currentTimeMillis() - lastPublishTime;
+        if (timeSinceLastPublish > 100){
+            lastPublishTime = System.currentTimeMillis();
+            try {
+                sendToAllPlayers(OBJECT_MAPPER.writeValueAsString(state));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
     public void sendToAllPlayers(String text) {
@@ -135,6 +142,7 @@ public class GameLogic implements Runnable {
     }
     public void shapeClicked(ShapeClicked event) {
         Tile clickedTile = (Tile) state.find(event.id);
+        System.out.println(clickedTile);
         int x = event.coords[0];
         int y = event.coords[1];
         Player player = findPlayer(event.playerName);
@@ -143,9 +151,6 @@ public class GameLogic implements Runnable {
         if (highestPheromonePlayer == player) {
             switch (clickedTile.getType()) {
                 case "FREE":
-                    state.build(new ProducerTile(x, y));
-                    break;
-                case "PRODUCER":
                     state.build(new ConsumerTile(x, y, player));
                     break;
                 case "CONSUMER":

@@ -63,15 +63,23 @@ class Tile {
     render(ctx, player) {
         ctx.save();
         ctx.translate(this.x, this.y);
+        this.renderBorder(ctx);
+        this.renderFill(ctx, player);
+        this.renderText(ctx);
 
-        var bg = "rgba(250,250,250,0.1)";
+        ctx.restore();
+    }
+
+    renderBorder(ctx) {
+        var bg = "rgba(250,250,250,0.0)";
         if (this.data.highestPheromonePlayer) {
             var playerName = this.data.highestPheromonePlayer.name;
             var color = this.data.highestPheromonePlayer.color;
-            var r = parseInt(color.substr(1,2),16);
-            var g = parseInt(color.substr(3,2),16);
-            var b = parseInt(color.substr(5,2),16);
-            var o = this.data.pAmounts[playerName]/100 + 0.1;
+            var r = parseInt(color.substr(1, 2), 16);
+            var g = parseInt(color.substr(3, 2), 16);
+            var b = parseInt(color.substr(5, 2), 16);
+            // var o = this.data.pAmounts[playerName] / 100 + 0.1;
+            var o = 0.15;
             bg = `rgba(${r},${g},${b},${o})`;
         }
 
@@ -83,7 +91,6 @@ class Tile {
             ctx.fillStyle = bg;
         }
 
-
         ctx.beginPath();
         ctx.moveTo(hexRadius, 0);
         ctx.lineTo(hexRectangleWidth, hexHeight);
@@ -94,7 +101,9 @@ class Tile {
         ctx.closePath();
 
         ctx.fill();
+    }
 
+    renderFill(ctx, player) {
         ctx.translate(hexRadius, hexRectangleHeight / 2);
         ctx.scale(0.9, 0.9);
         ctx.translate(-hexRadius, -hexRectangleHeight / 2);
@@ -107,10 +116,31 @@ class Tile {
         ctx.lineTo(0, hexHeight);
         ctx.closePath();
 
+        var bg = "rgba(250,250,250,0.0)";
+        if (this.data.highestPheromonePlayer) {
+            var playerName = this.data.highestPheromonePlayer.name;
+            var color = this.data.highestPheromonePlayer.color;
+            var r = parseInt(color.substr(1, 2), 16);
+            var g = parseInt(color.substr(3, 2), 16);
+            var b = parseInt(color.substr(5, 2), 16);
+            var o = this.data.pAmounts[playerName] / 100;
+            var o = 0.05;
+            bg = `rgba(${r},${g},${b},${o})`;
+        }
+        /*if (this.hover && this.data.highestPheromonePlayer && this.data.highestPheromonePlayer.name == player.name) {
+            ctx.fillStyle = "rgba(250,250,0,0.2)";
+        } else*/ if (this.data.owner) {
+            ctx.fillStyle = this.data.owner.color;
+        } else {
+            ctx.fillStyle = bg;
+        }
+
+        ctx.fillStyle = "black";
+        ctx.fill();
         ctx.fillStyle = bg;
         ctx.fill();
-        ctx.fillStyle = "rgba(0,0,0,0.8";
-        ctx.fill();
+        // ctx.fillStyle = "rgba(0,0,0,0.9";
+        // ctx.fill();
 
         if ("BLOCKER" === this.type) {
             ctx.fillStyle = "rgba(250,250,250,0.9)";
@@ -125,7 +155,9 @@ class Tile {
             ctx.fillStyle = "rgba(0,50,250," + fillGrade + ")";
         }
         ctx.fill();
+    }
 
+    renderText(ctx) {
         if (this.data.type !== "PRODUCER") {
             ctx.fillStyle = "white";
 
@@ -138,7 +170,5 @@ class Tile {
                 ctx.fillText(text, hexRectangleWidth / 2 - textWidth / 2, hexRectangleHeight / 2);
             }
         }
-
-        ctx.restore();
     }
 }
