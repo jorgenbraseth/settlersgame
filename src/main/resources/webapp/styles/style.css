@@ -1,0 +1,46 @@
+body {
+    background-color: #222;
+}
+
+canvas {
+    border: 1px solid white;
+}
+
+.resource-list, .resource-list * {
+    display: inline;
+    color: white;
+}
+
+#chat {
+    float: right;
+    width: 500px;
+    max-width: 500px;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+#chatInput {
+    width: 100%;
+    display: block;
+    max-width: 100%;
+    padding: .2em;
+}
+#chatHistory {
+    height: 300px;
+    min-height: 300px;
+    max-height: 300px;
+    background-color: white;
+    overflow-x: hidden;
+    overflow-y: auto
+}
+.chatEntry {
+    display: block;
+    padding: .2em .2em .5em;
+}
+.chatEntry .playerName{
+    background-color: #eee;
+    display: inline-block;
+    padding: .2em.3em;
+    border-radius: .3em;
+    border: 1px solid rgba(0,0,0,.1);
+}

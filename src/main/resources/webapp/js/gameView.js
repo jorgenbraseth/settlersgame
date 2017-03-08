@@ -2,7 +2,7 @@ var ZOOM = 0.9;
 
 var socket;
 var mouseX, mouseY;
-var gameData;
+var message;
 var tiles;
 var shapeInFocus = null;
 var player;
@@ -13,7 +13,7 @@ var renderTiles = function (context) {
     });
 };
 function render(context) {
-    if (gameData) {
+    if (message) {
         context.fillStyle = "#ffffff";
         context.fillStyle = "#000000";
         context.fillRect(0, 0, 800, 800);
@@ -33,13 +33,13 @@ function render(context) {
 function displayPlayerInfo(players) {
     var elm = document.getElementById("playerList");
     var newHtml = "";
-    players.forEach((p)=>{
+    players.forEach((p)=> {
 
         newHtml += `<div>`;
         newHtml += `<span class="player-name" style="color: ${p.color}">${p.name}</span> `;
         newHtml += `<dl class="resource-list">`;
-        for(var r in p.resources){
-            newHtml += `<dt>${r}</dt><dd>${p.resources[r]}</dd>`
+        for (var r in p.resources) {
+            newHtml += `$${p.resources[r]}`
         }
         newHtml += `</dl>`;
         newHtml += `</div>`
@@ -48,14 +48,21 @@ function displayPlayerInfo(players) {
 
 }
 function connect(playerInfo) {
-    socket = new WebSocket(`wss://${window.location.hostname}:${window.location.port}/game-state`);
-    socket.onmessage = (message) => {
+    var protocol = window.location.protocol == "https:" ? "wss" : "ws";
+    socket = new WebSocket(`${protocol}://${window.location.hostname}:${window.location.port}/game-state`);
+    socket.onmessage = (msg) => {
+        if (msg.data) {
+            message = JSON.parse(msg.data);
 
-        if (message.data) {
-            gameData = JSON.parse(message.data);
-            tiles = gameData.tiles.map(t=> new Tile(t));
+            switch (message.type) {
+                case "GAME_STATE":
+                    tiles = message.tiles.map(t=> new Tile(t));
+                    displayPlayerInfo(message.players)
+                    break;
+                case "CHAT":
+                    chatMessageReceived(message);
 
-            displayPlayerInfo(gameData.players)
+            }
         }
     };
     socket.onopen = () => {
@@ -65,6 +72,19 @@ function connect(playerInfo) {
         connect(playerInfo)
     }, 500);
 };
+
+function chatMessageReceived(msg) {
+    var chat = document.getElementById("chatHistory");
+
+
+    var newMsg = document.createElement("span");
+    newMsg.innerHTML = `<span class="chatEntry"><span class="playerName" style="color: ${msg.player.color}">${msg.player.name}</span> ${msg.message}</span>`;
+
+    chat.appendChild(newMsg);
+    chat.scrollTop = chat.scrollHeight;
+
+
+}
 
 function joinGame(e) {
     e.preventDefault();
@@ -92,7 +112,7 @@ function start() {
     joinGameButton.onclick = joinGame;
 
     canvas.onmousemove = (e) => {
-        if (gameData) {
+        if (message) {
             var x = e.offsetX;
             var y = e.offsetY;
 
@@ -135,9 +155,23 @@ function start() {
         } else {
             ZOOM = Math.max(0.5, ZOOM - 0.1);
         }
-
-
     };
+
+    var chatInput = document.getElementById("chatInput");
+    chatInput.onkeydown = (e) => {
+        if (e.keyCode === 13) {
+            var messageText = chatInput.value;
+            if (messageText !== "") {
+                socket.send(JSON.stringify({
+                    type: "CHAT",
+                    playerName: player.name,
+                    message: messageText
+                }));
+            }
+
+            chatInput.value = "";
+        }
+    }
 
 }
 

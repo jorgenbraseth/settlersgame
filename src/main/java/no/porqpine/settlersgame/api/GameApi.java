@@ -1,10 +1,8 @@
 package no.porqpine.settlersgame.api;
 
 import no.porqpine.settlersgame.GameLogic;
-import no.porqpine.settlersgame.api.messages.JoinGame;
-import no.porqpine.settlersgame.api.messages.MessageType;
-import no.porqpine.settlersgame.api.messages.ShapeClicked;
-import no.porqpine.settlersgame.api.messages.ShapeRightClicked;
+import no.porqpine.settlersgame.api.messages.*;
+import no.porqpine.settlersgame.state.Player;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -12,6 +10,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import java.io.IOException;
 
 import static no.porqpine.settlersgame.GameLogic.GAME;
+import static no.porqpine.settlersgame.GameLogic.OBJECT_MAPPER;
 
 @WebSocket
 public class GameApi extends WebSocketAdapter {
@@ -46,6 +45,12 @@ public class GameApi extends WebSocketAdapter {
                 case JOIN_GAME:
                     JoinGame joinGame = GameLogic.OBJECT_MAPPER.readValue(message, JoinGame.class);
                     GAME.addPlayer(getSession(),joinGame.name,joinGame.color);
+                    break;
+                case CHAT:
+                    Chat chat = GameLogic.OBJECT_MAPPER.readValue(message, Chat.class);
+                    Player player = GAME.findPlayer(chat.playerName);
+                    chat.player = player;
+                    GAME.sendToAllPlayers(OBJECT_MAPPER.writeValueAsString(chat));
                     break;
             }
         } catch (IOException e) {
