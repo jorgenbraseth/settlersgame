@@ -2,7 +2,7 @@ package no.porqpine.settlersgame.state;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import no.porqpine.settlersgame.GameLogic;
-import no.porqpine.settlersgame.api.MessageType;
+import no.porqpine.settlersgame.api.messages.MessageType;
 import no.porqpine.settlersgame.exceptions.InvalidObjectID;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static no.porqpine.settlersgame.api.MessageType.GAME_STATE;
+import static no.porqpine.settlersgame.api.messages.MessageType.GAME_STATE;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 public class GameState {

@@ -1,7 +1,10 @@
 package no.porqpine.settlersgame.api;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import no.porqpine.settlersgame.GameLogic;
+import no.porqpine.settlersgame.api.messages.JoinGame;
+import no.porqpine.settlersgame.api.messages.MessageType;
+import no.porqpine.settlersgame.api.messages.ShapeClicked;
+import no.porqpine.settlersgame.api.messages.ShapeRightClicked;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;

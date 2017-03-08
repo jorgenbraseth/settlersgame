@@ -1,7 +1,6 @@
 package no.porqpine.settlersgame.state;
 
 import no.porqpine.settlersgame.GameLogic;
-import no.porqpine.settlersgame.api.ShapeClicked;
 
 import java.util.Optional;
 

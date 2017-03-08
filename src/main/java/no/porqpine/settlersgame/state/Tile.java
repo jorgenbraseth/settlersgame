@@ -1,7 +1,6 @@
 package no.porqpine.settlersgame.state;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import no.porqpine.settlersgame.api.ShapeClicked;
 
 import java.util.*;
 import java.util.stream.Collectors;

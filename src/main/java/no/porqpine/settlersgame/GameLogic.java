@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import no.porqpine.settlersgame.api.ShapeClicked;
-import no.porqpine.settlersgame.api.ShapeRightClicked;
+import no.porqpine.settlersgame.api.messages.ShapeClicked;
+import no.porqpine.settlersgame.api.messages.ShapeRightClicked;
 import no.porqpine.settlersgame.exceptions.InvalidObjectID;
 import no.porqpine.settlersgame.state.*;
 import org.eclipse.jetty.websocket.api.Session;
@@ -91,11 +91,15 @@ public class GameLogic implements Runnable {
     }
 
     public void sendToAllPlayers(String text) {
-        state.players.stream().map(p -> p.session).filter(Session::isOpen)
-                .forEach(session -> {
+        state.players.stream().filter(p -> p.session.isOpen())
+                .forEach(player -> {
                     try {
-                        session.getRemote().sendString(text);
-                    } catch (IOException | WebSocketException | NullPointerException e) {
+                        player.session.getRemote().sendString(text);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (WebSocketException e) {
+                        System.out.println(String.format("Player disconnected: [%s]", player.name));
+                    } catch (NullPointerException e) {
                         e.printStackTrace();
                     }
                 });
