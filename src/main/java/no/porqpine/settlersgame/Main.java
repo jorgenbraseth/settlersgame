@@ -43,6 +43,18 @@ public class Main {
         context.addServlet(new ServletHolder("default",defaultServlet),"/");
 
         server.setHandler(context);
+        server.setStopAtShutdown(true);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            gameState.stop();
+            try {
+                gameLoop.join();
+                server.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Game stopped.");
+        }));
 
         try
         {
@@ -54,15 +66,7 @@ public class Main {
             t.printStackTrace(System.err);
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            gameState.stop();
-            try {
-                server.join();
-                gameLoop.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }));
+
 
     }
 }

@@ -12,6 +12,8 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class GameLogic implements Runnable {
@@ -28,6 +30,7 @@ public class GameLogic implements Runnable {
 
     public GameState state;
     private long lastPublishTime;
+    private List<Session> sessions = new ArrayList<>();
 
 
     private GameLogic() {
@@ -115,16 +118,28 @@ public class GameLogic implements Runnable {
     }
 
     public void stop() {
-        state.players.forEach(player -> player.session.close(0, "Server shutting down."));
+        running = false;
+        sessions.forEach(player -> {
+            player.close(0, "Server shutting down.");
+            try {
+                player.disconnect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
-        while (state.players.stream().filter(p -> p.session.isOpen()).findAny().isPresent()) {
+//        while (state.players.stream().filter(p -> p.session.isOpen()).findAny().isPresent()) {
+        while (sessions.stream().filter(p -> p.isOpen()).findAny().isPresent()) {
+            System.out.println("Not all client sessions stopped");
             try {
                 Thread.sleep(330);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        running = false;
+
+        System.out.println("Game loop stopped.");
+
     }
 
     public void shapeRightClicked(ShapeRightClicked event) {
@@ -178,5 +193,9 @@ public class GameLogic implements Runnable {
 
     public void destroyTile(Tile ownedTile) {
         state.build(new FreeTile(ownedTile.x, ownedTile.y));
+    }
+
+    public void addSession(Session sess) {
+        sessions.add(sess);
     }
 }

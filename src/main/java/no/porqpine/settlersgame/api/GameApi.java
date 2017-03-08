@@ -16,12 +16,9 @@ import static no.porqpine.settlersgame.GameLogic.GAME;
 @WebSocket
 public class GameApi extends WebSocketAdapter {
 
-
-
     @Override
     public void onWebSocketConnect(Session sess) {
         super.onWebSocketConnect(sess);
-//        GAME.addPlayer(getSession(), name, color);
     }
 
     @Override
@@ -62,4 +59,6 @@ public class GameApi extends WebSocketAdapter {
 
         public MessageWithOnlyType() {}
     }
+
+
 }
