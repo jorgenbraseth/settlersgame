@@ -4,6 +4,7 @@ public class JoinGame  extends Message {
 
     public String name;
     public String color;
+    public String gameId;
 
     public JoinGame() {}
 

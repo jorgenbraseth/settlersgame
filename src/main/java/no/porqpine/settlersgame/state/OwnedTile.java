@@ -9,7 +9,7 @@ public abstract class OwnedTile extends Tile {
 
     @JsonProperty
     public final long MAX_HEALTH = 1000;
-    private long health = MAX_HEALTH;
+    public long health = MAX_HEALTH;
 
 
     public OwnedTile(int x, int y, Player owner, GameLogic game) {
@@ -35,7 +35,7 @@ public abstract class OwnedTile extends Tile {
     @Override
     public void tick(int i) {
         if(getHighestPheromonePlayer() != owner){
-            health = 0;
+            health -= 10;
         }
         if(health <= 0){
             die();

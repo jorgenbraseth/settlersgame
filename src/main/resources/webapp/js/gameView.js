@@ -95,7 +95,7 @@ function joinGame(e) {
         color: color
     };
 
-    var joinGameMessage = Object.assign({}, player, {type: "JOIN_GAME"});
+    var joinGameMessage = Object.assign({}, player, {type: "JOIN_GAME", gameId: "foo"});
     connect(joinGameMessage);
     var joinForm = document.getElementById("joinForm");
     joinForm.parentNode.removeChild(joinForm);

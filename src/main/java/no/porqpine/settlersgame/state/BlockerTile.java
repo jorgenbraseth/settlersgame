@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public class BlockerTile extends OwnedTile {
 
-    public static final int COST = 3000;
+    public static final int COST = 500;
 
     public BlockerTile(int x, int y, Player owner, GameLogic game) {
         super(x, y, owner, game);
@@ -39,5 +39,9 @@ public class BlockerTile extends OwnedTile {
     @Override
     public long cost() {
         return COST;
+    }
+
+    @Override
+    public void tick(int i) {
     }
 }

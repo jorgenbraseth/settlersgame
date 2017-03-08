@@ -77,8 +77,7 @@ class Tile {
             var r = parseInt(color.substr(1, 2), 16);
             var g = parseInt(color.substr(3, 2), 16);
             var b = parseInt(color.substr(5, 2), 16);
-            // var o = this.data.pAmounts[playerName] / 100 + 0.1;
-            var o = 0.15;
+            var o = this.data.pheromoneLeadOfHighestPheromone / 500 + 0.1;
             bg = `rgba(${r},${g},${b},${o})`;
         }
 
@@ -113,26 +112,10 @@ class Tile {
         ctx.lineTo(0, hexHeight);
         ctx.closePath();
 
-        var bg = "rgba(250,250,250,0.0)";
-        if (this.data.highestPheromonePlayer) {
-            var playerName = this.data.highestPheromonePlayer.name;
-            var color = this.data.highestPheromonePlayer.color;
-            var r = parseInt(color.substr(1, 2), 16);
-            var g = parseInt(color.substr(3, 2), 16);
-            var b = parseInt(color.substr(5, 2), 16);
-            var o = this.data.pheromoneLeadOfHighestPheromone / 500;
-            bg = `rgba(${r},${g},${b},${o})`;
-        }
-        if (this.data.owner) {
-            ctx.fillStyle = this.data.owner.color;
-        } else {
-            ctx.fillStyle = bg;
-        }
-
         ctx.fillStyle = "black";
         ctx.fill();
-        ctx.fillStyle = bg;
-        ctx.fill();
+        // ctx.fillStyle = bg;
+        // ctx.fill();
 
         if ("BLOCKER" === this.type) {
             ctx.fillStyle = "rgba(250,250,250,0.9)";

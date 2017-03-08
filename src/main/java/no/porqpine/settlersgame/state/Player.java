@@ -45,4 +45,5 @@ public class Player {
     public boolean canAfford(long cost) {
         return cost <= resources.getOrDefault("resource", 0L);
     }
+
 }
