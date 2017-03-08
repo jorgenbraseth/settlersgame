@@ -48,7 +48,7 @@ function displayPlayerInfo(players) {
 
 }
 function connect(playerInfo) {
-    socket = new WebSocket("ws://localhost:8080/game-state");
+    socket = new WebSocket(`ws://${window.location.hostname}/game-state`);
     socket.onmessage = (message) => {
 
         if (message.data) {
