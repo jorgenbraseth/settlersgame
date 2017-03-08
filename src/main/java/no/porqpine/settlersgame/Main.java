@@ -18,6 +18,11 @@ public class Main {
 
         Server server = new Server();
         ServerConnector connector = new ServerConnector(server);
+        int port = 8080;
+        String envPort = System.getenv("PORT");
+        if(envPort != null){
+            port = Integer.parseInt(envPort);
+        }
         connector.setPort(8080);
         server.addConnector(connector);
 
