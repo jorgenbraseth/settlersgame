@@ -1,12 +1,12 @@
 package no.porqpine.settlersgame.state;
 
-public class OwnerShipSpreaderTile extends OwnedTile {
+public class RelayTile extends OwnedTile {
 
     private static final int PRODUCE_EVERY_N_TICK = 1;
     public static final int PRODUCTION = 600;
     private int timeSinceLastProduction;
 
-    public OwnerShipSpreaderTile(int x, int y, Player owner) {
+    public RelayTile(int x, int y, Player owner) {
         super(x, y, owner);
     }
 
@@ -17,7 +17,7 @@ public class OwnerShipSpreaderTile extends OwnedTile {
 
     @Override
     public boolean acceptsPheromone(PheromoneType pheromoneType) {
-        return false;
+        return true;
     }
 
     @Override
@@ -25,8 +25,9 @@ public class OwnerShipSpreaderTile extends OwnedTile {
         super.tick(ticks);
 
         timeSinceLastProduction += ticks;
-        if(timeSinceLastProduction >= PRODUCE_EVERY_N_TICK){
+        if (timeSinceLastProduction >= PRODUCE_EVERY_N_TICK) {
             timeSinceLastProduction = 0;
+
             adjustPheromone(owner.pheromone, PRODUCTION);
         }
     }

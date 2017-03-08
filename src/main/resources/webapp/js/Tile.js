@@ -120,13 +120,9 @@ class Tile {
             var r = parseInt(color.substr(1, 2), 16);
             var g = parseInt(color.substr(3, 2), 16);
             var b = parseInt(color.substr(5, 2), 16);
-            var o = this.data.pAmounts[playerName] / 500;
-            // var o = 0.05;
+            var o = this.data.pheromoneLeadOfHighestPheromone / 500;
             bg = `rgba(${r},${g},${b},${o})`;
         }
-        /*if (this.hover && this.data.highestPheromonePlayer && this.data.highestPheromonePlayer.name == player.name) {
-         ctx.fillStyle = "rgba(250,250,0,0.2)";
-         } else*/
         if (this.data.owner) {
             ctx.fillStyle = this.data.owner.color;
         } else {
@@ -137,15 +133,11 @@ class Tile {
         ctx.fill();
         ctx.fillStyle = bg;
         ctx.fill();
-        // ctx.fillStyle = "rgba(0,0,0,0.9";
-        // ctx.fill();
 
         if ("BLOCKER" === this.type) {
             ctx.fillStyle = "rgba(250,250,250,0.9)";
         } else if (this.data.type == "PRODUCER") {
             ctx.fillStyle = "#0099ff";
-        } else if (this.data.type == "OWNERSHIP_SPREADER") {
-            ctx.fillStyle = this.data.owner.color;
         } else {
             var fillGrade = this.data.pAmounts.resource / 25;
             ctx.fillStyle = "rgba(0,50,250," + fillGrade + ")";
@@ -154,25 +146,30 @@ class Tile {
     }
 
     renderText(ctx) {
-        // if (this.data.type !== "PRODUCER") {
-        //     ctx.fillStyle = "white";
-        //
-        //     var text = this.data.pheromoneAmount;
-        //     if (this.data.type == "CONSUMER") {
-        //         text = this.data.storedPheromone;
-        //     }
-        //     var textWidth = ctx.measureText(text).width;
-        //     if (text) {
-        //         ctx.fillText(text, hexRectangleWidth / 2 - textWidth / 2, hexRectangleHeight / 2);
-        //     }
-        // }
         ctx.save();
         ctx.translate(hexRadius, hexRectangleHeight / 2);
         ctx.globalAlpha = 0.7;
         if (this.data.type === "OWNERSHIP_SPREADER") {
-            IMAGE_MAP.EMITTER.render(ctx, TILE_SIZE * 1.3);
+            ctx.beginPath();
+            ctx.arc(0,0,hexRadius*0.8,0,2*Math.PI);
+            ctx.closePath();
+            ctx.fillStyle = this.data.owner.color;
+            ctx.fill();
+            IMAGE_MAP.EMITTER.render(ctx, TILE_SIZE);
+        } else if (this.data.type === "HOME") {
+            ctx.beginPath();
+            ctx.arc(0,0,hexRadius*0.7,0,2*Math.PI);
+            ctx.closePath();
+            ctx.fillStyle = this.data.owner.color;
+            ctx.fill();
+            IMAGE_MAP.HOME.render(ctx, TILE_SIZE);
         } else if (this.data.type === "CONSUMER") {
-            IMAGE_MAP.CONSUMER.render(ctx, TILE_SIZE * 1.3);
+            ctx.beginPath();
+            ctx.arc(0,0,hexRadius*0.7,0,2*Math.PI);
+            ctx.closePath();
+            ctx.fillStyle = this.data.owner.color;
+            ctx.fill();
+            IMAGE_MAP.CONSUMER.render(ctx, TILE_SIZE);
         }
         ctx.restore();
     }

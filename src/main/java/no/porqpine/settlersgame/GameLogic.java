@@ -154,7 +154,7 @@ public class GameLogic implements Runnable {
                     state.build(new ConsumerTile(x, y, player));
                     break;
                 case "CONSUMER":
-                    state.build(new OwnerShipSpreaderTile(x, y, player));
+                    state.build(new RelayTile(x, y, player));
                     break;
                 case "OWNERSHIP_SPREADER":
                     state.build(new FreeTile(x, y));

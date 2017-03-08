@@ -85,8 +85,23 @@ public abstract class Tile extends GameObject {
                 .max((o1, o2) -> pAmounts.get(o1).compareTo(pAmounts.get(o2)));
 
         return playerWithMostPheromone.map(pheromoneType -> pheromoneType.player.get()).orElse(null);
+    }
+
+    public Long getPheromoneLeadOfHighestPheromone() {
+        if (getHighestPheromonePlayer() == null) {
+            return null;
+        }
+
+        Long secondPlace = pAmounts.keySet().stream()
+                .filter(p -> p.player.isPresent())
+                .filter(p -> getHighestPheromonePlayer() != p.player.orElse(null))
+                .map(p -> pAmounts.get(p))
+                .max(Long::compareTo)
+                .orElse(0L);
+        return pAmounts.getOrDefault(getHighestPheromonePlayer().pheromone, 0L) - secondPlace;
 
     }
+
 
     public abstract String getType();
 

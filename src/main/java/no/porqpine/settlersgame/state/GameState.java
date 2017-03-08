@@ -119,6 +119,6 @@ public class GameState {
             tile = tiles[(int) (Math.random() * WIDTH)][(int) (Math.random() * HEIGHT)];
         }
 
-        replaceTile(tile, new OwnerShipSpreaderTile(tile.x, tile.y, player));
+        replaceTile(tile, new HomeTile(tile.x, tile.y, player));
     }
 }
