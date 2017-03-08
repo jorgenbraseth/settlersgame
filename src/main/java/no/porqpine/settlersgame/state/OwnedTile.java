@@ -19,7 +19,7 @@ public abstract class OwnedTile extends Tile {
     }
 
     public long getHealth(){
-        return MAX_HEALTH;
+        return health;
     }
 
     @Override
@@ -36,6 +36,8 @@ public abstract class OwnedTile extends Tile {
     public void tick(int i) {
         if(getHighestPheromonePlayer() != owner){
             health -= 10;
+        }else{
+            health = Math.min(MAX_HEALTH, health + 5);
         }
         if(health <= 0){
             die();

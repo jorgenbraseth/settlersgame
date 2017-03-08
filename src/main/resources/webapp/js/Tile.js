@@ -130,7 +130,13 @@ class Tile {
         ctx.save();
         ctx.translate(hexRadius, hexRectangleHeight / 2);
         ctx.globalAlpha = 0.7;
+        if(this.data.health != undefined){
+            var healthLeftPercent = this.data.health / this.data.MAX_HEALTH;
+            ctx.scale(healthLeftPercent, healthLeftPercent);
+        }
         if (this.data.type === "OWNERSHIP_SPREADER") {
+
+
             ctx.beginPath();
             ctx.arc(0, 0, hexRadius * 0.8, 0, 2 * Math.PI);
             ctx.closePath();
