@@ -1,6 +1,7 @@
 package no.porqpine.settlersgame.state;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import no.porqpine.settlersgame.GameLogic;
 import no.porqpine.settlersgame.api.MessageType;
 import no.porqpine.settlersgame.exceptions.InvalidObjectID;
 
@@ -18,13 +19,15 @@ public class GameState {
     private static final int HEIGHT = 30;
 
     private static Random rnd = new Random();
+    private final GameLogic game;
 
     private Tile[][] tiles = new Tile[WIDTH][HEIGHT];
     public List<Player> players = new ArrayList<>();
     public MessageType type = GAME_STATE;
     public int currentRoll;
 
-    public GameState() {
+    public GameState(GameLogic game) {
+        this.game = game;
         createMap();
     }
 
@@ -34,7 +37,7 @@ public class GameState {
             for (int y = 0; y < HEIGHT; y++) {
 
                 Tile newTile = new FreeTile(x, y);
-                if (Math.random() < 0.01) {
+                if (Math.random() < 0.02) {
                     newTile = new ProducerTile(x, y);
                 }
                 tiles[x][y] = newTile;
@@ -130,6 +133,6 @@ public class GameState {
             tile = tiles[(int) (Math.random() * WIDTH)][(int) (Math.random() * HEIGHT)];
         }
 
-        replaceTile(tile, new HomeTile(tile.x, tile.y, player));
+        replaceTile(tile, new HomeTile(tile.x, tile.y, player, game));
     }
 }

@@ -1,13 +1,16 @@
 package no.porqpine.settlersgame.state;
 
+import no.porqpine.settlersgame.GameLogic;
+import no.porqpine.settlersgame.api.ShapeClicked;
+
 import java.util.Optional;
 
 public class BlockerTile extends OwnedTile {
 
     public static final int COST = 3000;
 
-    public BlockerTile(int x, int y, Player owner) {
-        super(x, y, owner);
+    public BlockerTile(int x, int y, Player owner, GameLogic game) {
+        super(x, y, owner, game);
     }
 
     @Override

@@ -70,11 +70,6 @@ public abstract class Tile extends GameObject {
         pQueued.put(type, currentQueued + amount);
     }
 
-    @Override
-    public void click(ShapeClicked event) {
-
-    }
-
     public Player getHighestPheromonePlayer() {
         List<PheromoneType> playerPheromonesPresent = pAmounts.keySet().stream()
                 .filter(pheromoneType -> pheromoneType != PheromoneType.RESOURCE)

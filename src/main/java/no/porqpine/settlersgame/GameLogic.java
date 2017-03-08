@@ -35,7 +35,7 @@ public class GameLogic implements Runnable {
     }
 
     private void init() {
-        this.state = new GameState();
+        this.state = new GameState(this);
     }
 
 
@@ -70,10 +70,10 @@ public class GameLogic implements Runnable {
 
     private void tick() {
         state.roll();
-        state.getTiles().forEach(tile -> tile.tick(1));
         state.getTiles().forEach(tile -> tile.diffuse());
         state.getTiles().forEach(tile -> tile.degrade());
         state.getTiles().forEach(tile -> tile.acceptQueuedPheromone());
+        state.getTiles().forEach(tile -> tile.tick(1));
     }
 
     private void publishGameState() {
@@ -136,7 +136,7 @@ public class GameLogic implements Runnable {
                     state.build(new FreeTile(x, y));
                     break;
                 default:
-                    state.build(new BlockerTile(x, y, player));
+                    state.build(new BlockerTile(x, y, player, this));
             }
         }
     }
@@ -153,10 +153,10 @@ public class GameLogic implements Runnable {
             if (highestPheromonePlayer == player) {
                 switch (clickedTile.getType()) {
                     case "FREE":
-                        state.build(new SiphonTile(x, y, player));
+                        state.build(new SiphonTile(x, y, player, this));
                         break;
                     case "SIPHON":
-                        state.build(new RelayTile(x, y, player));
+                        state.build(new RelayTile(x, y, player, this));
                         break;
                     case "OWNERSHIP_SPREADER":
                         state.build(new FreeTile(x, y));
@@ -170,5 +170,9 @@ public class GameLogic implements Runnable {
 
     public Player findPlayer(String playerName) {
         return state.players.stream().filter(p -> p.name.equals(playerName)).findFirst().orElse(null);
+    }
+
+    public void destroyTile(Tile ownedTile) {
+        state.build(new FreeTile(ownedTile.x, ownedTile.y));
     }
 }

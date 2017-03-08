@@ -10,5 +10,4 @@ public abstract class GameObject {
         this.id = nextObjectId++;
     }
 
-    public abstract void click(ShapeClicked event);
 }

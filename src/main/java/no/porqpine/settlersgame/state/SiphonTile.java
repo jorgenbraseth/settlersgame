@@ -1,5 +1,7 @@
 package no.porqpine.settlersgame.state;
 
+import no.porqpine.settlersgame.GameLogic;
+
 //TODO: make this drain neighbouring tiles instead?
 public class SiphonTile extends OwnedTile {
     public int storedPheromone;
@@ -7,8 +9,8 @@ public class SiphonTile extends OwnedTile {
     public static final int COST = 300;
     public static final long MAX_SIPHON = 5;
 
-    public SiphonTile(int x, int y, Player owner) {
-        super(x, y, owner);
+    public SiphonTile(int x, int y, Player owner, GameLogic game) {
+        super(x, y, owner, game);
     }
 
     @Override

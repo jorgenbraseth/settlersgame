@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Player {
-    public static final long STARTING_RESOURCES = 100000L;
+    private static final long STARTING_RESOURCES = 10000;
     private static int NEXT_PLAYER_ID = 0;
 
     @JsonBackReference
