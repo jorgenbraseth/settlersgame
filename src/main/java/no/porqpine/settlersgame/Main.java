@@ -23,7 +23,7 @@ public class Main {
         if(envPort != null){
             port = Integer.parseInt(envPort);
         }
-        connector.setPort(8080);
+        connector.setPort(port);
         server.addConnector(connector);
 
         // Setup the basic application "context" for this application at "/"
