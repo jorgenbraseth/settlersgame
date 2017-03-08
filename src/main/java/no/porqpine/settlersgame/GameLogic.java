@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import no.porqpine.settlersgame.api.ShapeClicked;
 import no.porqpine.settlersgame.api.ShapeRightClicked;
+import no.porqpine.settlersgame.exceptions.InvalidObjectID;
 import no.porqpine.settlersgame.state.*;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketException;
@@ -79,7 +80,7 @@ public class GameLogic implements Runnable {
     private void publishGameState() {
 
         long timeSinceLastPublish = System.currentTimeMillis() - lastPublishTime;
-        if (timeSinceLastPublish > 100){
+        if (timeSinceLastPublish > 100) {
             lastPublishTime = System.currentTimeMillis();
             try {
                 sendToAllPlayers(OBJECT_MAPPER.writeValueAsString(state));
@@ -140,28 +141,32 @@ public class GameLogic implements Runnable {
             }
         }
     }
+
     public void shapeClicked(ShapeClicked event) {
-        Tile clickedTile = (Tile) state.find(event.id);
-        System.out.println(clickedTile);
-        int x = event.coords[0];
-        int y = event.coords[1];
-        Player player = findPlayer(event.playerName);
+        try {
+            Tile clickedTile = (Tile) state.find(event.id);
+            System.out.println(clickedTile);
+            int x = event.coords[0];
+            int y = event.coords[1];
+            Player player = findPlayer(event.playerName);
 
-        Player highestPheromonePlayer = clickedTile.getHighestPheromonePlayer();
-        if (highestPheromonePlayer == player) {
-            switch (clickedTile.getType()) {
-                case "FREE":
-                    state.build(new ConsumerTile(x, y, player));
-                    break;
-                case "CONSUMER":
-                    state.build(new RelayTile(x, y, player));
-                    break;
-                case "OWNERSHIP_SPREADER":
-                    state.build(new FreeTile(x, y));
-                    break;
+            Player highestPheromonePlayer = clickedTile.getHighestPheromonePlayer();
+            if (highestPheromonePlayer == player) {
+                switch (clickedTile.getType()) {
+                    case "FREE":
+                        state.build(new SiphonTile(x, y, player));
+                        break;
+                    case "SIPHON":
+                        state.build(new RelayTile(x, y, player));
+                        break;
+                    case "OWNERSHIP_SPREADER":
+                        state.build(new FreeTile(x, y));
+                        break;
+                }
             }
+        } catch (InvalidObjectID e) {
+            System.out.println("Invalid id, probably old state on client side.");
         }
-
     }
 
     public Player findPlayer(String playerName) {

@@ -151,25 +151,25 @@ class Tile {
         ctx.globalAlpha = 0.7;
         if (this.data.type === "OWNERSHIP_SPREADER") {
             ctx.beginPath();
-            ctx.arc(0,0,hexRadius*0.8,0,2*Math.PI);
+            ctx.arc(0, 0, hexRadius * 0.8, 0, 2 * Math.PI);
             ctx.closePath();
             ctx.fillStyle = this.data.owner.color;
             ctx.fill();
             IMAGE_MAP.EMITTER.render(ctx, TILE_SIZE);
         } else if (this.data.type === "HOME") {
             ctx.beginPath();
-            ctx.arc(0,0,hexRadius*0.7,0,2*Math.PI);
+            ctx.arc(0, 0, hexRadius * 0.7, 0, 2 * Math.PI);
             ctx.closePath();
             ctx.fillStyle = this.data.owner.color;
             ctx.fill();
             IMAGE_MAP.HOME.render(ctx, TILE_SIZE);
-        } else if (this.data.type === "CONSUMER") {
+        } else if (this.data.type === "SIPHON") {
             ctx.beginPath();
-            ctx.arc(0,0,hexRadius*0.7,0,2*Math.PI);
+            ctx.arc(0, 0, hexRadius * 0.7, 0, 2 * Math.PI);
             ctx.closePath();
             ctx.fillStyle = this.data.owner.color;
             ctx.fill();
-            IMAGE_MAP.CONSUMER.render(ctx, TILE_SIZE);
+            IMAGE_MAP.SIPHON.render(ctx, TILE_SIZE * 0.8);
         }
         ctx.restore();
     }

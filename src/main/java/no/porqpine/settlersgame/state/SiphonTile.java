@@ -1,16 +1,16 @@
 package no.porqpine.settlersgame.state;
 
 //TODO: make this drain neighbouring tiles instead?
-public class ConsumerTile extends OwnedTile {
+public class SiphonTile extends OwnedTile {
     public int storedPheromone;
 
-    public ConsumerTile(int x, int y, Player owner) {
+    public SiphonTile(int x, int y, Player owner) {
         super(x, y, owner);
     }
 
     @Override
     public String getType() {
-        return "CONSUMER";
+        return "SIPHON";
     }
 
     @Override
@@ -21,7 +21,7 @@ public class ConsumerTile extends OwnedTile {
     @Override
     public void acceptQueuedPheromone() {
         super.acceptQueuedPheromone();
-        storedPheromone += pAmounts.get(PheromoneType.RESOURCE);
+        storedPheromone += pAmounts.getOrDefault(PheromoneType.RESOURCE, 0L);
         pAmounts.put(PheromoneType.RESOURCE, 0L);
     }
 }

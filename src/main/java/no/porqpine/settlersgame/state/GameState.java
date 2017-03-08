@@ -2,6 +2,7 @@ package no.porqpine.settlersgame.state;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import no.porqpine.settlersgame.api.MessageType;
+import no.porqpine.settlersgame.exceptions.InvalidObjectID;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,10 +86,10 @@ public class GameState {
         return Stream.of(tiles).flatMap(row -> Stream.of(row)).collect(Collectors.toList());
     }
 
-    public GameObject find(int id) {
+    public GameObject find(long id) throws InvalidObjectID {
         List<GameObject> allObjects = new ArrayList<>();
         allObjects.addAll(getTiles());
-        return allObjects.stream().filter(tile -> tile.id == id).findFirst().orElseThrow(() -> new RuntimeException("No gameObject exists with id: " + id));
+        return allObjects.stream().filter(tile -> tile.id == id).findFirst().orElseThrow(() -> new InvalidObjectID(id));
     }
 
     public void roll() {
