@@ -99,7 +99,7 @@ class Tile {
         ctx.fill();
     }
 
-    renderFill(ctx, player) {
+    renderFill(ctx) {
         ctx.translate(hexRadius, hexRectangleHeight / 2);
         ctx.scale(0.9, 0.9);
         ctx.translate(-hexRadius, -hexRectangleHeight / 2);
@@ -114,8 +114,6 @@ class Tile {
 
         ctx.fillStyle = "black";
         ctx.fill();
-        // ctx.fillStyle = bg;
-        // ctx.fill();
 
         if ("BLOCKER" === this.type) {
             ctx.fillStyle = "rgba(250,250,250,0.9)";
