@@ -3,6 +3,9 @@ package no.porqpine.settlersgame.state;
 import java.util.Optional;
 
 public class BlockerTile extends OwnedTile {
+
+    public static final int COST = 3000;
+
     public BlockerTile(int x, int y, Player owner) {
         super(x, y, owner);
     }
@@ -29,5 +32,10 @@ public class BlockerTile extends OwnedTile {
             owner = highestPlayerPheromone.get().player.get();
         }
         pAmounts.keySet().forEach(pheromoneType -> adjustPheromone(pheromoneType, -pAmounts.get(pheromoneType)));
+    }
+
+    @Override
+    public long cost() {
+        return COST;
     }
 }

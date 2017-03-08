@@ -51,7 +51,6 @@ public class GameLogic implements Runnable {
             player.setPheromone(PheromoneType.playerPheromone(player));
 
             state.addPlayer(player);
-
         }
     }
 

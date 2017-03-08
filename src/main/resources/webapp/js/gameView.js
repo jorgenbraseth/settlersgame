@@ -30,6 +30,23 @@ function render(context) {
 
 }
 
+function displayPlayerInfo(players) {
+    var elm = document.getElementById("playerList");
+    var newHtml = "";
+    players.forEach((p)=>{
+
+        newHtml += `<div>`;
+        newHtml += `<span class="player-name" style="color: ${p.color}">${p.name}</span> `;
+        newHtml += `<dl class="resource-list">`;
+        for(var r in p.resources){
+            newHtml += `<dt>${r}</dt><dd>${p.resources[r]}</dd>`
+        }
+        newHtml += `</dl>`;
+        newHtml += `</div>`
+    });
+    elm.innerHTML = newHtml;
+
+}
 function connect(playerInfo) {
     socket = new WebSocket("ws://localhost:8080/game-state");
     socket.onmessage = (message) => {
@@ -37,6 +54,8 @@ function connect(playerInfo) {
         if (message.data) {
             gameData = JSON.parse(message.data);
             tiles = gameData.tiles.map(t=> new Tile(t));
+
+            displayPlayerInfo(gameData.players)
         }
     };
     socket.onopen = () => {

@@ -106,6 +106,16 @@ public class GameState {
     }
 
     public void build(Tile newTile) {
+        if(newTile instanceof OwnedTile){
+            OwnedTile ownedTile = (OwnedTile) newTile;
+            Player owner = ownedTile.owner;
+            long costOfTile = ownedTile.cost();
+            if (owner.canAfford(costOfTile)) {
+                owner.addResource("resource",-costOfTile);
+            } else {
+                return;
+            }
+        }
         replaceTile(tiles[newTile.x][newTile.y], newTile);
     }
 

@@ -25,4 +25,6 @@ public abstract class OwnedTile extends Tile {
                 ", MAX_HEALTH=" + MAX_HEALTH +
                 "} " + super.toString();
     }
+
+    public abstract long cost();
 }

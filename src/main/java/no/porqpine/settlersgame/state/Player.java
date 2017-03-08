@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Player {
+    public static final long STARTING_RESOURCES = 100000L;
     private static int NEXT_PLAYER_ID = 0;
 
     @JsonBackReference
@@ -23,6 +24,7 @@ public class Player {
         this.color = color;
         this.name = name;
         this.id = NEXT_PLAYER_ID++;
+        this.resources.put("resource", STARTING_RESOURCES);
     }
 
     public void addResource(String resource, long amount) {
@@ -38,5 +40,9 @@ public class Player {
 
     public void setPheromone(PheromoneType pheromone) {
         this.pheromone = pheromone;
+    }
+
+    public boolean canAfford(long cost) {
+        return cost <= resources.getOrDefault("resource", 0L);
     }
 }
