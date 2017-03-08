@@ -3,12 +3,19 @@ package no.porqpine.settlersgame;
 import no.porqpine.settlersgame.api.EventServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.resource.Resource;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+
+        GameLogic gameState = GameLogic.GAME;
+        Thread gameLoop = new Thread(gameState);
+        gameLoop.start();
+
         Server server = new Server();
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(8080);
@@ -18,17 +25,19 @@ public class Main {
         // This is also known as the handler tree (in jetty speak)
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
-        server.setHandler(context);
+
+
 
         // Add a websocket to a specific path spec
         EventServlet gameStateServlet = new EventServlet();
         ServletHolder holderEvents = new ServletHolder("ws-events", gameStateServlet);
         context.addServlet(holderEvents, "/game-state/*");
 
-        GameLogic gameState = GameLogic.GAME;
-        Thread gameLoop = new Thread(gameState);
-        gameLoop.start();
+        context.setBaseResource(Resource.newResource(Main.class.getClassLoader().getResource("webapp")));
+        DefaultServlet defaultServlet = new DefaultServlet();
+        context.addServlet(new ServletHolder("default",defaultServlet),"/");
 
+        server.setHandler(context);
 
         try
         {
