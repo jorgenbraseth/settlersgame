@@ -130,7 +130,8 @@ function start() {
                 type: "SHAPE_RIGHT_CLICKED",
                 id: clickedShape.data.id,
                 coords: [clickedShape.data.x, clickedShape.data.y],
-                playerName: player.name
+                playerName: player.name,
+                gameId: "foo"
             }))
         }
     }
@@ -142,7 +143,8 @@ function start() {
                 type: "SHAPE_CLICKED",
                 id: clickedShape.data.id,
                 coords: [clickedShape.data.x, clickedShape.data.y],
-                playerName: player.name
+                playerName: player.name,
+                gameId: "foo"
             }))
         }
     }
@@ -165,14 +167,14 @@ function start() {
                 socket.send(JSON.stringify({
                     type: "CHAT",
                     playerName: player.name,
-                    message: messageText
+                    message: messageText,
+                    gameId: "foo"
                 }));
             }
 
             chatInput.value = "";
         }
     }
-
 }
 
 // in case the document is already rendered

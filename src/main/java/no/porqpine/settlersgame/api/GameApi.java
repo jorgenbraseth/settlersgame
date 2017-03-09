@@ -23,19 +23,19 @@ public class GameApi extends WebSocketAdapter {
     @Override
     public void onWebSocketClose(int statusCode, String reason) {
         super.onWebSocketClose(statusCode, reason);
-        Game game =  GAME_LIST.getGame("gameId");
-        game.clearDeadConnections();
-        game.sendToAllPlayers("Player Left");
+//        Game game =  GAME_LIST.getGame("gameId");
+//        game.clearDeadConnections();
+//        game.sendToAllPlayers("Player Left");
     }
 
     @Override
     public void onWebSocketText(String message) {
 
         try {
-            MessageWithOnlyType typeMessage = Game.OBJECT_MAPPER.readValue(message, MessageWithOnlyType.class);
-            Game game = GAME_LIST.getGame("gameId");
+            MessageMetadata metadata = Game.OBJECT_MAPPER.readValue(message, MessageMetadata.class);
+            Game game = GAME_LIST.getOrCreateGame(metadata.gameId);
             System.out.println("Got message: "+message);
-            switch (typeMessage.type){
+            switch (metadata.type){
                 case SHAPE_CLICKED:
                     ShapeClicked shapeClicked = Game.OBJECT_MAPPER.readValue(message, ShapeClicked.class);
                     game.shapeClicked(shapeClicked);
@@ -64,10 +64,11 @@ public class GameApi extends WebSocketAdapter {
 
     }
 
-    static class MessageWithOnlyType {
+    static class MessageMetadata {
         public MessageType type;
+        public String gameId;
 
-        public MessageWithOnlyType() {}
+        public MessageMetadata() {}
     }
 
 

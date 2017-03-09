@@ -6,6 +6,7 @@ public class Chat extends Message {
     public String playerName;
     public String message;
     public Player player;
+    public String gameId;
 
     @Override
     public MessageType getType() {

@@ -43,4 +43,8 @@ public class GameList implements Runnable {
     public void stop() {
         games.values().forEach(Game::stop);
     }
+
+    public Game getOrCreateGame(String gameId) {
+        return games.computeIfAbsent(gameId, this::createGame);
+    }
 }
