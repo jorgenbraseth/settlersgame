@@ -1,7 +1,6 @@
 package no.porqpine.settlersgame.api;
 
 import no.porqpine.settlersgame.Game;
-import no.porqpine.settlersgame.GameList;
 import no.porqpine.settlersgame.api.messages.*;
 import no.porqpine.settlersgame.state.Player;
 import org.eclipse.jetty.websocket.api.Session;
@@ -11,6 +10,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import java.io.IOException;
 
 import static no.porqpine.settlersgame.Game.OBJECT_MAPPER;
+import static no.porqpine.settlersgame.GameList.GAME_LIST;
 
 @WebSocket
 public class GameApi extends WebSocketAdapter {
@@ -23,7 +23,7 @@ public class GameApi extends WebSocketAdapter {
     @Override
     public void onWebSocketClose(int statusCode, String reason) {
         super.onWebSocketClose(statusCode, reason);
-        Game game = GameList.getGame("gameId");
+        Game game =  GAME_LIST.getGame("gameId");
         game.clearDeadConnections();
         game.sendToAllPlayers("Player Left");
     }
@@ -33,7 +33,7 @@ public class GameApi extends WebSocketAdapter {
 
         try {
             MessageWithOnlyType typeMessage = Game.OBJECT_MAPPER.readValue(message, MessageWithOnlyType.class);
-            Game game = GameList.getGame("gameId");
+            Game game = GAME_LIST.getGame("gameId");
             System.out.println("Got message: "+message);
             switch (typeMessage.type){
                 case SHAPE_CLICKED:

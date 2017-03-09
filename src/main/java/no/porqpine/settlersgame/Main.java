@@ -8,12 +8,15 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
 
+import static no.porqpine.settlersgame.GameList.GAME_LIST;
+
 public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        Game gameState = GameList.createGame("gameId");
-        Thread gameLoop = new Thread(gameState);
+        GAME_LIST.createGame("gameId"); //TODO: do this only when clients requests new games.
+
+        Thread gameLoop = new Thread(GAME_LIST);
         gameLoop.start();
 
         Server server = new Server();
@@ -46,7 +49,7 @@ public class Main {
         server.setStopAtShutdown(true);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            gameState.stop();
+            GAME_LIST.stop();
             try {
                 gameLoop.join();
                 server.join();

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class Game implements Runnable {
+public class Game {
 
 //    public static final Game GAME = new Game("gameId");
     public final String gameId;
@@ -59,21 +59,7 @@ public class Game implements Runnable {
         }
     }
 
-    public void run() {
-        while (running) {
-            clearDeadConnections();
-            tick();
-            publishGameState();
-
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void tick() {
+    public void tick() {
         state.roll();
         state.getTiles().forEach(tile -> tile.diffuse());
         state.getTiles().forEach(tile -> tile.degrade());
@@ -81,7 +67,7 @@ public class Game implements Runnable {
         state.getTiles().forEach(tile -> tile.tick(1));
     }
 
-    private void publishGameState() {
+    public void publishGameState() {
 
         long timeSinceLastPublish = System.currentTimeMillis() - lastPublishTime;
         if (timeSinceLastPublish > 100) {
@@ -120,7 +106,6 @@ public class Game implements Runnable {
     }
 
     public void stop() {
-        running = false;
         sessions.forEach(player -> {
             player.close(0, "Server shutting down.");
             try {
@@ -130,8 +115,7 @@ public class Game implements Runnable {
             }
         });
 
-//        while (state.players.stream().filter(p -> p.session.isOpen()).findAny().isPresent()) {
-        while (sessions.stream().filter(p -> p.isOpen()).findAny().isPresent()) {
+        while (sessions.stream().filter(Session::isOpen).findAny().isPresent()) {
             System.out.println("Not all client sessions stopped");
             try {
                 Thread.sleep(330);
@@ -140,7 +124,7 @@ public class Game implements Runnable {
             }
         }
 
-        System.out.println("Game loop stopped.");
+        System.out.println(String.format("Game [%s] stopped.", gameId));
 
     }
 
