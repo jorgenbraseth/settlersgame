@@ -23,9 +23,6 @@ public class GameApi extends WebSocketAdapter {
     @Override
     public void onWebSocketClose(int statusCode, String reason) {
         super.onWebSocketClose(statusCode, reason);
-//        Game game =  GAME_LIST.getGame("gameId");
-//        game.clearDeadConnections();
-//        game.sendToAllPlayers("Player Left");
     }
 
     @Override

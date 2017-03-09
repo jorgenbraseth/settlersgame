@@ -18,10 +18,9 @@ import java.util.Optional;
 
 public class Game {
 
-//    public static final Game GAME = new Game("gameId");
     public final String gameId;
-    public boolean running = true;
 
+    //TODO: move to own class
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     static {

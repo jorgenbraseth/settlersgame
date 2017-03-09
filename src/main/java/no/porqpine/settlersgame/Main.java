@@ -14,8 +14,6 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        GAME_LIST.createGame("gameId"); //TODO: do this only when clients requests new games.
-
         Thread gameLoop = new Thread(GAME_LIST);
         gameLoop.start();
 
@@ -68,8 +66,5 @@ public class Main {
         {
             t.printStackTrace(System.err);
         }
-
-
-
     }
 }
