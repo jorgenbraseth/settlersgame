@@ -10,7 +10,9 @@ canvas {
     display: inline;
     color: white;
 }
-
+aside {
+    float: right;
+}
 #chat {
     float: right;
     width: 500px;

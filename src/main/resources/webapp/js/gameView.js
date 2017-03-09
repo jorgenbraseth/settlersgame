@@ -6,6 +6,7 @@ var message;
 var tiles;
 var shapeInFocus = null;
 var player;
+var gameName;
 
 var renderTiles = function (context) {
     tiles.forEach((t)=> {
@@ -88,6 +89,7 @@ function chatMessageReceived(msg) {
 
 function joinGame(e) {
     e.preventDefault();
+    gameName = document.getElementById('gameName').value;
     var playerName = document.getElementById('playerName').value;
     var color = document.getElementById("playerColor").value;
     player = {
@@ -95,7 +97,7 @@ function joinGame(e) {
         color: color
     };
 
-    var joinGameMessage = Object.assign({}, player, {type: "JOIN_GAME", gameId: "foo"});
+    var joinGameMessage = Object.assign({}, player, {type: "JOIN_GAME", gameId: gameName});
     connect(joinGameMessage);
     var joinForm = document.getElementById("joinForm");
     joinForm.parentNode.removeChild(joinForm);
@@ -131,7 +133,7 @@ function start() {
                 id: clickedShape.data.id,
                 coords: [clickedShape.data.x, clickedShape.data.y],
                 playerName: player.name,
-                gameId: "foo"
+                gameId: gameName
             }))
         }
     }
@@ -144,7 +146,7 @@ function start() {
                 id: clickedShape.data.id,
                 coords: [clickedShape.data.x, clickedShape.data.y],
                 playerName: player.name,
-                gameId: "foo"
+                gameId: gameName
             }))
         }
     }
@@ -168,7 +170,7 @@ function start() {
                     type: "CHAT",
                     playerName: player.name,
                     message: messageText,
-                    gameId: "foo"
+                    gameId: gameName
                 }));
             }
 
