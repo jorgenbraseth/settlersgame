@@ -1,6 +1,6 @@
 package no.porqpine.settlersgame.state;
 
-import no.porqpine.settlersgame.GameLogic;
+import no.porqpine.settlersgame.Game;
 
 public class HomeTile extends OwnedTile {
 
@@ -9,7 +9,7 @@ public class HomeTile extends OwnedTile {
     public static final int COST = 0;
     private int timeSinceLastProduction;
 
-    public HomeTile(int x, int y, Player owner, GameLogic game) {
+    public HomeTile(int x, int y, Player owner, Game game) {
         super(x, y, owner, game);
         pAmounts.put(owner.pheromone, PRODUCTION);
     }

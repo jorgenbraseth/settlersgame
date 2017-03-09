@@ -135,8 +135,6 @@ class Tile {
             ctx.scale(healthLeftPercent, healthLeftPercent);
         }
         if (this.data.type === "OWNERSHIP_SPREADER") {
-
-
             ctx.beginPath();
             ctx.arc(0, 0, hexRadius * 0.8, 0, 2 * Math.PI);
             ctx.closePath();
@@ -150,6 +148,13 @@ class Tile {
             ctx.fillStyle = this.data.owner.color;
             ctx.fill();
             IMAGE_MAP.HOME.render(ctx, TILE_SIZE);
+        } else if (this.data.type === "BLOCKER") {
+            ctx.beginPath();
+            ctx.arc(0, 0, hexRadius * 0.7, 0, 2 * Math.PI);
+            ctx.closePath();
+            ctx.fillStyle = this.data.owner.color;
+            ctx.fill();
+            IMAGE_MAP.WALL.render(ctx, TILE_SIZE * 0.7);
         } else if (this.data.type === "SIPHON") {
             ctx.beginPath();
             ctx.arc(0, 0, hexRadius * 0.7, 0, 2 * Math.PI);

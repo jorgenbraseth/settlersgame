@@ -1,6 +1,6 @@
 package no.porqpine.settlersgame.state;
 
-import no.porqpine.settlersgame.GameLogic;
+import no.porqpine.settlersgame.Game;
 
 import java.util.Optional;
 
@@ -8,7 +8,7 @@ public class BlockerTile extends OwnedTile {
 
     public static final int COST = 500;
 
-    public BlockerTile(int x, int y, Player owner, GameLogic game) {
+    public BlockerTile(int x, int y, Player owner, Game game) {
         super(x, y, owner, game);
     }
 

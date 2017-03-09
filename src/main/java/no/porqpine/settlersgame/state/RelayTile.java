@@ -1,6 +1,6 @@
 package no.porqpine.settlersgame.state;
 
-import no.porqpine.settlersgame.GameLogic;
+import no.porqpine.settlersgame.Game;
 
 public class RelayTile extends OwnedTile {
 
@@ -9,7 +9,7 @@ public class RelayTile extends OwnedTile {
     public static final int COST = 1000;
     private int timeSinceLastProduction;
 
-    public RelayTile(int x, int y, Player owner, GameLogic game) {
+    public RelayTile(int x, int y, Player owner, Game game) {
         super(x, y, owner, game);
     }
 

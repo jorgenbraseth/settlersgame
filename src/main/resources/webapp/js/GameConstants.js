@@ -5,7 +5,8 @@ const COLORS = {
 };
 
 const IMAGE_MAP = {
-    HOME: new PreloadedImage("img/home.png", 256, 256),
-    EMITTER: new PreloadedImage("img/emitter.png", 256, 256),
+    HOME: new PreloadedImage("img/home.png", 256, 224),
+    EMITTER: new PreloadedImage("img/emitter.png", 214, 199),
     SIPHON: new PreloadedImage("img/siphon.png", 256, 170),
+    WALL: new PreloadedImage("img/wall.png", 153, 153),
 };

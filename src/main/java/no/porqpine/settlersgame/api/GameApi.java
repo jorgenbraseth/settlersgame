@@ -1,6 +1,7 @@
 package no.porqpine.settlersgame.api;
 
-import no.porqpine.settlersgame.GameLogic;
+import no.porqpine.settlersgame.Game;
+import no.porqpine.settlersgame.GameList;
 import no.porqpine.settlersgame.api.messages.*;
 import no.porqpine.settlersgame.state.Player;
 import org.eclipse.jetty.websocket.api.Session;
@@ -9,8 +10,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
 import java.io.IOException;
 
-import static no.porqpine.settlersgame.GameLogic.GAME;
-import static no.porqpine.settlersgame.GameLogic.OBJECT_MAPPER;
+import static no.porqpine.settlersgame.Game.OBJECT_MAPPER;
 
 @WebSocket
 public class GameApi extends WebSocketAdapter {
@@ -23,37 +23,39 @@ public class GameApi extends WebSocketAdapter {
     @Override
     public void onWebSocketClose(int statusCode, String reason) {
         super.onWebSocketClose(statusCode, reason);
-        GAME.clearDeadConnections();
-        GAME.sendToAllPlayers("Player Left");
+        Game game = GameList.getGame("gameId");
+        game.clearDeadConnections();
+        game.sendToAllPlayers("Player Left");
     }
 
     @Override
     public void onWebSocketText(String message) {
 
         try {
-            MessageWithOnlyType typeMessage = GameLogic.OBJECT_MAPPER.readValue(message, MessageWithOnlyType.class);
+            MessageWithOnlyType typeMessage = Game.OBJECT_MAPPER.readValue(message, MessageWithOnlyType.class);
+            Game game = GameList.getGame("gameId");
             System.out.println("Got message: "+message);
             switch (typeMessage.type){
                 case SHAPE_CLICKED:
-                    ShapeClicked shapeClicked = GameLogic.OBJECT_MAPPER.readValue(message, ShapeClicked.class);
-                    GAME.shapeClicked(shapeClicked);
+                    ShapeClicked shapeClicked = Game.OBJECT_MAPPER.readValue(message, ShapeClicked.class);
+                    game.shapeClicked(shapeClicked);
                     break;
                 case SHAPE_RIGHT_CLICKED:
-                    ShapeRightClicked shapeRightClicked = GameLogic.OBJECT_MAPPER.readValue(message, ShapeRightClicked.class);
-                    GAME.shapeRightClicked(shapeRightClicked);
+                    ShapeRightClicked shapeRightClicked = Game.OBJECT_MAPPER.readValue(message, ShapeRightClicked.class);
+                    game.shapeRightClicked(shapeRightClicked);
                     break;
                 case CREATE_GAME:
-                    getSession().getRemote().sendString(GameLogic.OBJECT_MAPPER.writeValueAsString(new GameCreated("game_name")));
+                    getSession().getRemote().sendString(Game.OBJECT_MAPPER.writeValueAsString(new GameCreated("game_name")));
                     break;
                 case JOIN_GAME:
-                    JoinGame joinGame = GameLogic.OBJECT_MAPPER.readValue(message, JoinGame.class);
-                    GAME.addPlayer(getSession(),joinGame.name,joinGame.color);
+                    JoinGame joinGame = Game.OBJECT_MAPPER.readValue(message, JoinGame.class);
+                    game.addPlayer(getSession(),joinGame.name,joinGame.color);
                     break;
                 case CHAT:
-                    Chat chat = GameLogic.OBJECT_MAPPER.readValue(message, Chat.class);
-                    Player player = GAME.findPlayer(chat.playerName);
+                    Chat chat = Game.OBJECT_MAPPER.readValue(message, Chat.class);
+                    Player player = game.findPlayer(chat.playerName);
                     chat.player = player;
-                    GAME.sendToAllPlayers(OBJECT_MAPPER.writeValueAsString(chat));
+                    game.sendToAllPlayers(OBJECT_MAPPER.writeValueAsString(chat));
                     break;
             }
         } catch (IOException e) {

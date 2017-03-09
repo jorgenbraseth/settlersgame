@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class GameLogic implements Runnable {
+public class Game implements Runnable {
 
-    public static final GameLogic GAME = new GameLogic("gameId");
-    private final String gameId;
+//    public static final Game GAME = new Game("gameId");
+    public final String gameId;
     public boolean running = true;
 
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -34,7 +34,7 @@ public class GameLogic implements Runnable {
     private List<Session> sessions = new ArrayList<>();
 
 
-    private GameLogic(String gameId) {
+    public Game(String gameId) {
         this.gameId = gameId;
         init();
     }

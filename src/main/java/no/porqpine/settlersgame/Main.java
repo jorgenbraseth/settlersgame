@@ -12,7 +12,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        GameLogic gameState = GameLogic.GAME;
+        Game gameState = GameList.createGame("gameId");
         Thread gameLoop = new Thread(gameState);
         gameLoop.start();
 
