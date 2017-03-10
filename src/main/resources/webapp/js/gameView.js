@@ -48,7 +48,35 @@ function displayPlayerInfo(players) {
     elm.innerHTML = newHtml;
 
 }
-function connect(playerInfo) {
+function gameListReceived(message) {
+    var listElm = document.getElementById("gameList");
+    listElm.innerHTML = "";
+    var gameInfos = message.games.forEach(game => listElm.appendChild(gameInfoDomElement(game)));
+
+}
+
+function gameInfoDomElement(gameInfo) {
+    var players = "";
+    var elm = document.createElement("li");
+    elm.setAttribute("class", "gameInfo");
+    elm.innerHTML = `<span class="gameName">${gameInfo.gameId}</span>`;
+
+    var playerList = document.createElement("ul");
+
+    playerList.setAttribute("class", "playerList");
+    console.log(gameInfo.players);
+    gameInfo.players.forEach(player => {
+        console.log(player);
+        var playerInfo = document.createElement("li");
+        playerInfo.innerHTML = `<span class="playerName" style="color: ${player.color}">${player.name}</span>`;
+        playerList.appendChild(playerInfo);
+    });
+    elm.appendChild(playerList);
+    return elm;
+}
+
+
+function connect() {
     var protocol = window.location.protocol == "https:" ? "wss" : "ws";
     socket = new WebSocket(`${protocol}://${window.location.hostname}:${window.location.port}/game-state`);
     socket.onmessage = (msg) => {
@@ -62,15 +90,22 @@ function connect(playerInfo) {
                     break;
                 case "CHAT":
                     chatMessageReceived(message);
+                    break;
+                case "GAME_LIST":
+                    gameListReceived(message)
+                    break;
 
             }
         }
     };
     socket.onopen = () => {
-        socket.send(JSON.stringify(playerInfo))
+        socket.send(JSON.stringify({
+            type: "LIST_GAMES"
+        }))
     };
     socket.onclose = () => setTimeout(()=> {
-        connect(playerInfo)
+        connect();
+        joinGame();
     }, 500);
 };
 
@@ -87,8 +122,7 @@ function chatMessageReceived(msg) {
 
 }
 
-function joinGame(e) {
-    e.preventDefault();
+var joinGame = function () {
     gameName = document.getElementById('gameName').value;
     var playerName = document.getElementById('playerName').value;
     var color = document.getElementById("playerColor").value;
@@ -98,21 +132,27 @@ function joinGame(e) {
     };
 
     var joinGameMessage = Object.assign({}, player, {type: "JOIN_GAME", gameId: gameName});
-    connect(joinGameMessage);
+    socket.send(socket.send(JSON.stringify(joinGameMessage)));
     var joinForm = document.getElementById("joinForm");
     joinForm.parentNode.removeChild(joinForm);
+
+    render(renderContext());
+};
+function joinGameClicked(e) {
+    e.preventDefault();
+    joinGame();
+}
+
+function renderContext() {
+    var canvas = document.getElementById('gameScreen');
+    return canvas.getContext("2d");
 }
 
 function start() {
 
-    var canvas = document.getElementById('gameScreen');
-    var renderContext = canvas.getContext("2d");
-
-    render(renderContext);
-
     var joinGameButton = document.getElementById('joinGame');
-    joinGameButton.onclick = joinGame;
-
+    joinGameButton.onclick = joinGameClicked;
+    var canvas = renderContext();
     canvas.onmousemove = (e) => {
         if (message) {
             var x = e.offsetX;
@@ -177,6 +217,8 @@ function start() {
             chatInput.value = "";
         }
     }
+
+    connect();
 }
 
 // in case the document is already rendered

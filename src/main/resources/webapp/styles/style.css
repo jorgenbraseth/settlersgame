@@ -1,5 +1,6 @@
 body {
     background-color: #222;
+    font-family: sans-serif;
 }
 
 canvas {
@@ -45,4 +46,19 @@ aside {
     padding: .2em.3em;
     border-radius: .3em;
     border: 1px solid rgba(0,0,0,.1);
+}
+ul#gameList {
+    width: 20em;
+}
+li.gameInfo {
+    display: block;
+    background: rgba(250,250,250,0.5);
+    margin: .5em;
+    padding: .3em;
+}
+ul#gameList,
+ul.playerList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }

@@ -10,7 +10,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import java.io.IOException;
 
 import static no.porqpine.settlersgame.Game.OBJECT_MAPPER;
-import static no.porqpine.settlersgame.GameList.GAME_LIST;
+import static no.porqpine.settlersgame.GameHolder.GAME_LIST;
 
 @WebSocket
 public class GameApi extends WebSocketAdapter {
@@ -29,30 +29,27 @@ public class GameApi extends WebSocketAdapter {
     public void onWebSocketText(String message) {
 
         try {
-            MessageMetadata metadata = Game.OBJECT_MAPPER.readValue(message, MessageMetadata.class);
+            MessageMetadata metadata = OBJECT_MAPPER.readValue(message, MessageMetadata.class);
             Game game = GAME_LIST.getOrCreateGame(metadata.gameId);
-            System.out.println("Got message: "+message);
-            switch (metadata.type){
+            System.out.println("Got message: " + message);
+            switch (metadata.type) {
                 case SHAPE_CLICKED:
-                    ShapeClicked shapeClicked = Game.OBJECT_MAPPER.readValue(message, ShapeClicked.class);
-                    game.shapeClicked(shapeClicked);
+                    handleLeftClick(message, game);
                     break;
                 case SHAPE_RIGHT_CLICKED:
-                    ShapeRightClicked shapeRightClicked = Game.OBJECT_MAPPER.readValue(message, ShapeRightClicked.class);
-                    game.shapeRightClicked(shapeRightClicked);
+                    handleRightClick(message, game);
                     break;
                 case CREATE_GAME:
-                    getSession().getRemote().sendString(Game.OBJECT_MAPPER.writeValueAsString(new GameCreated("game_name")));
+                    handleCreateGame();
                     break;
                 case JOIN_GAME:
-                    JoinGame joinGame = Game.OBJECT_MAPPER.readValue(message, JoinGame.class);
-                    game.addPlayer(getSession(),joinGame.name,joinGame.color);
+                    handleJoinGame(message, game);
                     break;
                 case CHAT:
-                    Chat chat = Game.OBJECT_MAPPER.readValue(message, Chat.class);
-                    Player player = game.findPlayer(chat.playerName);
-                    chat.player = player;
-                    game.sendToAllPlayers(OBJECT_MAPPER.writeValueAsString(chat));
+                    handleChatMessage(message, game);
+                    break;
+                case LIST_GAMES:
+                    handleListGames();
                     break;
             }
         } catch (IOException e) {
@@ -61,11 +58,42 @@ public class GameApi extends WebSocketAdapter {
 
     }
 
-    static class MessageMetadata {
+    private void handleListGames() throws IOException {
+        getSession().getRemote().sendString(OBJECT_MAPPER.writeValueAsString(new GameList(GAME_LIST.games())));
+    }
+
+    private void handleLeftClick(String message, Game game) throws IOException {
+        ShapeClicked shapeClicked = OBJECT_MAPPER.readValue(message, ShapeClicked.class);
+        game.shapeClicked(shapeClicked);
+    }
+
+    private void handleRightClick(String message, Game game) throws IOException {
+        ShapeRightClicked shapeRightClicked = OBJECT_MAPPER.readValue(message, ShapeRightClicked.class);
+        game.shapeRightClicked(shapeRightClicked);
+    }
+
+    private void handleCreateGame() throws IOException {
+        getSession().getRemote().sendString(OBJECT_MAPPER.writeValueAsString(new GameCreated("game_name")));
+    }
+
+    private void handleJoinGame(String message, Game game) throws IOException {
+        JoinGame joinGame = OBJECT_MAPPER.readValue(message, JoinGame.class);
+        game.addPlayer(getSession(), joinGame.name, joinGame.color);
+    }
+
+    private void handleChatMessage(String message, Game game) throws IOException {
+        Chat chat = OBJECT_MAPPER.readValue(message, Chat.class);
+        Player player = game.findPlayer(chat.playerName);
+        chat.player = player;
+        game.sendToAllPlayers(OBJECT_MAPPER.writeValueAsString(chat));
+    }
+
+    public static class MessageMetadata {
         public MessageType type;
         public String gameId;
 
-        public MessageMetadata() {}
+        public MessageMetadata() {
+        }
     }
 
 

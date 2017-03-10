@@ -1,16 +1,17 @@
 package no.porqpine.settlersgame;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GameList implements Runnable {
+public class GameHolder implements Runnable {
 
-    public static final GameList GAME_LIST = new GameList();
+    public static final GameHolder GAME_LIST = new GameHolder();
 
     private static Map<String, Game> games = new HashMap<>();
     private boolean running;
 
-    private GameList() {
+    private GameHolder() {
         running = true;
     }
 
@@ -46,5 +47,9 @@ public class GameList implements Runnable {
 
     public Game getOrCreateGame(String gameId) {
         return games.computeIfAbsent(gameId, this::createGame);
+    }
+
+    public Collection<Game> games() {
+        return games.values();
     }
 }

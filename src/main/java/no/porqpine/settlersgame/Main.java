@@ -8,7 +8,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
 
-import static no.porqpine.settlersgame.GameList.GAME_LIST;
+import static no.porqpine.settlersgame.GameHolder.GAME_LIST;
 
 public class Main {
 
