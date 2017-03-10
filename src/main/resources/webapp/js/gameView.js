@@ -163,7 +163,7 @@ var joinGame = function (gameName) {
     var joinForm = document.getElementById("joinForm");
     joinForm.parentNode.removeChild(joinForm);
 
-    document.getElementById("game").style.display = "block";
+    document.getElementById("game").style.display = "flex";
 };
 function createGameClicked(e) {
     e.preventDefault();
