@@ -1,6 +1,8 @@
-package no.porqpine.settlersgame.state;
+package no.porqpine.settlersgame.state.tiles;
 
 import no.porqpine.settlersgame.Game;
+import no.porqpine.settlersgame.state.PheromoneType;
+import no.porqpine.settlersgame.state.Player;
 
 public class RelayTile extends OwnedTile {
 

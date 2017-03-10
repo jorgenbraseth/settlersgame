@@ -7,6 +7,7 @@ var tiles;
 var shapeInFocus = null;
 var player;
 var gameName;
+var rendering = false;
 
 var renderTiles = function (context) {
     tiles.forEach((t)=> {
@@ -86,6 +87,10 @@ function connect() {
             switch (message.type) {
                 case "GAME_STATE":
                     tiles = message.tiles.map(t=> new Tile(t));
+                    if(!rendering){
+                        render(renderContext());
+                        rendering = true;
+                    }
                     displayPlayerInfo(message.players)
                     break;
                 case "CHAT":
@@ -99,15 +104,19 @@ function connect() {
         }
     };
     socket.onopen = () => {
-        socket.send(JSON.stringify({
+        send({
             type: "LIST_GAMES"
-        }))
+        })
     };
     socket.onclose = () => setTimeout(()=> {
         connect();
-        joinGame();
+        // joinGame();
     }, 500);
 };
+
+function send(obj) {
+    socket.send(JSON.stringify(obj));
+}
 
 function chatMessageReceived(msg) {
     var chat = document.getElementById("chatHistory");
@@ -132,11 +141,9 @@ var joinGame = function () {
     };
 
     var joinGameMessage = Object.assign({}, player, {type: "JOIN_GAME", gameId: gameName});
-    socket.send(socket.send(JSON.stringify(joinGameMessage)));
+    send(joinGameMessage);
     var joinForm = document.getElementById("joinForm");
     joinForm.parentNode.removeChild(joinForm);
-
-    render(renderContext());
 };
 function joinGameClicked(e) {
     e.preventDefault();
@@ -152,7 +159,7 @@ function start() {
 
     var joinGameButton = document.getElementById('joinGame');
     joinGameButton.onclick = joinGameClicked;
-    var canvas = renderContext();
+    var canvas = document.getElementById('gameScreen');
     canvas.onmousemove = (e) => {
         if (message) {
             var x = e.offsetX;
@@ -168,28 +175,28 @@ function start() {
         var containingShape = tiles.filter(e => e.containsPoint(mouseX, mouseY));
         if (containingShape.length >= 1) {
             var clickedShape = containingShape[0];
-            socket.send(JSON.stringify({
+            send({
                 type: "SHAPE_RIGHT_CLICKED",
                 id: clickedShape.data.id,
                 coords: [clickedShape.data.x, clickedShape.data.y],
                 playerName: player.name,
                 gameId: gameName
-            }))
+            })
         }
-    }
+    };
     canvas.onclick = (e) => {
         var containingShape = tiles.filter(e => e.containsPoint(mouseX, mouseY));
         if (containingShape.length >= 1) {
             var clickedShape = containingShape[0];
-            socket.send(JSON.stringify({
+            send({
                 type: "SHAPE_CLICKED",
                 id: clickedShape.data.id,
                 coords: [clickedShape.data.x, clickedShape.data.y],
                 playerName: player.name,
                 gameId: gameName
-            }))
+            })
         }
-    }
+    };
 
     canvas.onmousewheel = (e)=> {
         var zoomIn = e.deltaY < 0;
@@ -206,17 +213,17 @@ function start() {
         if (e.keyCode === 13) {
             var messageText = chatInput.value;
             if (messageText !== "") {
-                socket.send(JSON.stringify({
+                send({
                     type: "CHAT",
                     playerName: player.name,
                     message: messageText,
                     gameId: gameName
-                }));
+                });
             }
 
             chatInput.value = "";
         }
-    }
+    };
 
     connect();
 }

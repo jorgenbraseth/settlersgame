@@ -1,4 +1,6 @@
-package no.porqpine.settlersgame.state;
+package no.porqpine.settlersgame.state.tiles;
+
+import no.porqpine.settlersgame.state.PheromoneType;
 
 public class FreeTile extends Tile {
     public FreeTile(int x, int y) {

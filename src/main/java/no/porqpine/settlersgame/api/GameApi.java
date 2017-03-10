@@ -27,25 +27,28 @@ public class GameApi extends WebSocketAdapter {
 
     @Override
     public void onWebSocketText(String message) {
-
         try {
             MessageMetadata metadata = OBJECT_MAPPER.readValue(message, MessageMetadata.class);
-            Game game = GAME_LIST.getOrCreateGame(metadata.gameId);
             System.out.println("Got message: " + message);
+            Game game;
             switch (metadata.type) {
                 case SHAPE_CLICKED:
+                    game = GAME_LIST.getOrCreateGame(metadata.gameId);
                     handleLeftClick(message, game);
                     break;
                 case SHAPE_RIGHT_CLICKED:
+                    game = GAME_LIST.getOrCreateGame(metadata.gameId);
                     handleRightClick(message, game);
                     break;
                 case CREATE_GAME:
                     handleCreateGame();
                     break;
                 case JOIN_GAME:
+                    game = GAME_LIST.getOrCreateGame(metadata.gameId);
                     handleJoinGame(message, game);
                     break;
                 case CHAT:
+                    game = GAME_LIST.getOrCreateGame(metadata.gameId);
                     handleChatMessage(message, game);
                     break;
                 case LIST_GAMES:

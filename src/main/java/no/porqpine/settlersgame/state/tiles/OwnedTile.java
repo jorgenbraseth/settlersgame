@@ -1,7 +1,8 @@
-package no.porqpine.settlersgame.state;
+package no.porqpine.settlersgame.state.tiles;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import no.porqpine.settlersgame.Game;
+import no.porqpine.settlersgame.state.Player;
 
 public abstract class OwnedTile extends Tile {
     public Player owner;

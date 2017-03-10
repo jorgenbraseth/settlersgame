@@ -1,6 +1,8 @@
-package no.porqpine.settlersgame.state;
+package no.porqpine.settlersgame.state.tiles;
 
 import no.porqpine.settlersgame.Game;
+import no.porqpine.settlersgame.state.PheromoneType;
+import no.porqpine.settlersgame.state.Player;
 
 //TODO: make this drain neighbouring tiles instead?
 public class SiphonTile extends OwnedTile {

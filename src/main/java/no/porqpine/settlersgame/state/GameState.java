@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import no.porqpine.settlersgame.Game;
 import no.porqpine.settlersgame.api.messages.MessageType;
 import no.porqpine.settlersgame.exceptions.InvalidObjectID;
+import no.porqpine.settlersgame.state.tiles.*;
 
 import java.util.ArrayList;
 import java.util.List;

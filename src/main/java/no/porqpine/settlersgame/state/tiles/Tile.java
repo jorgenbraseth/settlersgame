@@ -1,6 +1,9 @@
-package no.porqpine.settlersgame.state;
+package no.porqpine.settlersgame.state.tiles;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import no.porqpine.settlersgame.state.GameObject;
+import no.porqpine.settlersgame.state.PheromoneType;
+import no.porqpine.settlersgame.state.Player;
 
 import java.util.*;
 import java.util.stream.Collectors;

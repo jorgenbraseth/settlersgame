@@ -7,7 +7,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import no.porqpine.settlersgame.api.messages.ShapeClicked;
 import no.porqpine.settlersgame.api.messages.ShapeRightClicked;
 import no.porqpine.settlersgame.exceptions.InvalidObjectID;
-import no.porqpine.settlersgame.state.*;
+import no.porqpine.settlersgame.state.GameState;
+import no.porqpine.settlersgame.state.PheromoneType;
+import no.porqpine.settlersgame.state.Player;
+import no.porqpine.settlersgame.state.tiles.*;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketException;
 

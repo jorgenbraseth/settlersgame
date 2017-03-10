@@ -1,4 +1,6 @@
-package no.porqpine.settlersgame.state;
+package no.porqpine.settlersgame.state.tiles;
+
+import no.porqpine.settlersgame.state.PheromoneType;
 
 import java.util.Random;
 
