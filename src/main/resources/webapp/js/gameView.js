@@ -1,5 +1,6 @@
 var ZOOM = 0.9;
 
+var currentGame;
 var socket;
 var mouseX, mouseY;
 var message;
@@ -52,15 +53,33 @@ function displayPlayerInfo(players) {
 function gameListReceived(message) {
     var listElm = document.getElementById("gameList");
     listElm.innerHTML = "";
-    var gameInfos = message.games.forEach(game => listElm.appendChild(gameInfoDomElement(game)));
+    if (message.games.length > 0) {
+        message.games.forEach(game => listElm.appendChild(gameInfoDomElement(game)));
+        document.getElementById("existingGames").style.display = "flex";
+    }
 
 }
 
 function gameInfoDomElement(gameInfo) {
     var players = "";
     var elm = document.createElement("li");
+    var infoElm = document.createElement("div");
+    infoElm.style.flex = 1;
+    elm.appendChild(infoElm);
     elm.setAttribute("class", "gameInfo");
-    elm.innerHTML = `<span class="gameName">${gameInfo.gameId}</span>`;
+
+    infoElm.innerHTML = `<span class="gameName">${gameInfo.gameId}</span>`;
+    var joinButton = document.createElement("button");
+    joinButton.setAttribute("class", "joinGame");
+    joinButton.setAttribute("data-gameId", gameInfo.gameId);
+    joinButton.innerText = "Join";
+
+    joinButton.onclick = (e) => {
+        e.preventDefault();
+        joinGame(gameInfo.gameId)
+    };
+    elm.appendChild(joinButton);
+
 
     var playerList = document.createElement("ul");
 
@@ -72,7 +91,7 @@ function gameInfoDomElement(gameInfo) {
         playerInfo.innerHTML = `<span class="playerName" style="color: ${player.color}">${player.name}</span>`;
         playerList.appendChild(playerInfo);
     });
-    elm.appendChild(playerList);
+    infoElm.appendChild(playerList);
     return elm;
 }
 
@@ -87,7 +106,7 @@ function connect() {
             switch (message.type) {
                 case "GAME_STATE":
                     tiles = message.tiles.map(t=> new Tile(t));
-                    if(!rendering){
+                    if (!rendering) {
                         render(renderContext());
                         rendering = true;
                     }
@@ -110,7 +129,7 @@ function connect() {
     };
     socket.onclose = () => setTimeout(()=> {
         connect();
-        joinGame();
+        joinGame(currentGame);
     }, 500);
 };
 
@@ -131,8 +150,7 @@ function chatMessageReceived(msg) {
 
 }
 
-var joinGame = function () {
-    gameName = document.getElementById('gameName').value;
+var joinGame = function (gameName) {
     var playerName = document.getElementById('playerName').value;
     var color = document.querySelector('input[name = "playerColor"]:checked').value;
     player = {
@@ -147,9 +165,10 @@ var joinGame = function () {
 
     document.getElementById("game").style.display = "block";
 };
-function joinGameClicked(e) {
+function createGameClicked(e) {
     e.preventDefault();
-    joinGame();
+    currentGame = document.getElementById('gameName').value;
+    joinGame(currentGame);
 }
 
 function renderContext() {
@@ -159,8 +178,8 @@ function renderContext() {
 
 function start() {
 
-    var joinGameButton = document.getElementById('joinGame');
-    joinGameButton.onclick = joinGameClicked;
+    var createGameButton = document.getElementById('createGameButton');
+    createGameButton.onclick = createGameClicked;
     var canvas = document.getElementById('gameScreen');
     canvas.onmousemove = (e) => {
         if (message) {

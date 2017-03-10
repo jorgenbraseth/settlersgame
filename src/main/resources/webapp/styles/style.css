@@ -8,8 +8,23 @@ canvas {
     border: 1px solid white;
 }
 
+#joinForm {
+    display: flex;
+    flex-direction: column;
+    float: left;
+}
+
+fieldset {
+    margin-bottom: 1em;
+}
+
 #game {
     display: none;
+}
+
+#existingGames {
+    display: none;
+    flex-direction: column;
 }
 
 .resource-list, .resource-list * {
@@ -52,15 +67,19 @@ aside {
     border-radius: .3em;
     border: 1px solid rgba(0,0,0,.1);
 }
-ul#gameList {
-    width: 20em;
-}
 li.gameInfo {
-    display: block;
-    background: rgba(250,250,250,0.5);
+    display: flex;
+    background: rgba(0, 0, 0, 0.5);
     margin: .5em;
     padding: .3em;
 }
+span.gameName {
+    font-size: 1.3em;
+    text-decoration: underline;
+    margin-bottom: .3em;
+    display: block;
+}
+
 ul#gameList,
 ul.playerList {
     list-style: none;

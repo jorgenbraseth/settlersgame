@@ -2,6 +2,7 @@ package no.porqpine.settlersgame;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class GameHolder implements Runnable {
@@ -52,6 +53,8 @@ public class GameHolder implements Runnable {
     }
 
     public Collection<Game> games() {
-        return games.values();
+        HashSet<Game> games = new HashSet<>();
+        games.addAll(GameHolder.games.values());
+        return games;
     }
 }
