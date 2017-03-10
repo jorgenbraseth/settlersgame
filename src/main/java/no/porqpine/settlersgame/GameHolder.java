@@ -17,7 +17,9 @@ public class GameHolder implements Runnable {
 
     public Game createGame(String gameId) {
         Game newGame = new Game(gameId);
-        games.put(newGame.gameId, newGame);
+        synchronized (games){
+            games.put(newGame.gameId, newGame);
+        }
         return newGame;
     }
 

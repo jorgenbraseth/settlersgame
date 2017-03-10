@@ -1,37 +1,50 @@
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <title>Pheromones</title>
-    <link rel="stylesheet" href="styles/style.css" />
+    <link rel="stylesheet" href="styles/style.css"/>
 </head>
 
 <body>
+
+
 <form id="joinForm">
-    <select id="playerColor">
-        <option value="#ffa500">orange</option>
-        <option value="#6666ff">blue</option>
-        <option value="#66ff66">green</option>
-        <option value="#ff00ff">magenta</option>
-    </select>
-    <input id="playerName" placeholder="Player name" value="Finnicky"/>
-    <input id="gameName" placeholder="Game name" />
+    <fieldset>
+        <legend>Player Info</legend>
+        <strong>Color</strong>
+        <input checked class="colorPicker" name="playerColor" id="playerColor1" type="radio" value="#ffa500"/><label for="playerColor1" class="colorSquare"
+                                                                                                                     style="background-color: #ffa500"></label>
+        <input class="colorPicker" name="playerColor" id="playerColor2" type="radio" value="#6666ff"/><label for="playerColor2" class="colorSquare"
+                                                                                                             style="background-color: #6666ff"></label>
+        <input class="colorPicker" name="playerColor" id="playerColor3" type="radio" value="#66ff66"/><label for="playerColor3" class="colorSquare"
+                                                                                                             style="background-color: #66ff66"></label>
+        <input class="colorPicker" name="playerColor" id="playerColor4" type="radio" value="#ff00ff"/><label for="playerColor4" class="colorSquare"
+                                                                                                             style="background-color: #ff00ff"></label>
+        <strong>Name</strong>
+        <input id="playerName" placeholder="Player name" value="Finnicky"/>
+    </fieldset>
+
+    <input id="gameName" placeholder="Game name"/>
     <button id="joinGame">Create/Join Game</button>
+
+    <ul id="gameList"></ul>
 </form>
 
-<ul id="gameList">
 
-</ul>
 
-<aside>
-    <h1>Players</h1>
-    <div id="playerList"></div>
-</aside>
-<div id="chat">
-    <h2>Chat</h2>
-    <div id="chatHistory" readonly></div>
-    <input type="text" id="chatInput" placeholder="Chat message"/>
+<div id="game">
+    <aside>
+        <h1>Players</h1>
+        <div id="playerList"></div>
+    </aside>
+    <div id="chat">
+        <h2>Chat</h2>
+        <div id="chatHistory" readonly></div>
+        <input type="text" id="chatInput" placeholder="Chat message"/>
+    </div>
+    <div id="gameScreenFrame">
+        <canvas id="gameScreen" width="800" height="600"></canvas>
+    </div>
 </div>
-<div id="gameScreenFrame"><canvas id="gameScreen" width="800" height="600"></canvas></div>
-
 
 <script src="js/PreloadedImage.js"></script>
 <script src="js/GameConstants.js"></script>

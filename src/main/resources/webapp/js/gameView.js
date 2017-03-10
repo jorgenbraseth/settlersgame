@@ -110,7 +110,7 @@ function connect() {
     };
     socket.onclose = () => setTimeout(()=> {
         connect();
-        // joinGame();
+        joinGame();
     }, 500);
 };
 
@@ -134,7 +134,7 @@ function chatMessageReceived(msg) {
 var joinGame = function () {
     gameName = document.getElementById('gameName').value;
     var playerName = document.getElementById('playerName').value;
-    var color = document.getElementById("playerColor").value;
+    var color = document.querySelector('input[name = "playerColor"]:checked').value;
     player = {
         name: playerName,
         color: color
@@ -144,6 +144,8 @@ var joinGame = function () {
     send(joinGameMessage);
     var joinForm = document.getElementById("joinForm");
     joinForm.parentNode.removeChild(joinForm);
+
+    document.getElementById("game").style.display = "block";
 };
 function joinGameClicked(e) {
     e.preventDefault();

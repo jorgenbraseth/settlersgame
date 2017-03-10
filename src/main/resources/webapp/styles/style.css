@@ -1,10 +1,15 @@
 body {
     background-color: #222;
     font-family: sans-serif;
+    color: white;
 }
 
 canvas {
     border: 1px solid white;
+}
+
+#game {
+    display: none;
 }
 
 .resource-list, .resource-list * {
@@ -61,4 +66,25 @@ ul.playerList {
     list-style: none;
     padding: 0;
     margin: 0;
+}
+
+.colorSquare {
+    display: inline-block;
+    border: 1px solid transparent;
+    height: .8em;
+    width: .8em;
+    opacity: 0.5;
+    vertical-align: middle;
+}
+.colorSquare:hover {
+    opacity: 1;
+}
+
+.colorPicker {
+    display: none;
+}
+
+input[type="radio"].colorPicker:checked+label.colorSquare {
+    opacity: 1;
+    border: 1px solid white;
 }
