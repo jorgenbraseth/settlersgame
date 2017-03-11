@@ -1,8 +1,6 @@
 package no.porqpine.settlersgame.api.messages;
 
-public class GameCreated extends Message {
-
-    public String gameId;
+public class GameCreated extends GameMessage {
 
     public GameCreated(String gameId) {
         this.gameId = gameId;

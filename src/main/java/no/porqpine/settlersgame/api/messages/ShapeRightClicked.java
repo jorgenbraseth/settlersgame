@@ -1,6 +1,6 @@
 package no.porqpine.settlersgame.api.messages;
 
-public class ShapeRightClicked extends Message {
+public class ShapeRightClicked extends GameMessage {
 
     public int id;
 

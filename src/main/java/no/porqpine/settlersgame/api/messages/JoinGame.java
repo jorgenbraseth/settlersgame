@@ -1,10 +1,9 @@
 package no.porqpine.settlersgame.api.messages;
 
-public class JoinGame  extends Message {
+public class JoinGame  extends GameMessage {
 
     public String name;
     public String color;
-    public String gameId;
 
     public JoinGame() {}
 

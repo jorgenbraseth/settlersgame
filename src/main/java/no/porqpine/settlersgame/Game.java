@@ -140,10 +140,13 @@ public class Game {
         if (highestPheromonePlayer == player || clickedTile instanceof OwnedTile && (((OwnedTile) clickedTile).owner == player)) {
             switch (clickedTile.getType()) {
                 case "BLOCKER":
-                    state.build(new FreeTile(x, y));
+                    if (((OwnedTile) clickedTile).owner == player) {
+                        state.build(new FreeTile(x, y));
+                    }
                     break;
-                default:
+                case "FREE":
                     state.build(new BlockerTile(x, y, player, this));
+                    break;
             }
         }
     }
@@ -163,10 +166,14 @@ public class Game {
                         state.build(new SiphonTile(x, y, player, this));
                         break;
                     case "SIPHON":
-                        state.build(new RelayTile(x, y, player, this));
+                        if (((OwnedTile) clickedTile).owner == player) {
+                            state.build(new RelayTile(x, y, player, this));
+                        }
                         break;
                     case "OWNERSHIP_SPREADER":
-                        state.build(new FreeTile(x, y));
+                        if (((OwnedTile) clickedTile).owner == player) {
+                            state.build(new FreeTile(x, y));
+                        }
                         break;
                 }
             }

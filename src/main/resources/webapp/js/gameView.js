@@ -7,7 +7,6 @@ var message;
 var tiles;
 var shapeInFocus = null;
 var player;
-var gameName;
 var rendering = false;
 
 var renderTiles = function (context) {
@@ -134,6 +133,7 @@ function connect() {
 };
 
 function send(obj) {
+    console.log(obj);
     socket.send(JSON.stringify(obj));
 }
 
@@ -151,8 +151,10 @@ function chatMessageReceived(msg) {
 }
 
 var joinGame = function (gameName) {
+    console.log(gameName);
     var playerName = document.getElementById('playerName').value;
     var color = document.querySelector('input[name = "playerColor"]:checked').value;
+    currentGame = gameName;
     player = {
         name: playerName,
         color: color
@@ -201,7 +203,7 @@ function start() {
                 id: clickedShape.data.id,
                 coords: [clickedShape.data.x, clickedShape.data.y],
                 playerName: player.name,
-                gameId: gameName
+                gameId: currentGame
             })
         }
     };
@@ -214,7 +216,7 @@ function start() {
                 id: clickedShape.data.id,
                 coords: [clickedShape.data.x, clickedShape.data.y],
                 playerName: player.name,
-                gameId: gameName
+                gameId: currentGame
             })
         }
     };
@@ -238,7 +240,7 @@ function start() {
                     type: "CHAT",
                     playerName: player.name,
                     message: messageText,
-                    gameId: gameName
+                    gameId: currentGame
                 });
             }
 
