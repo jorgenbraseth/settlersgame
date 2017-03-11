@@ -8,27 +8,31 @@ var tiles;
 var shapeInFocus = null;
 var player;
 var rendering = false;
+var playerOverlay = new PlayerOverlay();
 
 var renderTiles = function (context) {
     tiles.forEach((t)=> {
         t.render(context, player);
     });
 };
-function render(context) {
+function render(gameScreen, playerOverlayScreen) {
     if (message) {
-        context.fillStyle = "#ffffff";
-        context.fillStyle = "#000000";
-        context.fillRect(0, 0, 800, 800);
-        context.save();
-        context.scale(ZOOM, ZOOM);
+        gameScreen.fillStyle = "#ffffff";
+        gameScreen.fillStyle = "#000000";
+        gameScreen.fillRect(0, 0, 800, 800);
+        gameScreen.save();
+        gameScreen.scale(ZOOM, ZOOM);
 
         tiles.filter(e => e.containsPoint(mouseX, mouseY))
             .forEach(shape => shape.mouseIsOver());
 
-        renderTiles(context);
-        context.restore();
+        renderTiles(gameScreen);
+        gameScreen.restore();
+
+        playerOverlayScreen.clearRect(0, 0, 800, 800);
+        playerOverlay.render(playerOverlayScreen, message.players);
     }
-    requestAnimationFrame(()=>render(context));
+    requestAnimationFrame(()=>render(gameScreen, playerOverlayScreen));
 
 }
 
@@ -106,7 +110,7 @@ function connect() {
                 case "GAME_STATE":
                     tiles = message.tiles.map(t=> new Tile(t));
                     if (!rendering) {
-                        render(renderContext());
+                        render(gameScreen(), playerOverlayScreen());
                         rendering = true;
                     }
                     displayPlayerInfo(message.players)
@@ -173,8 +177,12 @@ function createGameClicked(e) {
     joinGame(currentGame);
 }
 
-function renderContext() {
+function gameScreen() {
     var canvas = document.getElementById('gameScreen');
+    return canvas.getContext("2d");
+}
+function playerOverlayScreen() {
+    var canvas = document.getElementById('playerInfoOverlay');
     return canvas.getContext("2d");
 }
 

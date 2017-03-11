@@ -6,6 +6,12 @@ body {
 
 canvas {
     border: 1px solid white;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+#playerInfoOverlay {
+    pointer-events: none;
 }
 
 #joinForm {
@@ -34,9 +40,11 @@ fieldset {
     display: inline;
     color: white;
 }
+
 aside {
     float: right;
 }
+
 #chat {
     float: right;
     width: 500px;
@@ -45,12 +53,14 @@ aside {
     display: flex;
     flex-direction: column;
 }
+
 #chatInput {
     width: 100%;
     display: block;
     max-width: 100%;
     padding: .2em;
 }
+
 #chatHistory {
     height: 300px;
     min-height: 300px;
@@ -59,23 +69,27 @@ aside {
     overflow-x: hidden;
     overflow-y: auto
 }
+
 .chatEntry {
     display: block;
     padding: .2em .2em .5em;
 }
-.chatEntry .playerName{
+
+.chatEntry .playerName {
     background-color: #eee;
     display: inline-block;
-    padding: .2em.3em;
+    padding: .2em .3em;
     border-radius: .3em;
-    border: 1px solid rgba(0,0,0,.1);
+    border: 1px solid rgba(0, 0, 0, .1);
 }
+
 li.gameInfo {
     display: flex;
     background: rgba(0, 0, 0, 0.5);
     margin: .5em;
     padding: .3em;
 }
+
 span.gameName {
     font-size: 1.3em;
     text-decoration: underline;
@@ -98,6 +112,7 @@ ul.playerList {
     opacity: 0.5;
     vertical-align: middle;
 }
+
 .colorSquare:hover {
     opacity: 1;
 }
@@ -106,7 +121,7 @@ ul.playerList {
     display: none;
 }
 
-input[type="radio"].colorPicker:checked+label.colorSquare {
+input[type="radio"].colorPicker:checked + label.colorSquare {
     opacity: 1;
     border: 1px solid white;
 }
