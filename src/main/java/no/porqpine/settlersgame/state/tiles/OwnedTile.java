@@ -35,10 +35,15 @@ public abstract class OwnedTile extends Tile {
 
     @Override
     public void tick(int i) {
-        if(getHighestPheromonePlayer() != owner){
-            health -= 10;
-        }else{
+        boolean hasOwnersPheromoneFromOtherSource = getPAmounts().entrySet().stream()
+                .filter(e -> e.getKey().source != this)
+                .filter(e -> e.getKey().player.isPresent() && e.getKey().player.get() == owner)
+                .findFirst().isPresent();
+
+        if ((hasOwnersPheromoneFromOtherSource || getType().equals("HOME")) && getHighestPheromonePlayer() == owner) {
             health = Math.min(MAX_HEALTH, health + 5);
+        }else{
+            health -= 10;
         }
         if(health <= 0){
             die();

@@ -63,7 +63,7 @@ public class Game {
         state.roll();
         state.getTiles().forEach(tile -> tile.diffuse());
         state.getTiles().forEach(tile -> tile.degrade());
-        state.getTiles().forEach(tile -> tile.acceptQueuedPheromone());
+        state.getTiles().forEach(tile -> tile.calculateNewPheromoneAmounts());
         state.getTiles().forEach(tile -> tile.tick(1));
     }
 

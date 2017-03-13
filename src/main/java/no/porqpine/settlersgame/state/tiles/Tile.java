@@ -65,7 +65,7 @@ public abstract class Tile extends GameObject {
         neighbours.add(t);
     }
 
-    public void acceptQueuedPheromone() {
+    public void calculateNewPheromoneAmounts() {
         Map<PheromoneType, Long> newAmounts = new HashMap<>();
 
         pQueued.forEach((pheromoneType, queuedAmount) -> {
