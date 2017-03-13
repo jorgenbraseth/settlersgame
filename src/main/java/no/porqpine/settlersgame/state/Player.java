@@ -17,7 +17,6 @@ public class Player {
     public final String name;
     public final int id;
     public Map<String, Long> resources = new HashMap<>();
-    public PheromoneType pheromone;
 
     public Player(String name, String color, Session connection) {
         this.session = connection;
@@ -36,10 +35,6 @@ public class Player {
         for (String resource : cost.keySet()) {
             resources.computeIfPresent(resource, (s, currentValue) -> currentValue - cost.get(resource));
         }
-    }
-
-    public void setPheromone(PheromoneType pheromone) {
-        this.pheromone = pheromone;
     }
 
     public boolean canAfford(long cost) {

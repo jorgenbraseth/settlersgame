@@ -13,9 +13,12 @@ public class ProducerTile extends Tile {
     private boolean isOn = false;
     private int timeInCurrentState = 0;
 
+    private final PheromoneType pheromone;
+
     public ProducerTile(int x, int y) {
         super(x, y);
         timeInCurrentState = new Random().nextInt(TIME_OFF);
+        pheromone = PheromoneType.resource(this);
     }
 
     @Override
@@ -32,7 +35,7 @@ public class ProducerTile extends Tile {
         timeInCurrentState++;
 
         if (isOn) {
-            adjustPheromone(PheromoneType.RESOURCE, PRODUCTION);
+            adjustPheromone(pheromone, PRODUCTION);
         }
 
     }

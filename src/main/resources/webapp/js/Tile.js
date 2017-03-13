@@ -77,7 +77,8 @@ class Tile {
             var r = parseInt(color.substr(1, 2), 16);
             var g = parseInt(color.substr(3, 2), 16);
             var b = parseInt(color.substr(5, 2), 16);
-            var o = this.data.pheromoneLeadOfHighestPheromone / 500 + 0.1;
+            console.log(this.data.pheromoneLeadOfHighestPheromone);
+            var o = this.data.pheromoneLeadOfHighestPheromone / 500 + 0.15;
             bg = `rgba(${r},${g},${b},${o})`;
         }
 

@@ -28,10 +28,10 @@ public class SiphonTile extends OwnedTile {
     @Override
     public void acceptQueuedPheromone() {
         super.acceptQueuedPheromone();
-        Long pheromoneOnTile = getPAmounts().getOrDefault(PheromoneType.RESOURCE, 0L);
+        Long pheromoneOnTile = getResourcePheromones().getOrDefault(PheromoneType.RESOURCE_TYPE, 0L);
         long siphonedAmount = Math.min(pheromoneOnTile, MAX_SIPHON);
         owner.addResource("resource", siphonedAmount);
-        getPAmounts().put(PheromoneType.RESOURCE, pheromoneOnTile-siphonedAmount);
+        setPheromone(PheromoneType.resource(this), -siphonedAmount);
     }
 
     @Override

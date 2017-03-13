@@ -9,11 +9,13 @@ public class HomeTile extends OwnedTile {
     private static final int PRODUCE_EVERY_N_TICK = 1;
     public static final long PRODUCTION = 600L;
     public static final int COST = 0;
+    private final PheromoneType pheromone;
     private int timeSinceLastProduction;
 
     public HomeTile(int x, int y, Player owner, Game game) {
         super(x, y, owner, game);
-        setPheromone(owner.pheromone, PRODUCTION);
+        pheromone = PheromoneType.playerPheromone(this, owner);
+        setPheromone(pheromone, PRODUCTION);
     }
 
     @Override
@@ -33,7 +35,7 @@ public class HomeTile extends OwnedTile {
         timeSinceLastProduction += ticks;
         if (timeSinceLastProduction >= PRODUCE_EVERY_N_TICK) {
             timeSinceLastProduction = 0;
-            adjustPheromone(owner.pheromone, PRODUCTION);
+            adjustPheromone(pheromone, PRODUCTION);
         }
 
         owner.addResource("resource", 1L);

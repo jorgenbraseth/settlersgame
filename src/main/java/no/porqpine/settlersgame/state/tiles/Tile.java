@@ -6,7 +6,10 @@ import no.porqpine.settlersgame.state.GameObject;
 import no.porqpine.settlersgame.state.PheromoneType;
 import no.porqpine.settlersgame.state.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("WeakerAccess")
@@ -104,30 +107,32 @@ public abstract class Tile extends GameObject {
     }
 
     public Player getHighestPheromonePlayer() {
-        List<PheromoneType> playerPheromonesPresent = pAmounts.keySet().stream()
-                .filter(pheromoneType -> pheromoneType != PheromoneType.RESOURCE)
-                .filter(pheromoneType -> pAmounts.get(pheromoneType) > 0)
-                .collect(Collectors.toList());
-
-        Optional<PheromoneType> playerWithMostPheromone = playerPheromonesPresent.stream()
-                .max((o1, o2) -> pAmounts.get(o1).compareTo(pAmounts.get(o2)));
-
-        return playerWithMostPheromone.map(pheromoneType -> pheromoneType.player.get()).orElse(null);
+        Map<Player, Long> playerPheromones = getPlayerPheromones();
+        if (playerPheromones.isEmpty()) {
+            return null;
+        }
+        return getPlayerPheromones().entrySet().stream()
+                .max((e1, e2) -> e1.getValue().compareTo(e2.getValue()))
+                .get().getKey();
     }
 
     public Long getPheromoneLeadOfHighestPheromone() {
         if (getHighestPheromonePlayer() == null) {
             return null;
         }
+        if (getPlayerPheromones().size() == 1) {
+            return getPlayerPheromones().get(getHighestPheromonePlayer());
+        } else {
 
-        Long secondPlace = pAmounts.keySet().stream()
-                .filter(p -> p.player.isPresent())
-                .filter(p -> getHighestPheromonePlayer() != p.player.orElse(null))
-                .map(p -> pAmounts.get(p))
-                .max(Long::compareTo)
-                .orElse(0L);
-        return pAmounts.getOrDefault(getHighestPheromonePlayer().pheromone, 0L) - secondPlace;
+            Long secondPlace = getPlayerPheromones().entrySet().stream()
+                    .filter(entry -> entry.getKey() != getHighestPheromonePlayer())
+                    .max((e1, e2) -> e1.getValue().compareTo(e2.getValue()))
+                    .get().getValue();
 
+            long lead = getPlayerPheromones().getOrDefault(getHighestPheromonePlayer(), 0L) - secondPlace;
+            return lead;
+
+        }
     }
 
 

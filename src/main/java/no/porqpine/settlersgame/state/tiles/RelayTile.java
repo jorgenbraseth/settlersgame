@@ -9,10 +9,12 @@ public class RelayTile extends OwnedTile {
     private static final int PRODUCE_EVERY_N_TICK = 1;
     public static final int PRODUCTION = 600;
     public static final int COST = 1000;
+    private final PheromoneType pheromone;
     private int timeSinceLastProduction;
 
     public RelayTile(int x, int y, Player owner, Game game) {
         super(x, y, owner, game);
+        pheromone = PheromoneType.playerPheromone(this, owner);
     }
 
     @Override
@@ -33,7 +35,7 @@ public class RelayTile extends OwnedTile {
         if (timeSinceLastProduction >= PRODUCE_EVERY_N_TICK) {
             timeSinceLastProduction = 0;
 
-            adjustPheromone(owner.pheromone, PRODUCTION);
+            adjustPheromone(pheromone, PRODUCTION);
         }
     }
 
