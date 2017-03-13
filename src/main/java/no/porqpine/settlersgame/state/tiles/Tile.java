@@ -66,10 +66,16 @@ public abstract class Tile extends GameObject {
     }
 
     public void acceptQueuedPheromone() {
+        Map<PheromoneType, Long> newAmounts = new HashMap<>();
+
         pQueued.forEach((pheromoneType, queuedAmount) -> {
             Long currentAmount = pAmounts.getOrDefault(pheromoneType, 0L);
-            pAmounts.put(pheromoneType, Math.max(0, currentAmount + queuedAmount));
+            long newAmount = Math.max(0, currentAmount + queuedAmount);
+            if(newAmount > 0) {
+                newAmounts.put(pheromoneType, newAmount);
+            }
         });
+        pAmounts = newAmounts;
 
         pQueued.clear();
     }
