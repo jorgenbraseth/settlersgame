@@ -4,6 +4,7 @@ var currentGame;
 var socket;
 var mouseX, mouseY;
 var message;
+var gameState;
 var tiles;
 var shapeInFocus = null;
 var player;
@@ -16,7 +17,7 @@ var renderTiles = function (context) {
     });
 };
 function render(gameScreen, playerOverlayScreen) {
-    if (message) {
+    if (gameState) {
         gameScreen.fillStyle = "#ffffff";
         gameScreen.fillStyle = "#000000";
         gameScreen.fillRect(0, 0, 800, 800);
@@ -30,29 +31,12 @@ function render(gameScreen, playerOverlayScreen) {
         gameScreen.restore();
 
         playerOverlayScreen.clearRect(0, 0, 800, 800);
-        playerOverlay.render(playerOverlayScreen, message.players);
+        playerOverlay.render(playerOverlayScreen, gameState.players);
     }
     requestAnimationFrame(()=>render(gameScreen, playerOverlayScreen));
 
 }
 
-function displayPlayerInfo(players) {
-    var elm = document.getElementById("playerList");
-    var newHtml = "";
-    players.forEach((p)=> {
-
-        newHtml += `<div>`;
-        newHtml += `<span class="player-name" style="color: ${p.color}">${p.name}</span> `;
-        newHtml += `<dl class="resource-list">`;
-        for (var r in p.resources) {
-            newHtml += `$${p.resources[r]}`
-        }
-        newHtml += `</dl>`;
-        newHtml += `</div>`
-    });
-    elm.innerHTML = newHtml;
-
-}
 function gameListReceived(message) {
     var listElm = document.getElementById("gameList");
     listElm.innerHTML = "";
@@ -108,12 +92,12 @@ function connect() {
 
             switch (message.type) {
                 case "GAME_STATE":
+                    gameState = message;
                     tiles = message.tiles.map(t=> new Tile(t));
                     if (!rendering) {
                         render(gameScreen(), playerOverlayScreen());
                         rendering = true;
                     }
-                    displayPlayerInfo(message.players)
                     break;
                 case "CHAT":
                     chatMessageReceived(message);
