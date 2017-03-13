@@ -31,11 +31,11 @@ public class BlockerTile extends OwnedTile {
 
     @Override
     public void degrade() {
-        Optional<PheromoneType> highestPlayerPheromone = pAmounts.keySet().stream().max((p1, p2) -> pAmounts.get(p1).compareTo(pAmounts.get(p2)));
+        Optional<PheromoneType> highestPlayerPheromone = getPAmounts().keySet().stream().max((p1, p2) -> getPAmounts().get(p1).compareTo(getPAmounts().get(p2)));
         if(highestPlayerPheromone.isPresent()){
             owner = highestPlayerPheromone.get().player.get();
         }
-        pAmounts.keySet().forEach(pheromoneType -> adjustPheromone(pheromoneType, -pAmounts.get(pheromoneType)));
+        getPAmounts().keySet().forEach(pheromoneType -> adjustPheromone(pheromoneType, -getPAmounts().get(pheromoneType)));
     }
 
     @Override

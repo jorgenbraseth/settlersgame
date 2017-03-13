@@ -13,7 +13,7 @@ public class HomeTile extends OwnedTile {
 
     public HomeTile(int x, int y, Player owner, Game game) {
         super(x, y, owner, game);
-        pAmounts.put(owner.pheromone, PRODUCTION);
+        setPheromone(owner.pheromone, PRODUCTION);
     }
 
     @Override

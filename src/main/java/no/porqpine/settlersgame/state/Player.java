@@ -46,4 +46,8 @@ public class Player {
         return cost <= resources.getOrDefault("resource", 0L);
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 }

@@ -1,6 +1,7 @@
 package no.porqpine.settlersgame.state.tiles;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import no.porqpine.settlersgame.state.GameObject;
 import no.porqpine.settlersgame.state.PheromoneType;
 import no.porqpine.settlersgame.state.Player;
@@ -9,6 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("WeakerAccess")
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public abstract class Tile extends GameObject {
 
     public final int x;
@@ -17,7 +19,7 @@ public abstract class Tile extends GameObject {
     @JsonIgnore
     public List<Tile> neighbours = new ArrayList<>();
 
-    public Map<PheromoneType, Long> pAmounts = new HashMap<>();
+    private Map<PheromoneType, Long> pAmounts = new HashMap<>();
     public Map<PheromoneType, Long> pQueued = new HashMap<>();
 
 
@@ -25,6 +27,23 @@ public abstract class Tile extends GameObject {
         super();
         this.x = x;
         this.y = y;
+    }
+
+    public void setPheromone(PheromoneType pheromone, long amount) {
+        pAmounts.put(pheromone, amount);
+    }
+
+
+    public Map<Player, Long> getPlayerPheromones() {
+        Map<Player, Long> map = new HashMap<>();
+        pAmounts.keySet().stream()
+                .filter(type -> type.player.isPresent())
+                .forEach(ph -> map.merge(ph.player.get(), pAmounts.get(ph), (aLong, aLong2) -> aLong + aLong2));
+        return map.entrySet().stream().filter(entry -> entry.getValue() > 0L).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public Map<PheromoneType, Long> getPAmounts() {
+        return pAmounts.entrySet().stream().filter(entry -> entry.getValue() > 0L).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public void addNeighbour(Tile t) {
