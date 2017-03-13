@@ -119,8 +119,8 @@ class Tile {
             ctx.fillStyle = "rgba(250,250,250,0.9)";
         } else if (this.data.type == "PRODUCER") {
             ctx.fillStyle = "#0099ff";
-        } else if(this.data.pAmounts) {
-            var fillGrade = this.data.pAmounts.resource / 25;
+        } else if(this.data.resourcePheromones) {
+            var fillGrade = this.data.resourcePheromones.resource / 25;
             ctx.fillStyle = "rgba(0,50,250," + fillGrade + ")";
         }
         ctx.fill();
