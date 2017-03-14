@@ -19,7 +19,8 @@ class PlayerOverlay {
 
             ctx.translate(ctx.measureText(p.name).width + 10, 0);
             ctx.fillStyle = "white";
-            ctx.fillText(p.resources.resource, 0, 0);
+            var resourceText = "$"+p.resources.resource;
+            ctx.fillText(resourceText, 0, 0);
             ctx.translate(-(ctx.measureText(p.name).width + 10), 20);
         });
         ctx.restore();

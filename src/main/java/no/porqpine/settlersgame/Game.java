@@ -129,23 +129,27 @@ public class Game {
     }
 
     public void shapeRightClicked(ShapeRightClicked event) {
-        Tile clickedTile = (Tile) state.find(event.id);
-        int x = event.coords[0];
-        int y = event.coords[1];
-        Player player = findPlayer(event.playerName);
+        try {
+            Tile clickedTile = (Tile) state.find(event.id);
+            int x = event.coords[0];
+            int y = event.coords[1];
+            Player player = findPlayer(event.playerName);
 
-        Player highestPheromonePlayer = clickedTile.getHighestPheromonePlayer();
-        if (highestPheromonePlayer == player || clickedTile instanceof OwnedTile && (((OwnedTile) clickedTile).owner == player)) {
-            switch (clickedTile.getType()) {
-                case "BLOCKER":
-                    if (((OwnedTile) clickedTile).owner == player) {
-                        state.build(new FreeTile(x, y));
-                    }
-                    break;
-                case "FREE":
-                    state.build(new BlockerTile(x, y, player, this));
-                    break;
+            Player highestPheromonePlayer = clickedTile.getHighestPheromonePlayer();
+            if (highestPheromonePlayer == player || clickedTile instanceof OwnedTile && (((OwnedTile) clickedTile).owner == player)) {
+                switch (clickedTile.getType()) {
+                    case "BLOCKER":
+                        if (((OwnedTile) clickedTile).owner == player) {
+                            state.build(new FreeTile(x, y));
+                        }
+                        break;
+                    case "FREE":
+                        state.build(new BlockerTile(x, y, player, this));
+                        break;
+                }
             }
+        } catch (InvalidObjectID e) {
+            System.out.println("Invalid id, probably old state on client side.");
         }
     }
 

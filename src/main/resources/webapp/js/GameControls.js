@@ -5,9 +5,9 @@ class GameControls {
         this.forwardAllMouseEventsToElement(gameScreen);
 
         this.buttonCenter = {
-            B1: [60, -hexRectangleHeight / 2 - 10],
-            B2: [60 + hexRectangleWidth + 10, -hexRectangleHeight / 2 - 10],
-            B3: [60 + hexRectangleWidth * 2 + 20, -hexRectangleHeight / 2 - 10],
+            RELAY: [60, -hexRectangleHeight / 2 - 10],
+            SIPHON: [60 + hexRectangleWidth + 10, -hexRectangleHeight / 2 - 10],
+            WALL: [60 + hexRectangleWidth * 2 + 20, -hexRectangleHeight / 2 - 10],
         };
         this.polys = {
             BACKGROUND: [
@@ -16,7 +16,7 @@ class GameControls {
                 [SCREEN_WIDTH_PIXELS - 30, -30],
                 [SCREEN_WIDTH_PIXELS, 0]
             ],
-            B1: [
+            RELAY: [
                 [hexRadius, 0],
                 [hexRectangleWidth, hexHeight],
                 [hexRectangleWidth, hexHeight + sideLength],
@@ -24,7 +24,7 @@ class GameControls {
                 [0, hexHeight + sideLength],
                 [0, hexHeight]
             ],
-            B2: [
+            SIPHON: [
                 [hexRadius, 0],
                 [hexRectangleWidth, hexHeight],
                 [hexRectangleWidth, hexHeight + sideLength],
@@ -32,7 +32,7 @@ class GameControls {
                 [0, hexHeight + sideLength],
                 [0, hexHeight]
             ],
-            B3: [
+            WALL: [
                 [hexRadius, 0],
                 [hexRectangleWidth, hexHeight],
                 [hexRectangleWidth, hexHeight + sideLength],
@@ -87,12 +87,12 @@ class GameControls {
     getButtonAt(unadjustedX, unadjustedY) {
         var x = unadjustedX - 0;
         var y = unadjustedY - SCREEN_HEIGHT_PIXELS;
-        if (isInside([x - this.buttonCenter.B1[0] + hexRectangleWidth / 2, y - this.buttonCenter.B1[1] + hexRectangleHeight / 2], this.polys.B1)) {
-            return "B1";
-        } else if (isInside([x - this.buttonCenter.B2[0] + hexRectangleWidth / 2, y - this.buttonCenter.B2[1] + hexRectangleHeight / 2], this.polys.B2)) {
-            return "B2";
-        } else if (isInside([x - this.buttonCenter.B3[0] + hexRectangleWidth / 2, y - this.buttonCenter.B3[1] + hexRectangleHeight / 2], this.polys.B3)) {
-            return "B3";
+        if (isInside([x - this.buttonCenter.RELAY[0] + hexRectangleWidth / 2, y - this.buttonCenter.RELAY[1] + hexRectangleHeight / 2], this.polys.RELAY)) {
+            return "RELAY";
+        } else if (isInside([x - this.buttonCenter.SIPHON[0] + hexRectangleWidth / 2, y - this.buttonCenter.SIPHON[1] + hexRectangleHeight / 2], this.polys.SIPHON)) {
+            return "SIPHON";
+        } else if (isInside([x - this.buttonCenter.WALL[0] + hexRectangleWidth / 2, y - this.buttonCenter.WALL[1] + hexRectangleHeight / 2], this.polys.WALL)) {
+            return "WALL";
         } else {
             return null;
         }
@@ -107,9 +107,9 @@ class GameControls {
 
         this.renderBackground(ctx);
 
-        this.renderButton(ctx, "B1", IMAGE_MAP.EMITTER);
-        this.renderButton(ctx, "B2", IMAGE_MAP.SIPHON);
-        this.renderButton(ctx, "B3", IMAGE_MAP.WALL);
+        this.renderButton(ctx, "RELAY", IMAGE_MAP.EMITTER);
+        this.renderButton(ctx, "SIPHON", IMAGE_MAP.SIPHON);
+        this.renderButton(ctx, "WALL", IMAGE_MAP.WALL);
 
         ctx.restore();
 
