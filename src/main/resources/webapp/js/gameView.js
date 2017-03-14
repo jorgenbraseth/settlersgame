@@ -1,6 +1,8 @@
-var ZOOM = 0.9;
+var ZOOM = 1;
 
 var currentGame;
+var panX = 0;
+var panY = 0;
 var socket;
 var mouseX, mouseY;
 var message;
@@ -19,10 +21,11 @@ var renderTiles = function (context) {
 function render(gameScreen, playerOverlayScreen) {
     if (gameState) {
         gameScreen.fillStyle = "#ffffff";
-        gameScreen.fillStyle = "#000000";
+        gameScreen.fillStyle = "#333333";
         gameScreen.fillRect(0, 0, 800, 800);
         gameScreen.save();
         gameScreen.scale(ZOOM, ZOOM);
+        gameScreen.translate(-panX,-panY);
 
         tiles.filter(e => e.containsPoint(mouseX, mouseY))
             .forEach(shape => shape.mouseIsOver());
@@ -170,6 +173,26 @@ function playerOverlayScreen() {
     return canvas.getContext("2d");
 }
 
+function panUp() {
+    console.log([panX,panY]);
+    panY = Math.max(0,panY - 50);
+
+}
+function panLeft() {
+    panX = Math.max(0,panX - 50);
+
+}
+function panDown() {
+    console.log([panX,panY]);
+    var maxDownPan = Math.max(0,30*(hexHeight+sideLength)+hexHeight - 600/ZOOM);
+    panY = Math.min(maxDownPan,panY + 50);
+}
+function panRight() {
+    var maxRightPan = Math.max(0,30.5*hexRectangleWidth - 800/ZOOM);
+    panX = Math.min(maxRightPan, panX + 50);
+
+}
+
 function start() {
 
     var createGameButton = document.getElementById('createGameButton');
@@ -220,6 +243,23 @@ function start() {
             ZOOM = Math.min(2, ZOOM + 0.1);
         } else {
             ZOOM = Math.max(0.5, ZOOM - 0.1);
+        }
+    };
+
+    document.onkeydown = (e) => {
+        switch (e.key) {
+            case 'w':
+                panUp();
+                break;
+            case 'a':
+                panLeft();
+                break;
+            case 's':
+                panDown();
+                break;
+            case 'd':
+                panRight();
+                break;
         }
     };
 
