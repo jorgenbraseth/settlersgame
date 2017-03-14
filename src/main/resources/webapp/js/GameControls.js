@@ -6,7 +6,11 @@ class GameControls {
 
     forwardAllMouseEventsToElement(gameScreen) {
         this.canvas.onclick = (e) => {
-            gameScreen.onclick(e);
+            var x = e.offsetX;
+            var y = e.offsetY;
+            if (this.nothingAt(x, y)) {
+                gameScreen.onclick(e);
+            }
         };
 
         this.canvas.onmousemove = (e) => {
@@ -22,6 +26,11 @@ class GameControls {
         };
     }
 
+    nothingAt(x, y) {
+        console.log([x,y]);
+        return true;
+    }
+
     render() {
         var ctx = this.canvas.getContext("2d");
         ctx.clearRect(0, 0, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS);
@@ -29,12 +38,12 @@ class GameControls {
 
         this.renderBackground(ctx);
 
-        ctx.translate(40,-hexRectangleHeight-10);
-        this.renderButton(ctx);
-        ctx.translate(hexRectangleWidth + 20,0);
-        this.renderButton(ctx);
-        ctx.translate(hexRectangleWidth + 20,0);
-        this.renderButton(ctx);
+        ctx.translate(40, -hexRectangleHeight - 10);
+        this.renderButton(ctx, IMAGE_MAP.EMITTER);
+        ctx.translate(hexRectangleWidth + 20, 0);
+        this.renderButton(ctx, IMAGE_MAP.SIPHON);
+        ctx.translate(hexRectangleWidth + 20, 0);
+        this.renderButton(ctx, IMAGE_MAP.WALL);
 
         ctx.restore();
 
@@ -57,9 +66,8 @@ class GameControls {
         ctx.stroke();
     }
 
-    renderButton(ctx) {
+    renderButton(ctx, icon) {
         ctx.save();
-
 
         var poly = [
             [hexRadius, 0],
@@ -69,7 +77,6 @@ class GameControls {
             [0, hexHeight + sideLength],
             [0, hexHeight]
         ];
-
 
         ctx.beginPath();
         poly.forEach(point => {
@@ -81,8 +88,15 @@ class GameControls {
         ctx.fill();
 
         ctx.strokeStyle = "white";
+        ctx.lineWidth = 2;
         ctx.stroke();
 
+        if (icon) {
+            ctx.save();
+            ctx.translate(hexRectangleWidth / 2, hexRectangleHeight / 2)
+            icon.render(ctx);
+            ctx.restore();
+        }
 
         ctx.restore();
     }

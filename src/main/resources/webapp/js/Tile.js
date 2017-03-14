@@ -85,12 +85,9 @@ class Tile {
         }
 
         ctx.beginPath();
-        ctx.moveTo(hexRadius, 0);
-        ctx.lineTo(hexRectangleWidth, hexHeight);
-        ctx.lineTo(hexRectangleWidth, hexHeight + sideLength);
-        ctx.lineTo(hexRadius, hexRectangleHeight);
-        ctx.lineTo(0, sideLength + hexHeight);
-        ctx.lineTo(0, hexHeight);
+        this.poly.forEach(point => {
+            ctx.lineTo(point[0]-this.x, point[1]-this.y);
+        });
         ctx.closePath();
 
         ctx.fill();
@@ -101,12 +98,9 @@ class Tile {
         ctx.scale(0.9, 0.9);
         ctx.translate(-hexRadius, -hexRectangleHeight / 2);
         ctx.beginPath();
-        ctx.moveTo(hexRadius, 0);
-        ctx.lineTo(hexRectangleWidth, hexHeight);
-        ctx.lineTo(hexRectangleWidth, hexHeight + sideLength);
-        ctx.lineTo(hexRadius, hexRectangleHeight);
-        ctx.lineTo(0, sideLength + hexHeight);
-        ctx.lineTo(0, hexHeight);
+        this.poly.forEach(point => {
+            ctx.lineTo(point[0]-this.x, point[1]-this.y);
+        });
         ctx.closePath();
 
         ctx.fillStyle = "black";
