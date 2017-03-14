@@ -1,5 +1,11 @@
 const TILE_SIZE = 25;
 
+const SCREEN_WIDTH_PIXELS = 800;
+const SCREEN_HEIGHT_PIXELS = 600;
+
+const MAP_WIDTH_TILES = 30;
+const MAP_HEIGHT_TILES = 30;
+
 const COLORS = {
     "FOREST": "#007700", "MOUNTAIN": "#666666", "WATER": "blue", "PASTURE": "#66aa00", "DESERT": "#aa8800"
 };

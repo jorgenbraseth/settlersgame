@@ -21,11 +21,11 @@ var renderTiles = function (context) {
 function render(gameScreen, playerOverlayScreen) {
     if (gameState) {
         gameScreen.fillStyle = "#ffffff";
-        gameScreen.fillStyle = "#333333";
+        gameScreen.fillStyle = "#090909";
         gameScreen.fillRect(0, 0, 800, 800);
         gameScreen.save();
         gameScreen.scale(ZOOM, ZOOM);
-        gameScreen.translate(-panX,-panY);
+        gameScreen.translate(-panX, -panY);
 
         tiles.filter(e => e.containsPoint(mouseX, mouseY))
             .forEach(shape => shape.mouseIsOver());
@@ -174,22 +174,20 @@ function playerOverlayScreen() {
 }
 
 function panUp() {
-    console.log([panX,panY]);
-    panY = Math.max(0,panY - 50);
+    panY = Math.max(0, panY - 50);
 
 }
 function panLeft() {
-    panX = Math.max(0,panX - 50);
+    panX = Math.max(0, panX - 50);
 
 }
 function panDown() {
-    console.log([panX,panY]);
-    var maxDownPan = Math.max(0,30*(hexHeight+sideLength)+hexHeight - 600/ZOOM);
-    panY = Math.min(maxDownPan,panY + 50);
+    var maxDownPan = Math.max(0, MAP_HEIGHT_TILES * (hexHeight + sideLength) + hexHeight - SCREEN_HEIGHT_PIXELS / ZOOM);
+    panY = Math.min(maxDownPan, panY + (hexHeight + sideLength));
 }
 function panRight() {
-    var maxRightPan = Math.max(0,30.5*hexRectangleWidth - 800/ZOOM);
-    panX = Math.min(maxRightPan, panX + 50);
+    var maxRightPan = Math.max(0, (MAP_WIDTH_TILES + 0.5) * hexRectangleWidth - SCREEN_WIDTH_PIXELS / ZOOM);
+    panX = Math.min(maxRightPan, panX + hexRectangleWidth);
 
 }
 
@@ -203,8 +201,8 @@ function start() {
             var x = e.offsetX;
             var y = e.offsetY;
 
-            mouseX = x / ZOOM;
-            mouseY = y / ZOOM;
+            mouseX = (x / ZOOM) + panX;
+            mouseY = (y / ZOOM) + panY;
         }
     };
 
