@@ -17,6 +17,10 @@ div#gameScreenFrame {
     flex: 1;
 }
 
+#gameControls {
+    pointer-events: visible;
+}
+
 #joinForm {
     display: flex;
     flex-direction: column;

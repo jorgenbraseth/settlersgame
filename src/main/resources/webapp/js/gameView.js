@@ -22,7 +22,7 @@ function render(gameScreen, playerOverlayScreen) {
     if (gameState) {
         gameScreen.fillStyle = "#ffffff";
         gameScreen.fillStyle = "#090909";
-        gameScreen.fillRect(0, 0, 800, 800);
+        gameScreen.fillRect(0, 0, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS);
         gameScreen.save();
         gameScreen.scale(ZOOM, ZOOM);
         gameScreen.translate(-panX, -panY);
@@ -33,7 +33,7 @@ function render(gameScreen, playerOverlayScreen) {
         renderTiles(gameScreen);
         gameScreen.restore();
 
-        playerOverlayScreen.clearRect(0, 0, 800, 800);
+        playerOverlayScreen.clearRect(0, 0, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS);
         playerOverlay.render(playerOverlayScreen, gameState.players);
     }
     requestAnimationFrame(()=>render(gameScreen, playerOverlayScreen));
@@ -174,29 +174,35 @@ function playerOverlayScreen() {
 }
 
 function panUp() {
-    panY = Math.max(0, panY - 50);
+    panY = Math.max(0, panY - (hexHeight + sideLength) / 2);
 
 }
 function panLeft() {
-    panX = Math.max(0, panX - 50);
+    panX = Math.max(0, panX - hexRectangleWidth / 2);
 
 }
 function panDown() {
     var maxDownPan = Math.max(0, MAP_HEIGHT_TILES * (hexHeight + sideLength) + hexHeight - SCREEN_HEIGHT_PIXELS / ZOOM);
-    panY = Math.min(maxDownPan, panY + (hexHeight + sideLength));
+    panY = Math.min(maxDownPan, panY + (hexHeight + sideLength) / 2);
 }
 function panRight() {
     var maxRightPan = Math.max(0, (MAP_WIDTH_TILES + 0.5) * hexRectangleWidth - SCREEN_WIDTH_PIXELS / ZOOM);
-    panX = Math.min(maxRightPan, panX + hexRectangleWidth);
+    panX = Math.min(maxRightPan, panX + hexRectangleWidth / 2);
 
 }
 
 function start() {
 
+    document.querySelectorAll("#gameScreenFrame canvas").forEach(canvasElm => {
+        canvasElm.setAttribute("width", SCREEN_WIDTH_PIXELS);
+        canvasElm.setAttribute("height", SCREEN_HEIGHT_PIXELS);
+    });
+
+
     var createGameButton = document.getElementById('createGameButton');
     createGameButton.onclick = createGameClicked;
-    var canvas = document.getElementById('gameScreen');
-    canvas.onmousemove = (e) => {
+    var gameScreen = document.getElementById('gameScreen');
+    gameScreen.onmousemove = (e) => {
         if (message) {
             var x = e.offsetX;
             var y = e.offsetY;
@@ -206,7 +212,7 @@ function start() {
         }
     };
 
-    canvas.oncontextmenu = (e) => {
+    gameScreen.oncontextmenu = (e) => {
         e.preventDefault();
         var containingShape = tiles.filter(e => e.containsPoint(mouseX, mouseY));
         if (containingShape.length >= 1) {
@@ -220,7 +226,7 @@ function start() {
             })
         }
     };
-    canvas.onclick = (e) => {
+    gameScreen.onclick = (e) => {
         var containingShape = tiles.filter(e => e.containsPoint(mouseX, mouseY));
         if (containingShape.length >= 1) {
             var clickedShape = containingShape[0];
@@ -234,7 +240,7 @@ function start() {
         }
     };
 
-    canvas.onmousewheel = (e)=> {
+    gameScreen.onmousewheel = (e)=> {
         var zoomIn = e.deltaY < 0;
 
         if (zoomIn) {
@@ -278,8 +284,12 @@ function start() {
         }
     };
 
+
+    new GameControls(document.getElementById('gameControls'), gameScreen);
+
     connect();
 }
+
 
 // in case the document is already rendered
 if (document.readyState != 'loading') start();
