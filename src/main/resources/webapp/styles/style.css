@@ -50,6 +50,9 @@ fieldset {
 
 aside {
     float: right;
+    width: 300px;
+    background: rgba(0,0,0,0.3);
+    padding: 1em;
 }
 
 #chat {

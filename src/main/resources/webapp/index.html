@@ -19,6 +19,8 @@
         <label for="playerColor3" class="colorSquare" style="background-color: #66ff66"></label>
         <input class="colorPicker" name="playerColor" id="playerColor4" type="radio" value="#ff00ff"/>
         <label for="playerColor4" class="colorSquare" style="background-color: #ff00ff"></label>
+        <input class="colorPicker" name="playerColor" id="playerColor5" type="radio" value="#cccccc"/>
+        <label for="playerColor5" class="colorSquare" style="background-color: #cccccc"></label>
         <strong>Name</strong>
         <input id="playerName" placeholder="Player name" value="Finnicky"/>
     </fieldset>
@@ -39,12 +41,41 @@
 
 </div>
 
+<aside>
+    <h1>Quick explaination</h1>
 
+    <h2>The game</h2>
+    <p>
+        The game is based on spreading pheromones in a hex grid.
+    </p>
+    <ul>
+        <li>Spread your pheromones to expand your territory.</li>
+        <li>New structures can only be built on tiles that has your pheromones on them.</li>
+        <li>Structures take damage if on tiles without their owners pheromone.</li>
+    </ul>
+    <p>
+        Be the only player left to win.
+    </p>
+
+    <h2>Tile types/Structures</h2>
+
+    <h3><img src="img/resource-tile.png" /> Resource tiles</h3>
+    These tiles pulse a blue pheromone with regular intervals.
+
+    <h3><img src="img/home-tile.png" /> Home tile</h3>
+    The starting tile for each player. Spread pheromones and provides the player with a trickle of income.
+
+    <h3><img src="img/siphon-tile.png" /> Siphon tile</h3>
+    Build this to siphon parts of the resource pheromone on the tiles this is built.
+
+    <h3><img src="img/relay-tile.png" /> Relay tile</h3>
+    Spreads your pheromone to expand your territory.
+
+    <h3><img src="img/wall-tile.png" /> Wall tile</h3>
+    Stops pheromone from spreading to this tile. Affects both resource and player pheromone.
+</aside>
 <div id="game">
-    <div id="players">
-        <h1>Players</h1>
-        <div id="playerList"></div>
-    </div>
+
     <div id="gameScreenFrame">
         <canvas id="gameScreen" width="800" height="600"></canvas>
         <canvas id="playerInfoOverlay" width="800" height="600"></canvas>
