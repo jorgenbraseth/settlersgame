@@ -126,7 +126,6 @@ function connect() {
 };
 
 function send(obj) {
-    console.log(obj);
     socket.send(JSON.stringify(obj));
 }
 
