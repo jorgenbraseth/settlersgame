@@ -1,5 +1,6 @@
 var ZOOM = 1;
 
+var gameControls;
 var currentGame;
 var panX = 0;
 var panY = 0;
@@ -8,7 +9,6 @@ var mouseX, mouseY;
 var message;
 var gameState;
 var tiles;
-var shapeInFocus = null;
 var player;
 var rendering = false;
 var playerOverlay = new PlayerOverlay();
@@ -35,6 +35,8 @@ function render(gameScreen, playerOverlayScreen) {
 
         playerOverlayScreen.clearRect(0, 0, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS);
         playerOverlay.render(playerOverlayScreen, gameState.players);
+
+        gameControls.render();
     }
     requestAnimationFrame(()=>render(gameScreen, playerOverlayScreen));
 
@@ -285,7 +287,7 @@ function start() {
     };
 
 
-    new GameControls(document.getElementById('gameControls'), gameScreen);
+    gameControls = new GameControls(document.getElementById('gameControls'), gameScreen);
 
     connect();
 }

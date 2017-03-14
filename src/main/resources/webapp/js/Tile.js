@@ -74,11 +74,8 @@ class Tile {
         var bg = "rgba(250,250,250,0.0)";
         if (this.data.highestPheromonePlayer) {
             var color = this.data.highestPheromonePlayer.color;
-            var r = parseInt(color.substr(1, 2), 16);
-            var g = parseInt(color.substr(3, 2), 16);
-            var b = parseInt(color.substr(5, 2), 16);
             var o = this.data.pheromoneLeadOfHighestPheromone / 500 + 0.15;
-            bg = `rgba(${r},${g},${b},${o})`;
+            bg = hexToRGBA(color, o);
         }
 
         if (this.hover && this.data.highestPheromonePlayer && this.data.highestPheromonePlayer.name == player.name) {

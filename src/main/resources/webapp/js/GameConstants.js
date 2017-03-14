@@ -16,3 +16,10 @@ const IMAGE_MAP = {
     SIPHON: new PreloadedImage("img/siphon.png", 256, 170),
     WALL: new PreloadedImage("img/wall.png", 153, 153),
 };
+
+function hexToRGBA(hex, opacity) {
+    var r = parseInt(hex.substr(1, 2), 16);
+    var g = parseInt(hex.substr(3, 2), 16);
+    var b = parseInt(hex.substr(5, 2), 16);
+    return `rgba(${r},${g},${b},${opacity})`;
+}
