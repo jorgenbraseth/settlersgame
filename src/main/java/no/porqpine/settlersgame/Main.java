@@ -7,10 +7,14 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static no.porqpine.settlersgame.GameHolder.GAME_LIST;
 
 public class Main {
+
+   public static Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws Exception {
 
@@ -47,6 +51,7 @@ public class Main {
         server.setStopAtShutdown(true);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            log.info("Shutting down");
             GAME_LIST.stop();
             try {
                 gameLoop.join();
@@ -54,7 +59,7 @@ public class Main {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println("Game stopped.");
+            log.info("Game stopped.");
         }));
 
         try

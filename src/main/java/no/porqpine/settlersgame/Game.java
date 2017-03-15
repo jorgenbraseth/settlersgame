@@ -12,6 +12,8 @@ import no.porqpine.settlersgame.state.Player;
 import no.porqpine.settlersgame.state.tiles.*;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class Game {
+    private static Logger log = LoggerFactory.getLogger(Game.class);
 
     public final String gameId;
 
@@ -89,7 +92,8 @@ public class Game {
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (WebSocketException e) {
-                        System.out.println(String.format("Player disconnected: [%s]", player.name));
+
+                        log.info("Player disconnected: [{}]", player.name);
                     } catch (NullPointerException e) {
                         e.printStackTrace();
                     }
@@ -116,7 +120,7 @@ public class Game {
         });
 
         while (sessions.stream().filter(Session::isOpen).findAny().isPresent()) {
-            System.out.println("Not all client sessions stopped");
+            log.error("Not all client sessions stopped");
             try {
                 Thread.sleep(330);
             } catch (InterruptedException e) {
@@ -124,7 +128,7 @@ public class Game {
             }
         }
 
-        System.out.println(String.format("Game [%s] stopped.", gameId));
+        log.info("Game [{}] stopped.", gameId);
 
     }
 
@@ -149,14 +153,14 @@ public class Game {
                 }
             }
         } catch (InvalidObjectID e) {
-            System.out.println("Invalid id, probably old state on client side.");
+            log.error("Invalid id, probably old state on client side.",e);
         }
     }
 
     public void shapeClicked(ShapeClicked event) {
         try {
             Tile clickedTile = (Tile) state.find(event.id);
-            System.out.println(clickedTile);
+            log.debug(clickedTile.toString());
             int x = event.coords[0];
             int y = event.coords[1];
             Player player = findPlayer(event.playerName);
@@ -180,7 +184,7 @@ public class Game {
                 }
             }
         } catch (InvalidObjectID e) {
-            System.out.println("Invalid id, probably old state on client side.");
+            log.error("Invalid id, probably old state on client side.",e);
         }
     }
 

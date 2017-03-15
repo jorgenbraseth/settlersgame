@@ -6,6 +6,8 @@ import no.porqpine.settlersgame.state.Player;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -14,6 +16,8 @@ import static no.porqpine.settlersgame.GameHolder.GAME_LIST;
 
 @WebSocket
 public class GameApi extends WebSocketAdapter {
+
+    private static Logger log = LoggerFactory.getLogger(GameApi.class);
 
     @Override
     public void onWebSocketConnect(Session sess) {
@@ -29,7 +33,7 @@ public class GameApi extends WebSocketAdapter {
     public void onWebSocketText(String message) {
         try {
             MessageMetadata metadata = OBJECT_MAPPER.readValue(message, MessageMetadata.class);
-            System.out.println("Got message: " + message);
+            log.info("Got message: {}", message);
             Game game;
             switch (metadata.type) {
                 case SHAPE_CLICKED:
