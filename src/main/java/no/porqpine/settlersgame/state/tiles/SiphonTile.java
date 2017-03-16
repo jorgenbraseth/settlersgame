@@ -9,7 +9,7 @@ public class SiphonTile extends OwnedTile {
     public int storedPheromone;
 
     public static final int COST = 300;
-    public static final long MAX_SIPHON = 5;
+    public static final long MAX_SIPHON = 50;
 
     public SiphonTile(int x, int y, Player owner, Game game) {
         super(x, y, owner, game);
@@ -30,7 +30,7 @@ public class SiphonTile extends OwnedTile {
         super.calculateNewPheromoneAmounts();
         Long pheromoneOnTile = getResourcePheromones().getOrDefault(PheromoneType.RESOURCE_TYPE, 0L);
         long siphonedAmount = Math.min(pheromoneOnTile, MAX_SIPHON);
-        owner.addResource("resource", siphonedAmount);
+        owner.addResource("resource", siphonedAmount/10);
         setPheromone(PheromoneType.resource(this), -siphonedAmount);
     }
 

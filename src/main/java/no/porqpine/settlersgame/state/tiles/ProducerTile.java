@@ -1,14 +1,16 @@
 package no.porqpine.settlersgame.state.tiles;
 
+import no.porqpine.settlersgame.Game;
 import no.porqpine.settlersgame.state.PheromoneType;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class ProducerTile extends Tile {
 
     private static final int TIME_ON = 15;
     private static final int TIME_OFF = 40;
-    public static final int PRODUCTION = 100;
+    public static final int PRODUCTION = 1000;
 
     private boolean isOn = false;
     private int timeInCurrentState = 0;
