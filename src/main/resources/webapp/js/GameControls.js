@@ -43,12 +43,16 @@ class GameControls {
         }
     }
 
+    chooseBuildMode(mode){
+        //overwritten by external for now. TODO: move GameView into its own class and make these to communicate.
+    }
+
     forwardAllMouseEventsToElement(gameScreen) {
         this.canvas.onclick = (e) => {
             if (this.nothingAt(e.offsetX, e.offsetY)) {
                 gameScreen.onclick(e);
             } else {
-                console.log(this.getButtonAt(e.offsetX, e.offsetY));
+                this.chooseBuildMode(this.getButtonAt(e.offsetX, e.offsetY));
             }
         };
 
@@ -63,9 +67,8 @@ class GameControls {
 
         this.canvas.oncontextmenu = (e) => {
             e.preventDefault();
-            if (this.nothingAt(e.offsetX, e.offsetY)) {
-                gameScreen.oncontextmenu(e);
-            }
+            this.chooseBuildMode(null);
+
         };
 
         this.canvas.onmousewheel = (e)=> {

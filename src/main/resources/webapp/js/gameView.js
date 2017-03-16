@@ -12,6 +12,8 @@ var tiles;
 var player;
 var rendering = false;
 var playerOverlay = new PlayerOverlay();
+var buildMode = null;
+
 
 var renderTiles = function (context) {
     tiles.forEach((t)=> {
@@ -98,7 +100,7 @@ function connect() {
             switch (message.type) {
                 case "GAME_STATE":
                     gameState = message;
-                    tiles = message.tiles.map(t=> new Tile(t));
+                    tiles = message.tiles.map(t=> new Tile(t, () => {return buildMode}));
                     if (!rendering) {
                         render(gameScreen(), playerOverlayScreen());
                         rendering = true;
@@ -287,6 +289,10 @@ function start() {
 
 
     gameControls = new GameControls(document.getElementById('gameControls'), gameScreen);
+    gameControls.chooseBuildMode = (mode) => {
+        console.log(`Changing mode to ${mode}`);
+        buildMode = mode
+    };
 
     connect();
 }

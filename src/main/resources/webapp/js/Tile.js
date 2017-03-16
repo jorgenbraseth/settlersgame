@@ -9,7 +9,8 @@ var hexRectangleWidth = 2 * hexRadius;
 
 class Tile {
 
-    constructor(data) {
+    constructor(data, buildMode) {
+        this.buildMode = buildMode;
         this.id = data.id;
         this.x = data.x * hexRectangleWidth + (data.y % 2 * hexRadius);
         this.y = data.y * (hexHeight + sideLength);
@@ -58,15 +59,17 @@ class Tile {
             bg = hexToRGBA(color, o);
         }
 
-        if (this.hover && this.data.highestPheromonePlayer && this.data.highestPheromonePlayer.name == player.name) {
-            ctx.fillStyle = "yellow";
+        if(this.hover && this.buildMode()){
+            ctx.fillStyle = this.buildableForCurrentPlayer() ? "rgba(100,250,0,0.6)" : "rgba(250,50,0,0.6)";
+        }else if (this.hover && this.buildableForCurrentPlayer()) {
+                ctx.fillStyle = "yellow";
         } else {
             ctx.fillStyle = bg;
         }
 
         ctx.beginPath();
         this.poly.forEach(point => {
-            ctx.lineTo(point[0]-this.x, point[1]-this.y);
+            ctx.lineTo(point[0] - this.x, point[1] - this.y);
         });
         ctx.closePath();
 
@@ -79,7 +82,7 @@ class Tile {
         ctx.translate(-hexRadius, -hexRectangleHeight / 2);
         ctx.beginPath();
         this.poly.forEach(point => {
-            ctx.lineTo(point[0]-this.x, point[1]-this.y);
+            ctx.lineTo(point[0] - this.x, point[1] - this.y);
         });
         ctx.closePath();
 
@@ -90,18 +93,25 @@ class Tile {
             ctx.fillStyle = "rgba(250,250,250,0.9)";
         } else if (this.data.type == "PRODUCER") {
             ctx.fillStyle = "#0099ff";
-        } else if(this.data.resourcePheromones) {
+        } else if (this.data.resourcePheromones) {
             var fillGrade = this.data.resourcePheromones.resource / 500;
             ctx.fillStyle = "rgba(0,50,250," + fillGrade + ")";
         }
         ctx.fill();
+
+
+
+    }
+
+    buildableForCurrentPlayer() {
+        return this.type === "FREE" && this.data.highestPheromonePlayer && this.data.highestPheromonePlayer.name == player.name;
     }
 
     renderText(ctx) {
         ctx.save();
         ctx.translate(hexRadius, hexRectangleHeight / 2);
         ctx.globalAlpha = 0.7;
-        if(this.data.health != undefined){
+        if (this.data.health != undefined) {
             var healthLeftPercent = this.data.health / this.data.MAX_HEALTH;
             ctx.scale(healthLeftPercent, healthLeftPercent);
         }
