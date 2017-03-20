@@ -103,7 +103,6 @@ function connect() {
 }
 
 function send(obj) {
-    console.log(JSON.stringify(obj));
     socket.send(JSON.stringify(obj));
 }
 

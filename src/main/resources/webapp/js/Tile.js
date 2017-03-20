@@ -60,10 +60,10 @@ class Tile {
             bg = hexToRGBA(color, o);
         }
 
-        if(this.hover && this.buildMode()){
-            ctx.fillStyle = this.buildableForCurrentPlayer() ? "rgba(100,250,0,0.6)" : "rgba(250,50,0,0.6)";
-        }else if (this.hover && this.buildableForCurrentPlayer()) {
-                ctx.fillStyle = "yellow";
+        if (this.hover && this.buildableForCurrentPlayer()) {
+            ctx.fillStyle = "yellow";
+        } else if(this.buildMode()){
+            ctx.fillStyle = this.buildableForCurrentPlayer() ? "rgba(100,250,0,0.6)" : bg;
         } else {
             ctx.fillStyle = bg;
         }
@@ -101,8 +101,8 @@ class Tile {
         }
         ctx.fill();
 
-        if(this.buildMode()) {
-            ctx.fillStyle = this.buildableForCurrentPlayer() ? "rgba(100,250,0,0.15)" : "rgba(250,50,0,0.15)";
+        if(this.buildMode() && this.buildableForCurrentPlayer()) {
+            ctx.fillStyle = "rgba(100,250,0,0.15)";
             ctx.fill();
         }
 

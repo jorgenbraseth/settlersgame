@@ -49,7 +49,6 @@ class GameScreen {
             var containingShape = this.tiles.filter(e => e.containsPoint(this.mouseX, this.mouseY));
             if (containingShape.length >= 1) {
                 var clickedShape = containingShape[0];
-                console.log(this.buildMode);
                 if(this.buildMode){
                     send({
                         type: "BUILD",
