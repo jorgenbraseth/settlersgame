@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import no.porqpine.settlersgame.Game;
 import no.porqpine.settlersgame.api.messages.MessageType;
 import no.porqpine.settlersgame.exceptions.InvalidObjectID;
-import no.porqpine.settlersgame.state.tiles.*;
+import no.porqpine.settlersgame.state.maps.Map;
+import no.porqpine.settlersgame.state.tiles.HomeTile;
+import no.porqpine.settlersgame.state.tiles.OwnedTile;
+import no.porqpine.settlersgame.state.tiles.Tile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,69 +24,23 @@ public class GameState {
 
     private static Random rnd = new Random();
     private final Game game;
+    private final Map initialMap;
 
     private Tile[][] tiles = new Tile[WIDTH][HEIGHT];
     public List<Player> players = new ArrayList<>();
     public MessageType type = GAME_STATE;
-    public int currentRoll;
 
     public GameState(Game game) {
         this.game = game;
-        createMap();
+        initialMap = new Map();
+        tiles = initialMap.getTiles();
     }
 
-    private void createMap() {
-        //Create tiles
-        for (int x = 0; x < WIDTH; x++) {
-            for (int y = 0; y < HEIGHT; y++) {
-
-                Tile newTile = new FreeTile(x, y);
-                if (Math.random() < 0.01) {
-                    newTile = new ProducerTile(x, y);
-                }
-                tiles[x][y] = newTile;
-            }
-        }
-
-        for (int x = 0; x < WIDTH; x++) {
-            for (int y = 0; y < HEIGHT; y++) {
-                Tile currentTile = tiles[x][y];
-                if (x > 0) {
-                    currentTile.addNeighbour(tiles[x - 1][y]);
-                }
-                if (x < WIDTH - 1) {
-                    currentTile.addNeighbour(tiles[x + 1][y]);
-                }
-
-                if (y > 0) {
-                    currentTile.addNeighbour(tiles[x][y - 1]);
-                }
-                if (y < HEIGHT - 1) {
-                    currentTile.addNeighbour(tiles[x][y + 1]);
-                }
-
-                if (y % 2 == 0 && x > 0) { //Partallsrader, samme og -1
-                    if (y > 0) {
-                        currentTile.addNeighbour(tiles[x - 1][y - 1]);
-                    }
-                    if (y < HEIGHT - 1) {
-                        currentTile.addNeighbour(tiles[x - 1][y + 1]);
-                    }
-                }
-                if (y % 2 == 1 && x < WIDTH - 1) {  //Oddetallsrader, samme og +1
-                    if (y > 0) {
-                        currentTile.addNeighbour(tiles[x + 1][y - 1]);
-                    }
-                    if (y < HEIGHT - 1) {
-                        currentTile.addNeighbour(tiles[x + 1][y + 1]);
-                    }
-                }
-
-            }
-        }
-
-        //TODO: wrap around?
-
+    public Tile getFreeStartTile() {
+        return initialMap.getStartTilesPositions().stream()
+                .map(coord -> tiles[coord.x][coord.y])
+                .filter(tile -> tile.getType().equals("FREE"))
+                .findAny().orElse(null);
     }
 
     public List<Tile> getTiles() {
@@ -96,10 +53,6 @@ public class GameState {
         return allObjects.stream().filter(tile -> tile.id == id).findFirst().orElseThrow(() -> new InvalidObjectID(id));
     }
 
-    public void roll() {
-        this.currentRoll = rnd.nextInt(6) + rnd.nextInt(6);
-    }
-
     private void replaceTile(Tile tile, Tile newTile) {
         Tile oldTile = tile;
         oldTile.neighbours.forEach(n -> {
@@ -110,12 +63,12 @@ public class GameState {
     }
 
     public void build(Tile newTile) {
-        if(newTile instanceof OwnedTile){
+        if (newTile instanceof OwnedTile) {
             OwnedTile ownedTile = (OwnedTile) newTile;
             Player owner = ownedTile.owner;
             long costOfTile = ownedTile.cost();
             if (owner.canAfford(costOfTile)) {
-                owner.addResource("resource",-costOfTile);
+                owner.addResource("resource", -costOfTile);
             } else {
                 return;
             }
@@ -128,12 +81,10 @@ public class GameState {
     }
 
     public void addPlayer(Player player) {
-        players.add(player);
-        Tile tile = tiles[(int) (Math.random() * WIDTH)][(int) (Math.random() * HEIGHT)];
-        while (tile instanceof OwnedTile) {
-            tile = tiles[(int) (Math.random() * WIDTH)][(int) (Math.random() * HEIGHT)];
+        Tile startTile = getFreeStartTile();
+        if(startTile != null){
+            players.add(player);
+            replaceTile(startTile, new HomeTile(startTile.x, startTile.y, player, game));
         }
-
-        replaceTile(tile, new HomeTile(tile.x, tile.y, player, game));
     }
 }

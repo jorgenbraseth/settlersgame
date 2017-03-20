@@ -62,10 +62,9 @@ public class Game {
     }
 
     public void tick() {
-        state.roll();
-        state.getTiles().forEach(tile -> tile.diffuse());
-        state.getTiles().forEach(tile -> tile.degrade());
-        state.getTiles().forEach(tile -> tile.calculateNewPheromoneAmounts());
+        state.getTiles().forEach(Tile::diffuse);
+        state.getTiles().forEach(Tile::degrade);
+        state.getTiles().forEach(Tile::calculateNewPheromoneAmounts);
         state.getTiles().forEach(tile -> tile.tick(1));
     }
 
