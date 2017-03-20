@@ -32,7 +32,7 @@ class GameScreen {
     
     setMessage(message){
         this.message = message;
-        this.player = message.players[this.playerName];
+        this.player = message.players.filter(player => player.name == playerName)[0];
         this.tiles = message.tiles.map(t=> new Tile(t, () => {return this.buildMode}, this.playerName, this));
     }
 
