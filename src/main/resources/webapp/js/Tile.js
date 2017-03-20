@@ -62,8 +62,8 @@ class Tile {
 
         if (this.hover && this.buildableForCurrentPlayer()) {
             ctx.fillStyle = "yellow";
-        } else if (this.buildMode() && this.buildableForCurrentPlayer()) {
-            ctx.fillStyle = `rgba(100,250,0,0.6)`;
+        } else if (this.buildMode()) {
+            ctx.fillStyle = this.buildableForCurrentPlayer() ? `rgba(100,250,0,0.6)` : `rgba(250,0,0,0.1)`;
         } else {
             ctx.fillStyle = bg;
         }
@@ -147,7 +147,7 @@ class Tile {
             ctx.translate(hexRadius, hexRectangleHeight / 2);
             ctx.font = `${TILE_SIZE * 0.8}pt FontAwesome`;
             ctx.fillStyle = this.gameScreen.player.color;
-            var icon = TILE_ICONS[this.buildMode()];
+            icon = TILE_ICONS[this.buildMode()];
             ctx.fillText(icon, -ctx.measureText(icon).width / 2, TILE_SIZE * 0.8 / 2);
             ctx.restore();
         }
