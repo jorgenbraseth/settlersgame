@@ -1,27 +1,23 @@
-// var ZOOM = 1;
-
 var game;
 var gameControls;
 var gameScreen;
 var currentGame;
 var socket;
-var mouseX, mouseY;
 var message;
 var gameState;
-var player;
-var rendering = false;
-var playerOverlay = new PlayerOverlay();
+var playerName;
+var gameRendering = false;
+var playerOverlay;
 var buildMode = null;
 
 
-function render(playerOverlayScreen) {
+function render() {
     if (gameState) {
-        playerOverlayScreen.clearRect(0, 0, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS);
-        playerOverlay.render(playerOverlayScreen, gameState.players);
+        playerOverlay.render();
         gameScreen.render();
         gameControls.render();
     }
-    requestAnimationFrame(()=>render(playerOverlayScreen));
+    requestAnimationFrame(()=>render());
 }
 
 function gameListReceived(message) {
@@ -81,10 +77,11 @@ function connect() {
                 case "GAME_STATE":
                     gameState = message;
                     gameScreen.setMessage(message);
-                    // tiles = message.tiles.map(t=> new Tile(t, () => {return buildMode}));
-                    if (!rendering) {
-                        render(playerOverlayScreen());
-                        rendering = true;
+                    playerOverlay.setPlayers(message.players);
+                    gameControls.setPlayerInfo(message.players.filter(player => player.name == playerName)[0]);
+                    if (!gameRendering) {
+                        render();
+                        gameRendering = true;
                     }
                     break;
                 case "CHAT":
@@ -106,7 +103,7 @@ function connect() {
         connect();
         joinGame(currentGame);
     }, 500);
-};
+}
 
 function send(obj) {
     socket.send(JSON.stringify(obj));
@@ -126,10 +123,13 @@ function chatMessageReceived(msg) {
 }
 
 var joinGame = function (gameName) {
-    var playerName = document.getElementById('playerName').value;
+    playerName = document.getElementById('playerName').value;
+
+    gameScreen.playerName = playerName;
+    gameScreen.gameId = gameName;
     var color = document.querySelector('input[name = "playerColor"]:checked').value;
     currentGame = gameName;
-    player = {
+    var player = {
         name: playerName,
         color: color
     };
@@ -147,11 +147,6 @@ function createGameClicked(e) {
     joinGame(currentGame);
 }
 
-function playerOverlayScreen() {
-    var canvas = document.getElementById('playerInfoOverlay');
-    return canvas.getContext("2d");
-}
-
 function start() {
 
     document.querySelectorAll("#gameScreenFrame canvas").forEach(canvasElm => {
@@ -159,11 +154,13 @@ function start() {
         canvasElm.setAttribute("height", SCREEN_HEIGHT_PIXELS);
     });
 
+    playerOverlay = new PlayerOverlay(document.getElementById('playerInfoOverlay'));
 
     var createGameButton = document.getElementById('createGameButton');
     createGameButton.onclick = createGameClicked;
     var gameScreenCanvas = document.getElementById('gameScreen');
-    gameScreen = new GameScreen(gameScreenCanvas, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS, MAP_WIDTH_TILES, MAP_HEIGHT_TILES);
+
+    gameScreen = new GameScreen(gameScreenCanvas, currentGame, playerName, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS, MAP_WIDTH_TILES, MAP_HEIGHT_TILES);
 
     document.onkeydown = (e) => {
         switch (e.key) {
@@ -189,7 +186,7 @@ function start() {
             if (messageText !== "") {
                 send({
                     type: "CHAT",
-                    playerName: player.name,
+                    playerName: playerName,
                     message: messageText,
                     gameId: currentGame
                 });
@@ -200,7 +197,7 @@ function start() {
     };
 
 
-    gameControls = new GameControls(document.getElementById('gameControls'), gameScreenCanvas);
+    gameControls = new GameControls(document.getElementById('gameControls'), gameScreenCanvas, playerName);
     gameControls.chooseBuildMode = (mode) => {
         console.log(`Changing mode to ${mode}`);
         buildMode = mode

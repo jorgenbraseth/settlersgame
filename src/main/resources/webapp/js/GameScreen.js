@@ -8,7 +8,7 @@ var hexRectangleWidth = 2 * hexRadius;
 
 class GameScreen {
 
-    constructor(canvas, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS, MAP_WIDTH_TILES, MAP_HEIGHT_TILES) {
+    constructor(canvas, gameId, playerName, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS, MAP_WIDTH_TILES, MAP_HEIGHT_TILES) {
         this.canvas = canvas;
         this.panX = 0;
         this.panY = 0;
@@ -19,13 +19,15 @@ class GameScreen {
         this.SCREEN_WIDTH_PIXELS = SCREEN_WIDTH_PIXELS;
         this.MAP_WIDTH_TILES = MAP_WIDTH_TILES;
         this.MAP_HEIGHT_TILES = MAP_HEIGHT_TILES;
+        this.playerName = playerName;
+        this.gameId = gameId;
         this.bindMouseEvents(canvas);
-
     }
     
     setMessage(message){
         this.message = message;
-        this.tiles = message.tiles.map(t=> new Tile(t, () => {return buildMode}));
+        this.tiles = message.tiles.map(t=> new Tile(t, () => {return buildMode}, this.playerName));
+        this.player = message.players[this.playerName];
     }
 
     bindMouseEvents(canvas) {
@@ -48,8 +50,8 @@ class GameScreen {
                     type: "SHAPE_RIGHT_CLICKED",
                     id: clickedShape.data.id,
                     coords: [clickedShape.data.x, clickedShape.data.y],
-                    playerName: player.name,
-                    gameId: currentGame
+                    playerName: this.playerName,
+                    gameId: this.gameId
                 })
             }
         };
@@ -61,8 +63,8 @@ class GameScreen {
                     type: "SHAPE_CLICKED",
                     id: clickedShape.data.id,
                     coords: [clickedShape.data.x, clickedShape.data.y],
-                    playerName: player.name,
-                    gameId: currentGame
+                    playerName: this.playerName,
+                    gameId: this.gameId
                 })
             }
         };
@@ -114,7 +116,7 @@ class GameScreen {
                 .forEach(shape => shape.mouseIsOver());
 
             this.tiles.forEach((t)=> {
-                t.render(ctx, player);
+                t.render(ctx);
             });
             ctx.restore();
         }

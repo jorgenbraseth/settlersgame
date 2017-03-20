@@ -9,7 +9,8 @@ var hexRectangleWidth = 2 * hexRadius;
 
 class Tile {
 
-    constructor(data, buildMode) {
+    constructor(data, buildMode, playerName) {
+        this.playerName = playerName;
         this.buildMode = buildMode;
         this.id = data.id;
         this.x = data.x * hexRectangleWidth + (data.y % 2 * hexRadius);
@@ -41,11 +42,11 @@ class Tile {
         this.hover = false;
     }
 
-    render(ctx, player) {
+    render(ctx) {
         ctx.save();
         ctx.translate(this.x, this.y);
         this.renderBorder(ctx);
-        this.renderFill(ctx, player);
+        this.renderFill(ctx);
         this.renderText(ctx);
 
         ctx.restore();
@@ -110,7 +111,7 @@ class Tile {
     }
 
     buildableForCurrentPlayer() {
-        return this.type === "FREE" && this.data.highestPheromonePlayer && this.data.highestPheromonePlayer.name == player.name;
+        return this.type === "FREE" && this.data.highestPheromonePlayer && this.data.highestPheromonePlayer.name == this.playerName;
     }
 
     renderText(ctx) {

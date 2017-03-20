@@ -1,5 +1,6 @@
 class GameControls {
-    constructor(canvas, gameScreen) {
+    constructor(canvas, gameScreen, playerName) {
+        this.playerName = playerName;
         this.canvas = canvas;
         this.ctx = this.canvas.getContext("2d");
         this.forwardAllMouseEventsToElement(gameScreen);
@@ -42,6 +43,7 @@ class GameControls {
             ]
         }
     }
+
 
     chooseBuildMode(mode){
         //overwritten by external for now. TODO: move GameView into its own class and make these to communicate.
@@ -118,9 +120,12 @@ class GameControls {
 
     }
 
+    setPlayerInfo(playerInfo){
+        this.playerInfo = playerInfo;
+    }
+
     renderBackground(ctx) {
         ctx.save();
-
 
         ctx.beginPath();
         this.polys.BACKGROUND.forEach(point => {
@@ -128,10 +133,10 @@ class GameControls {
         });
         ctx.closePath();
 
-        ctx.fillStyle = hexToRGBA(player.color, 0.3);
+        ctx.fillStyle = hexToRGBA(this.playerInfo.color, 0.3);
         ctx.fill();
 
-        ctx.strokeStyle = player.color;
+        ctx.strokeStyle = this.playerInfo.color;
         ctx.stroke();
         ctx.restore();
     }
@@ -151,7 +156,7 @@ class GameControls {
         ctx.fillStyle = "black";
         ctx.fill();
 
-        ctx.fillStyle = this.hoverOnButton == button ? player.color : hexToRGBA(player.color, 0.4);
+        ctx.fillStyle = this.hoverOnButton == button ? this.playerInfo.color : hexToRGBA(this.playerInfo.color, 0.4);
 
         ctx.fill();
 

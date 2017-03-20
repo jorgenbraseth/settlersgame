@@ -164,6 +164,7 @@ public abstract class Tile extends GameObject {
         return "Tile{" +
                 "x=" + x +
                 ", y=" + y +
+                ", id=" + id +
                 '}';
     }
 }
