@@ -1,47 +1,27 @@
-var ZOOM = 1;
+// var ZOOM = 1;
 
+var game;
 var gameControls;
+var gameScreen;
 var currentGame;
-var panX = 0;
-var panY = 0;
 var socket;
 var mouseX, mouseY;
 var message;
 var gameState;
-var tiles;
 var player;
 var rendering = false;
 var playerOverlay = new PlayerOverlay();
 var buildMode = null;
 
 
-var renderTiles = function (context) {
-    tiles.forEach((t)=> {
-        t.render(context, player);
-    });
-};
-function render(gameScreen, playerOverlayScreen) {
+function render(playerOverlayScreen) {
     if (gameState) {
-        gameScreen.fillStyle = "#ffffff";
-        gameScreen.fillStyle = "#090909";
-        gameScreen.fillRect(0, 0, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS);
-        gameScreen.save();
-        gameScreen.scale(ZOOM, ZOOM);
-        gameScreen.translate(-panX, -panY);
-
-        tiles.filter(e => e.containsPoint(mouseX, mouseY))
-            .forEach(shape => shape.mouseIsOver());
-
-        renderTiles(gameScreen);
-        gameScreen.restore();
-
         playerOverlayScreen.clearRect(0, 0, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS);
         playerOverlay.render(playerOverlayScreen, gameState.players);
-
+        gameScreen.render();
         gameControls.render();
     }
-    requestAnimationFrame(()=>render(gameScreen, playerOverlayScreen));
-
+    requestAnimationFrame(()=>render(playerOverlayScreen));
 }
 
 function gameListReceived(message) {
@@ -100,9 +80,10 @@ function connect() {
             switch (message.type) {
                 case "GAME_STATE":
                     gameState = message;
-                    tiles = message.tiles.map(t=> new Tile(t, () => {return buildMode}));
+                    gameScreen.setMessage(message);
+                    // tiles = message.tiles.map(t=> new Tile(t, () => {return buildMode}));
                     if (!rendering) {
-                        render(gameScreen(), playerOverlayScreen());
+                        render(playerOverlayScreen());
                         rendering = true;
                     }
                     break;
@@ -145,7 +126,6 @@ function chatMessageReceived(msg) {
 }
 
 var joinGame = function (gameName) {
-    console.log(gameName);
     var playerName = document.getElementById('playerName').value;
     var color = document.querySelector('input[name = "playerColor"]:checked').value;
     currentGame = gameName;
@@ -167,31 +147,9 @@ function createGameClicked(e) {
     joinGame(currentGame);
 }
 
-function gameScreen() {
-    var canvas = document.getElementById('gameScreen');
-    return canvas.getContext("2d");
-}
 function playerOverlayScreen() {
     var canvas = document.getElementById('playerInfoOverlay');
     return canvas.getContext("2d");
-}
-
-function panUp() {
-    panY = Math.max(0, panY - (hexHeight + sideLength) / 2);
-
-}
-function panLeft() {
-    panX = Math.max(0, panX - hexRectangleWidth / 2);
-
-}
-function panDown() {
-    var maxDownPan = Math.max(0, MAP_HEIGHT_TILES * (hexHeight + sideLength) + hexHeight - SCREEN_HEIGHT_PIXELS / ZOOM);
-    panY = Math.min(maxDownPan, panY + (hexHeight + sideLength) / 2);
-}
-function panRight() {
-    var maxRightPan = Math.max(0, (MAP_WIDTH_TILES + 0.5) * hexRectangleWidth - SCREEN_WIDTH_PIXELS / ZOOM);
-    panX = Math.min(maxRightPan, panX + hexRectangleWidth / 2);
-
 }
 
 function start() {
@@ -204,68 +162,22 @@ function start() {
 
     var createGameButton = document.getElementById('createGameButton');
     createGameButton.onclick = createGameClicked;
-    var gameScreen = document.getElementById('gameScreen');
-    gameScreen.onmousemove = (e) => {
-        if (message) {
-            var x = e.offsetX;
-            var y = e.offsetY;
-
-            mouseX = (x / ZOOM) + panX;
-            mouseY = (y / ZOOM) + panY;
-        }
-    };
-
-    gameScreen.oncontextmenu = (e) => {
-        e.preventDefault();
-        var containingShape = tiles.filter(e => e.containsPoint(mouseX, mouseY));
-        if (containingShape.length >= 1) {
-            var clickedShape = containingShape[0];
-            send({
-                type: "SHAPE_RIGHT_CLICKED",
-                id: clickedShape.data.id,
-                coords: [clickedShape.data.x, clickedShape.data.y],
-                playerName: player.name,
-                gameId: currentGame
-            })
-        }
-    };
-    gameScreen.onclick = (e) => {
-        var containingShape = tiles.filter(e => e.containsPoint(mouseX, mouseY));
-        if (containingShape.length >= 1) {
-            var clickedShape = containingShape[0];
-            send({
-                type: "SHAPE_CLICKED",
-                id: clickedShape.data.id,
-                coords: [clickedShape.data.x, clickedShape.data.y],
-                playerName: player.name,
-                gameId: currentGame
-            })
-        }
-    };
-
-    gameScreen.onmousewheel = (e)=> {
-        var zoomIn = e.deltaY < 0;
-
-        if (zoomIn) {
-            ZOOM = Math.min(2, ZOOM + 0.1);
-        } else {
-            ZOOM = Math.max(0.5, ZOOM - 0.1);
-        }
-    };
+    var gameScreenCanvas = document.getElementById('gameScreen');
+    gameScreen = new GameScreen(gameScreenCanvas, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS, MAP_WIDTH_TILES, MAP_HEIGHT_TILES);
 
     document.onkeydown = (e) => {
         switch (e.key) {
             case 'w':
-                panUp();
+                gameScreen.panUp();
                 break;
             case 'a':
-                panLeft();
+                gameScreen.panLeft();
                 break;
             case 's':
-                panDown();
+                gameScreen.panDown();
                 break;
             case 'd':
-                panRight();
+                gameScreen.panRight();
                 break;
         }
     };
@@ -288,11 +200,13 @@ function start() {
     };
 
 
-    gameControls = new GameControls(document.getElementById('gameControls'), gameScreen);
+    gameControls = new GameControls(document.getElementById('gameControls'), gameScreenCanvas);
     gameControls.chooseBuildMode = (mode) => {
         console.log(`Changing mode to ${mode}`);
         buildMode = mode
     };
+
+    game = new Game();
 
     connect();
 }
