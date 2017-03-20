@@ -42,6 +42,7 @@ class GameScreen {
 
     bindMouseEvents(canvas) {
         canvas.onmousemove = (e) => {
+            canvas.focus();
             if (this.message) {
                 var x = e.offsetX;
                 var y = e.offsetY;
@@ -79,11 +80,11 @@ class GameScreen {
     }
 
     panUp() {
-        this.panY = Math.max(0, this.panY - (hexHeight + sideLength) / 2);
+        this.panY = Math.max(-50, this.panY - (hexHeight + sideLength) / 2);
     }
 
     panLeft() {
-        this.panX = Math.max(0, this.panX - hexRectangleWidth / 2);
+        this.panX = Math.max(-50, this.panX - hexRectangleWidth / 2);
     }
 
     panDown() {

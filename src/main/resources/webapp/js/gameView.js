@@ -139,6 +139,8 @@ var joinGame = function (gameName) {
     joinForm.parentNode.removeChild(joinForm);
 
     document.getElementById("game").style.display = "flex";
+    document.getElementById("gameScreenFrame").focus();
+
 };
 function createGameClicked(e) {
     e.preventDefault();
@@ -146,6 +148,16 @@ function createGameClicked(e) {
     joinGame(currentGame);
 }
 
+function displayChatInput() {
+    var chatInput = document.getElementById("chatInput");
+    chatInput.style.display = 'block';
+    chatInput.focus();
+    console.log("chat on");
+}
+function hideChatInput() {
+    chatInput.style.display = 'none';
+    document.getElementById("gameScreenFrame").focus();
+}
 function start() {
 
     document.querySelectorAll("#gameScreenFrame canvas").forEach(canvasElm => {
@@ -160,8 +172,8 @@ function start() {
     var gameScreenCanvas = document.getElementById('gameScreen');
 
     gameScreen = new GameScreen(gameScreenCanvas, currentGame, playerName, SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS, MAP_WIDTH_TILES, MAP_HEIGHT_TILES);
-
-    document.onkeydown = (e) => {
+    var gameScreenFrame = document.getElementById("gameScreenFrame");
+    gameScreenFrame.onkeydown = (e) => {
         switch (e.key) {
             case 'w':
                 gameScreen.panningUp = true;
@@ -175,10 +187,13 @@ function start() {
             case 'd':
                 gameScreen.panningRight = true;
                 break;
+            case 'Enter':
+                displayChatInput();
+                break;
         }
     };
 
-    document.onkeyup = (e) => {
+    gameScreenFrame.onkeyup = (e) => {
         switch (e.key) {
             case 'w':
                 gameScreen.panningUp = false;
@@ -209,6 +224,7 @@ function start() {
             }
 
             chatInput.value = "";
+            hideChatInput();
         }
     };
 
