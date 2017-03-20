@@ -63,8 +63,6 @@ class Tile {
 
         if (this.hover && this.buildableForCurrentPlayer()) {
             ctx.fillStyle = "yellow";
-        } else if (this.buildMode()) {
-            ctx.fillStyle = this.buildableForCurrentPlayer() ? "rgba(100,250,0,0.6)" : bg;
         } else {
             ctx.fillStyle = bg;
         }
@@ -81,7 +79,7 @@ class Tile {
     renderFill(ctx) {
         ctx.save();
         ctx.translate(hexRadius, hexRectangleHeight / 2);
-        ctx.scale(0.9, 0.9);
+        ctx.scale(0.95, 0.95);
         ctx.translate(-hexRadius, -hexRectangleHeight / 2);
         ctx.beginPath();
         this.poly.forEach(point => {
@@ -104,7 +102,7 @@ class Tile {
         ctx.fill();
 
         if (this.buildMode() && this.buildableForCurrentPlayer()) {
-            ctx.fillStyle = "rgba(100,250,0,0.15)";
+            ctx.fillStyle = "rgba(100,250,0,0.1)";
             ctx.fill();
         }
 
