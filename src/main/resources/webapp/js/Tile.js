@@ -77,6 +77,7 @@ class Tile {
     }
 
     renderFill(ctx) {
+        ctx.save();
         ctx.translate(hexRadius, hexRectangleHeight / 2);
         ctx.scale(0.9, 0.9);
         ctx.translate(-hexRadius, -hexRectangleHeight / 2);
@@ -99,7 +100,12 @@ class Tile {
         }
         ctx.fill();
 
+        if(this.buildMode()) {
+            ctx.fillStyle = this.buildableForCurrentPlayer() ? "rgba(100,250,0,0.15)" : "rgba(250,50,0,0.15)";
+            ctx.fill();
+        }
 
+        ctx.restore();
 
     }
 
