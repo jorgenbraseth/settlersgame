@@ -26,8 +26,12 @@ class GameScreen {
     
     setMessage(message){
         this.message = message;
-        this.tiles = message.tiles.map(t=> new Tile(t, () => {return buildMode}, this.playerName));
+        this.tiles = message.tiles.map(t=> new Tile(t, () => {return this.buildMode}, this.playerName));
         this.player = message.players[this.playerName];
+    }
+
+    setBuildMode(mode){
+        this.buildMode = mode;
     }
 
     bindMouseEvents(canvas) {
@@ -41,31 +45,20 @@ class GameScreen {
             }
         };
 
-        canvas.oncontextmenu = (e) => {
-            e.preventDefault();
-            var containingShape = this.tiles.filter(e => e.containsPoint(this.mouseX, this.mouseY));
-            if (containingShape.length >= 1) {
-                var clickedShape = containingShape[0];
-                send({
-                    type: "SHAPE_RIGHT_CLICKED",
-                    id: clickedShape.data.id,
-                    coords: [clickedShape.data.x, clickedShape.data.y],
-                    playerName: this.playerName,
-                    gameId: this.gameId
-                })
-            }
-        };
         canvas.onclick = (e) => {
             var containingShape = this.tiles.filter(e => e.containsPoint(this.mouseX, this.mouseY));
             if (containingShape.length >= 1) {
                 var clickedShape = containingShape[0];
-                send({
-                    type: "SHAPE_CLICKED",
-                    id: clickedShape.data.id,
-                    coords: [clickedShape.data.x, clickedShape.data.y],
-                    playerName: this.playerName,
-                    gameId: this.gameId
-                })
+                console.log(this.buildMode);
+                if(this.buildMode){
+                    send({
+                        type: "BUILD",
+                        tileToBuild: this.buildMode,
+                        buildOnTileId: clickedShape.data.id,
+                        playerName: this.playerName,
+                        gameId: this.gameId
+                    });
+                }
             }
         };
 

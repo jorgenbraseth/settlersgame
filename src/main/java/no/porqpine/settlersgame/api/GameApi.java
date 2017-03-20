@@ -36,14 +36,6 @@ public class GameApi extends WebSocketAdapter {
             log.info("Got message: {}", message);
             Game game;
             switch (metadata.type) {
-                case SHAPE_CLICKED:
-                    game = GAME_LIST.getOrCreateGame(metadata.gameId);
-                    handleLeftClick(message, game);
-                    break;
-                case SHAPE_RIGHT_CLICKED:
-                    game = GAME_LIST.getOrCreateGame(metadata.gameId);
-                    handleRightClick(message, game);
-                    break;
                 case CREATE_GAME:
                     handleCreateGame();
                     break;
@@ -52,12 +44,18 @@ public class GameApi extends WebSocketAdapter {
                     handleJoinGame(message, game);
                     break;
                 case CHAT:
-                    game = GAME_LIST.getOrCreateGame(metadata.gameId);
+                    game = GAME_LIST.getGame(metadata.gameId);
                     handleChatMessage(message, game);
                     break;
                 case LIST_GAMES:
                     handleListGames();
                     break;
+                case BUILD:
+                    game = GAME_LIST.getGame(metadata.gameId);
+                    handleBuild(message, game);
+                    break;
+                default:
+                    log.error("Unhandled message type received: {}", metadata.type);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,18 +63,13 @@ public class GameApi extends WebSocketAdapter {
 
     }
 
+    private void handleBuild(String message, Game game) throws IOException {
+        Build build = OBJECT_MAPPER.readValue(message, Build.class);
+        game.build(build);
+    }
+
     private void handleListGames() throws IOException {
         getSession().getRemote().sendString(OBJECT_MAPPER.writeValueAsString(new GameList(GAME_LIST.games())));
-    }
-
-    private void handleLeftClick(String message, Game game) throws IOException {
-        ShapeClicked shapeClicked = OBJECT_MAPPER.readValue(message, ShapeClicked.class);
-        game.shapeClicked(shapeClicked);
-    }
-
-    private void handleRightClick(String message, Game game) throws IOException {
-        ShapeRightClicked shapeRightClicked = OBJECT_MAPPER.readValue(message, ShapeRightClicked.class);
-        game.shapeRightClicked(shapeRightClicked);
     }
 
     private void handleCreateGame() throws IOException {

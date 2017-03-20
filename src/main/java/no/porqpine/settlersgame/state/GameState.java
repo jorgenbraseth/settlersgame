@@ -38,7 +38,7 @@ public class GameState {
             for (int y = 0; y < HEIGHT; y++) {
 
                 Tile newTile = new FreeTile(x, y);
-                if (Math.random() < 0.02) {
+                if (Math.random() < 0.01) {
                     newTile = new ProducerTile(x, y);
                 }
                 tiles[x][y] = newTile;

@@ -4,9 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import no.porqpine.settlersgame.api.messages.ShapeClicked;
-import no.porqpine.settlersgame.api.messages.ShapeRightClicked;
-import no.porqpine.settlersgame.exceptions.InvalidObjectID;
+import no.porqpine.settlersgame.api.messages.Build;
 import no.porqpine.settlersgame.state.GameState;
 import no.porqpine.settlersgame.state.Player;
 import no.porqpine.settlersgame.state.tiles.*;
@@ -18,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class Game {
@@ -132,60 +131,26 @@ public class Game {
 
     }
 
-    public void shapeRightClicked(ShapeRightClicked event) {
-        try {
-            Tile clickedTile = (Tile) state.find(event.id);
-            int x = event.coords[0];
-            int y = event.coords[1];
-            Player player = findPlayer(event.playerName);
+    public void build(Build buildCommand) {
+        Tile clickedTile = (Tile) state.find(buildCommand.buildOnTileId);
+        Player player = findPlayer(buildCommand.playerName);
+        boolean playerHasHighestPheromoneOnTile = clickedTile.getHighestPheromonePlayer() == player;
+        boolean isClickedTileFree = Objects.equals(clickedTile.getType(), "FREE");
 
-            Player highestPheromonePlayer = clickedTile.getHighestPheromonePlayer();
-            if (highestPheromonePlayer == player || clickedTile instanceof OwnedTile && (((OwnedTile) clickedTile).owner == player)) {
-                switch (clickedTile.getType()) {
-                    case "BLOCKER":
-                        if (((OwnedTile) clickedTile).owner == player) {
-                            state.build(new FreeTile(x, y));
-                        }
-                        break;
-                    case "FREE":
-                        state.build(new BlockerTile(x, y, player, this));
-                        break;
-                }
+        if (playerHasHighestPheromoneOnTile && isClickedTileFree) {
+            switch (buildCommand.tileToBuild) {
+                case "SIPHON":
+                    state.build(new SiphonTile(clickedTile.x, clickedTile.y, player, this));
+                    break;
+                case "RELAY":
+                    state.build(new RelayTile(clickedTile.x, clickedTile.y, player, this));
+                    break;
+                case "WALL":
+                    state.build(new BlockerTile(clickedTile.x, clickedTile.y, player, this));
+                    break;
             }
-        } catch (InvalidObjectID e) {
-            log.error("Invalid id, probably old state on client side.",e);
         }
-    }
 
-    public void shapeClicked(ShapeClicked event) {
-        try {
-            Tile clickedTile = (Tile) state.find(event.id);
-            log.debug(clickedTile.toString());
-            int x = event.coords[0];
-            int y = event.coords[1];
-            Player player = findPlayer(event.playerName);
-
-            Player highestPheromonePlayer = clickedTile.getHighestPheromonePlayer();
-            if (highestPheromonePlayer == player) {
-                switch (clickedTile.getType()) {
-                    case "FREE":
-                        state.build(new SiphonTile(x, y, player, this));
-                        break;
-                    case "SIPHON":
-                        if (((OwnedTile) clickedTile).owner == player) {
-                            state.build(new RelayTile(x, y, player, this));
-                        }
-                        break;
-                    case "OWNERSHIP_SPREADER":
-                        if (((OwnedTile) clickedTile).owner == player) {
-                            state.build(new FreeTile(x, y));
-                        }
-                        break;
-                }
-            }
-        } catch (InvalidObjectID e) {
-            log.error("Invalid id, probably old state on client side.",e);
-        }
     }
 
     public Player findPlayer(String playerName) {

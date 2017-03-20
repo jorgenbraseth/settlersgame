@@ -9,5 +9,6 @@ public enum MessageType {
     JOIN_GAME,
     CHAT,
     LIST_GAMES,
-    GAME_LIST
+    GAME_LIST,
+    BUILD
 }

@@ -1,13 +1,13 @@
 package no.porqpine.settlersgame.api.messages;
 
-public class ShapeClicked extends GameMessage {
+public class Build extends GameMessage {
 
-    public int id;
-    public int[] coords;
+    public String tileToBuild;
+    public int buildOnTileId;
     public String playerName;
 
     @Override
     public MessageType getType() {
-        return MessageType.SHAPE_CLICKED;
+        return MessageType.BUILD;
     }
 }

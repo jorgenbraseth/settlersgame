@@ -8,8 +8,6 @@ var gameState;
 var playerName;
 var gameRendering = false;
 var playerOverlay;
-var buildMode = null;
-
 
 function render() {
     if (gameState) {
@@ -31,7 +29,6 @@ function gameListReceived(message) {
 }
 
 function gameInfoDomElement(gameInfo) {
-    var players = "";
     var elm = document.createElement("li");
     var infoElm = document.createElement("div");
     infoElm.style.flex = 1;
@@ -106,6 +103,7 @@ function connect() {
 }
 
 function send(obj) {
+    console.log(JSON.stringify(obj));
     socket.send(JSON.stringify(obj));
 }
 
@@ -200,7 +198,7 @@ function start() {
     gameControls = new GameControls(document.getElementById('gameControls'), gameScreenCanvas, playerName);
     gameControls.chooseBuildMode = (mode) => {
         console.log(`Changing mode to ${mode}`);
-        buildMode = mode
+        gameScreen.setBuildMode(mode);
     };
 
     game = new Game();

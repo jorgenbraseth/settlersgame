@@ -70,7 +70,6 @@ class GameControls {
         this.canvas.oncontextmenu = (e) => {
             e.preventDefault();
             this.chooseBuildMode(null);
-
         };
 
         this.canvas.onmousewheel = (e)=> {
