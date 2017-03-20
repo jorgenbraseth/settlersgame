@@ -137,7 +137,7 @@ class Tile {
             ctx.save();
             ctx.translate(hexRadius, hexRectangleHeight / 2);
             ctx.font = `${TILE_SIZE * 0.8}pt FontAwesome`;
-            ctx.fillStyle = `rgba(100,250,0,0.6)`;
+            ctx.fillStyle = this.gameScreen.player.color;
             var icon = TILE_ICONS[this.buildMode()];
             ctx.fillText(icon, -ctx.measureText(icon).width / 2, TILE_SIZE * 0.8 / 2);
             ctx.restore();
