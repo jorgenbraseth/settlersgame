@@ -14,6 +14,12 @@ class GameScreen {
         this.panY = 0;
         this.mouseX = 0;
         this.mouseY = 0;
+
+        this.panningLeft = false;
+        this.panningRight = false;
+        this.panningUp = false;
+        this.panningDown = false;
+
         this.zoom = 1;
         this.SCREEN_HEIGHT_PIXELS = SCREEN_HEIGHT_PIXELS;
         this.SCREEN_WIDTH_PIXELS = SCREEN_WIDTH_PIXELS;
@@ -95,6 +101,19 @@ class GameScreen {
     }
 
     render() {
+        if(this.panningLeft){
+            this.panLeft();
+        }
+        if(this.panningRight){
+            this.panRight();
+        }
+        if(this.panningUp){
+            this.panUp();
+        }
+        if(this.panningDown){
+            this.panDown();
+        }
+
         var ctx = this.renderContext();
         if (gameState) {
             ctx.fillStyle = "#ffffff";

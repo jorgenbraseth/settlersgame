@@ -9,6 +9,8 @@ var playerName;
 var gameRendering = false;
 var playerOverlay;
 
+
+
 function render() {
     if (gameState) {
         playerOverlay.render();
@@ -162,19 +164,36 @@ function start() {
     document.onkeydown = (e) => {
         switch (e.key) {
             case 'w':
-                gameScreen.panUp();
+                gameScreen.panningUp = true;
                 break;
             case 'a':
-                gameScreen.panLeft();
+                gameScreen.panningLeft = true;
                 break;
             case 's':
-                gameScreen.panDown();
+                gameScreen.panningDown = true;
                 break;
             case 'd':
-                gameScreen.panRight();
+                gameScreen.panningRight = true;
                 break;
         }
     };
+
+    document.onkeyup = (e) => {
+        switch (e.key) {
+            case 'w':
+                gameScreen.panningUp = false;
+                break;
+            case 'a':
+                gameScreen.panningLeft = false;
+                break;
+            case 's':
+                gameScreen.panningDown = false;
+                break;
+            case 'd':
+                gameScreen.panningRight = false;
+                break;
+        }
+    }
 
     var chatInput = document.getElementById("chatInput");
     chatInput.onkeydown = (e) => {
