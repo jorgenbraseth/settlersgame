@@ -6,7 +6,6 @@ var hexRadius = Math.cos(hexagonAngle) * sideLength;
 var hexRectangleHeight = sideLength + 2 * hexHeight;
 var hexRectangleWidth = 2 * hexRadius;
 
-
 class Tile {
 
     constructor(data, buildMode, playerName, gameScreen) {
@@ -96,10 +95,20 @@ class Tile {
             var color = this.data.owner.color;
             ctx.fillStyle = hexToRGBA(color, 0.5);
         } else if (this.data.type == "PRODUCER") {
-            ctx.fillStyle = "#0099ff";
+            ctx.fillStyle = TILE_TYPE_COLORS[this.data.type].background;
         } else if (this.data.resourcePheromones) {
             var fillGrade = this.data.resourcePheromones.resource / 500;
-            ctx.fillStyle = "rgba(0,50,250," + fillGrade + ")";
+            ctx.fillStyle = `rgba(0,50,250,${fillGrade})`;
+
+
+            ctx.globalAlpha = fillGrade;
+            var fillSize = TILE_SIZE * Math.min(0.8, fillGrade);
+            var grd = ctx.createRadialGradient(hexRectangleWidth / 2, hexRectangleHeight / 2, 0, hexRectangleWidth / 2, hexRectangleHeight / 2, fillSize);
+            grd.addColorStop(0.000, 'rgba(255, 255, 255, 1.000)');
+            grd.addColorStop(0.5, 'rgba(255, 255, 255, 1.000)');
+            grd.addColorStop(1.000, 'rgba(0, 0, 0, 1.000)');
+
+            ctx.fillStyle = grd;
         }
         ctx.fill();
 
@@ -117,7 +126,8 @@ class Tile {
     }
 
     renderText(ctx) {
-        if (this.data.owner) {
+        var icon = TILE_ICONS[this.data.type];
+        if (icon) {
             ctx.save();
             ctx.translate(hexRadius, hexRectangleHeight / 2);
             if (this.data.health != undefined) {
@@ -126,8 +136,7 @@ class Tile {
             }
             ctx.font = `${TILE_SIZE * 0.8}pt FontAwesome`;
 
-            ctx.fillStyle = this.data.owner.color || "black";
-            var icon = TILE_ICONS[this.data.type];
+            ctx.fillStyle = this.data.owner != undefined ? this.data.owner.color : TILE_TYPE_COLORS[this.data.type].foreground;
             ctx.fillText(icon, -ctx.measureText(icon).width / 2, TILE_SIZE * 0.8 / 2);
             ctx.restore();
         }

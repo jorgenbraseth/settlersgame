@@ -18,14 +18,21 @@ const IMAGE_MAP = {
 };
 
 const TILE_ICONS = {
-    OWNERSHIP_SPREADER: '\uf140', //TODO: REMOVE USE OF THIS NAME
-    RELAY: '\uf140', // f140, f185
+    OWNERSHIP_SPREADER: '\uf185', //TODO: REMOVE USE OF THIS NAME
+    RELAY: '\uf185', // f140, f185
     HOME: '\uf015',
     BLOCKER: '\uf132', //TODO: REMOVE USE OF THIS NAME
     WALL: '\uf132',
     SIPHON: '\uf155',
-    RECYCLE: '\uf1b8'
-}
+    RECYCLE: '\uf1b8',
+    PRODUCER: '\uf140'
+};
+
+const TILE_TYPE_COLORS = {
+    PRODUCER: {background: "white", foreground: "black"}
+};
+
+
 
 function hexToRGBA(hex, opacity) {
     var r = parseInt(hex.substr(1, 2), 16);
