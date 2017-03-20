@@ -17,6 +17,16 @@ const IMAGE_MAP = {
     WALL: new PreloadedImage("img/wall.png", 153, 153),
 };
 
+const TILE_ICONS = {
+    OWNERSHIP_SPREADER: '\uf140', //TODO: REMOVE USE OF THIS NAME
+    RELAY: '\uf140', // f140, f185
+    HOME: '\uf015',
+    BLOCKER: '\uf132', //TODO: REMOVE USE OF THIS NAME
+    WALL: '\uf132',
+    SIPHON: '\uf155',
+    RECYCLE: '\uf1b8'
+}
+
 function hexToRGBA(hex, opacity) {
     var r = parseInt(hex.substr(1, 2), 16);
     var g = parseInt(hex.substr(3, 2), 16);

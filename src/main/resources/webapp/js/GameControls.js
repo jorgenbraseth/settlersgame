@@ -2,6 +2,7 @@ class GameControls {
     constructor(canvas, gameScreen, playerName) {
         this.playerName = playerName;
         this.canvas = canvas;
+        this.buildMode = null;
         this.ctx = this.canvas.getContext("2d");
         this.forwardAllMouseEventsToElement(gameScreen);
 
@@ -54,7 +55,9 @@ class GameControls {
             if (this.nothingAt(e.offsetX, e.offsetY)) {
                 gameScreen.onclick(e);
             } else {
-                this.chooseBuildMode(this.getButtonAt(e.offsetX, e.offsetY));
+                var buttonClicked = this.getButtonAt(e.offsetX, e.offsetY);
+                this.buildMode = buttonClicked;
+                this.chooseBuildMode(buttonClicked);
             }
         };
 
@@ -69,6 +72,7 @@ class GameControls {
 
         this.canvas.oncontextmenu = (e) => {
             e.preventDefault();
+            this.buildMode = null;
             this.chooseBuildMode(null);
         };
 
@@ -111,9 +115,9 @@ class GameControls {
 
         this.renderBackground(ctx);
 
-        this.renderButton(ctx, "RELAY", IMAGE_MAP.EMITTER);
-        this.renderButton(ctx, "SIPHON", IMAGE_MAP.SIPHON);
-        this.renderButton(ctx, "WALL", IMAGE_MAP.WALL);
+        this.renderButton(ctx, "RELAY", TILE_ICONS.RELAY);
+        this.renderButton(ctx, "SIPHON", TILE_ICONS.SIPHON);
+        this.renderButton(ctx, "WALL", TILE_ICONS.WALL);
 
         ctx.restore();
 
@@ -132,7 +136,7 @@ class GameControls {
         });
         ctx.closePath();
 
-        ctx.fillStyle = hexToRGBA(this.playerInfo.color, 0.3);
+        ctx.fillStyle = hexToRGBA(this.playerInfo.color, 0.1);
         ctx.fill();
 
         ctx.strokeStyle = this.playerInfo.color;
@@ -155,7 +159,7 @@ class GameControls {
         ctx.fillStyle = "black";
         ctx.fill();
 
-        ctx.fillStyle = this.hoverOnButton == button ? this.playerInfo.color : hexToRGBA(this.playerInfo.color, 0.4);
+        ctx.fillStyle = this.hoverOnButton == button || this.buildMode == button ? hexToRGBA(this.playerInfo.color, 0.4) : "black";
 
         ctx.fill();
 
@@ -165,8 +169,10 @@ class GameControls {
 
         if (icon) {
             ctx.save();
-            ctx.translate(hexRectangleWidth / 2, hexRectangleHeight / 2);
-            icon.render(ctx);
+            var fontSize = TILE_SIZE*0.8;
+            ctx.font = `${fontSize}pt FontAwesome`;
+            ctx.fillStyle = this.playerInfo.color || "black";
+            ctx.fillText(icon, hexRectangleWidth/2-ctx.measureText(icon).width / 2, hexRectangleHeight/2+fontSize/2);
             ctx.restore();
         }
 

@@ -9,7 +9,8 @@ var hexRectangleWidth = 2 * hexRadius;
 
 class Tile {
 
-    constructor(data, buildMode, playerName) {
+    constructor(data, buildMode, playerName, gameScreen) {
+        this.gameScreen = gameScreen
         this.playerName = playerName;
         this.buildMode = buildMode;
         this.id = data.id;
@@ -62,7 +63,7 @@ class Tile {
 
         if (this.hover && this.buildableForCurrentPlayer()) {
             ctx.fillStyle = "yellow";
-        } else if(this.buildMode()){
+        } else if (this.buildMode()) {
             ctx.fillStyle = this.buildableForCurrentPlayer() ? "rgba(100,250,0,0.6)" : bg;
         } else {
             ctx.fillStyle = bg;
@@ -91,8 +92,9 @@ class Tile {
         ctx.fillStyle = "black";
         ctx.fill();
 
-        if ("BLOCKER" === this.type) {
-            ctx.fillStyle = "rgba(250,250,250,0.9)";
+        if(this.data.owner){
+            var color = this.data.owner.color;
+            ctx.fillStyle = hexToRGBA(color, 0.5);
         } else if (this.data.type == "PRODUCER") {
             ctx.fillStyle = "#0099ff";
         } else if (this.data.resourcePheromones) {
@@ -101,7 +103,7 @@ class Tile {
         }
         ctx.fill();
 
-        if(this.buildMode() && this.buildableForCurrentPlayer()) {
+        if (this.buildMode() && this.buildableForCurrentPlayer()) {
             ctx.fillStyle = "rgba(100,250,0,0.15)";
             ctx.fill();
         }
@@ -115,42 +117,32 @@ class Tile {
     }
 
     renderText(ctx) {
-        ctx.save();
-        ctx.translate(hexRadius, hexRectangleHeight / 2);
-        ctx.globalAlpha = 0.7;
-        if (this.data.health != undefined) {
-            var healthLeftPercent = this.data.health / this.data.MAX_HEALTH;
-            ctx.scale(healthLeftPercent, healthLeftPercent);
+        if (this.data.owner) {
+            ctx.save();
+            ctx.translate(hexRadius, hexRectangleHeight / 2);
+            if (this.data.health != undefined) {
+                var healthLeftPercent = this.data.health / this.data.MAX_HEALTH;
+                ctx.scale(healthLeftPercent, healthLeftPercent);
+            }
+            ctx.font = `${TILE_SIZE*0.8}pt FontAwesome`;
+
+            ctx.fillStyle = this.data.owner.color || "black";
+            var icon = TILE_ICONS[this.data.type];
+            ctx.fillText(icon, -ctx.measureText(icon).width / 2, TILE_SIZE*0.8/2);
+            ctx.restore();
         }
-        if (this.data.type === "OWNERSHIP_SPREADER") {
-            ctx.beginPath();
-            ctx.arc(0, 0, hexRadius * 0.8, 0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.fillStyle = this.data.owner.color;
-            ctx.fill();
-            IMAGE_MAP.EMITTER.render(ctx, TILE_SIZE);
-        } else if (this.data.type === "HOME") {
-            ctx.beginPath();
-            ctx.arc(0, 0, hexRadius * 0.7, 0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.fillStyle = this.data.owner.color;
-            ctx.fill();
-            IMAGE_MAP.HOME.render(ctx, TILE_SIZE);
-        } else if (this.data.type === "BLOCKER") {
-            ctx.beginPath();
-            ctx.arc(0, 0, hexRadius * 0.7, 0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.fillStyle = this.data.owner.color;
-            ctx.fill();
-            IMAGE_MAP.WALL.render(ctx, TILE_SIZE * 0.7);
-        } else if (this.data.type === "SIPHON") {
-            ctx.beginPath();
-            ctx.arc(0, 0, hexRadius * 0.7, 0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.fillStyle = this.data.owner.color;
-            ctx.fill();
-            IMAGE_MAP.SIPHON.render(ctx, TILE_SIZE * 0.8);
+
+
+        if(this.hover && this.buildMode() && this.gameScreen.player) {
+            console.log("buildicon");
+            ctx.save();
+            ctx.translate(hexRadius, hexRectangleHeight / 2);
+            ctx.font = `${TILE_SIZE*0.8}pt FontAwesome`;
+            ctx.fillStyle = this.gameScreen.player.color || "black";
+            var icon = TILE_ICONS[this.buildMode];
+            ctx.fillText(icon, -ctx.measureText(icon).width / 2, TILE_SIZE*0.8/2);
+            ctx.restore();
         }
-        ctx.restore();
+
     }
 }

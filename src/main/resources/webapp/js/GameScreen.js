@@ -26,8 +26,8 @@ class GameScreen {
     
     setMessage(message){
         this.message = message;
-        this.tiles = message.tiles.map(t=> new Tile(t, () => {return this.buildMode}, this.playerName));
         this.player = message.players[this.playerName];
+        this.tiles = message.tiles.map(t=> new Tile(t, () => {return this.buildMode}, this.playerName, this));
     }
 
     setBuildMode(mode){
