@@ -45,11 +45,33 @@ class Tile {
     render(ctx) {
         ctx.save();
         ctx.translate(this.x, this.y);
+
         this.renderBorder(ctx);
         this.renderFill(ctx);
         this.renderText(ctx);
 
+        //TODO: render this AFTER all tiles are rendered to show it on top.
+        //this.renderLineToSupplier(ctx);
+
         ctx.restore();
+    }
+
+    renderLineToSupplier(ctx){
+        if (this.data.pheromoneSupplier) {
+
+            ctx.save();
+            ctx.translate(hexRectangleWidth / 2, hexRectangleHeight / 2);
+            var tx = (this.data.pheromoneSupplier.x * hexRectangleWidth + (this.data.pheromoneSupplier.y % 2 * hexRadius)) - this.x;
+            var ty = (this.data.pheromoneSupplier.y* (hexHeight + sideLength)) - this.y;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(tx, ty);
+            ctx.closePath();
+            ctx.strokeStyle = this.data.owner.color;
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.restore();
+        }
     }
 
     renderBorder(ctx) {
@@ -139,12 +161,12 @@ class Tile {
             ctx.fillStyle = this.data.owner != undefined ? this.data.owner.color : TILE_TYPE_COLORS[this.data.type].foreground;
             ctx.strokeStyle = "white";
             ctx.fillText(icon, -ctx.measureText(icon).width / 2, TILE_SIZE * 0.8 / 2);
-            if(this.type == "SIPHON" && this.data.resourcePheromones && this.data.resourcePheromones.resource > 0){
+            if (this.type == "SIPHON" && this.data.resourcePheromones && this.data.resourcePheromones.resource > 0) {
                 ctx.strokeText(icon, -ctx.measureText(icon).width / 2, TILE_SIZE * 0.8 / 2);
             }
-            if(this.type == "OWNERSHIP_SPREADER" && this.data.distanceToHome){
-                ctx.scale(0.6,0.6);
-                ctx.fillText(this.data.distanceToHome,-ctx.measureText(this.data.distanceToHome).width / 2, TILE_SIZE * 0.8 / 2)
+            if (this.type == "OWNERSHIP_SPREADER" && this.data.distanceToHome) {
+                ctx.scale(0.6, 0.6);
+                ctx.fillText(this.data.distanceToHome, -ctx.measureText(this.data.distanceToHome).width / 2, TILE_SIZE * 0.8 / 2)
             }
             ctx.restore();
         }

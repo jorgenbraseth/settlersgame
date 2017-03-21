@@ -17,6 +17,8 @@ public abstract class OwnedTile extends Tile {
     @JsonProperty
     public final long MAX_HEALTH;
     public long health;
+
+    @JsonProperty
     public OwnedTile pheromoneSupplier;
 
 
