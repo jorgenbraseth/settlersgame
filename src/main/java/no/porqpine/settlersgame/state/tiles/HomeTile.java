@@ -20,6 +20,7 @@ public class HomeTile extends OwnedTile {
         super(x, y, owner, game, 1000);
         pheromone = PheromoneType.playerPheromone(this, owner);
         setPheromone(pheromone.type, PRODUCTION);
+        distanceToHome = 0;
     }
 
     @Override
@@ -34,7 +35,7 @@ public class HomeTile extends OwnedTile {
         timeSinceLastPheromone += ticks;
         if (timeSinceLastPheromone >= PHEROMONE_EVERY_N_TICK) {
             timeSinceLastPheromone = 0;
-            Pheromone pheromone = new Pheromone(this.pheromone.type, PRODUCTION, this.pheromone.degradationRate, this.pheromone.diffusionRate, owner);
+            Pheromone pheromone = new Pheromone(this, this.pheromone.type, PRODUCTION, this.pheromone.degradationRate, this.pheromone.diffusionRate, owner);
             queuePheromone(this, pheromone);
         }
 
@@ -44,6 +45,12 @@ public class HomeTile extends OwnedTile {
             owner.addResource("resource", RESOURCE_PRODUCED);
         }
 
+    }
+
+    @Override
+    public void calculateNewPheromoneAmounts() {
+        super.calculateNewPheromoneAmounts();
+        distanceToHome = 0;
     }
 
     @Override

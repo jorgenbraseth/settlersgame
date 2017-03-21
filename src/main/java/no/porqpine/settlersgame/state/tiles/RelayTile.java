@@ -30,7 +30,7 @@ public class RelayTile extends OwnedTile {
         timeSinceLastProduction += ticks;
         if (timeSinceLastProduction >= PRODUCE_EVERY_N_TICK) {
             timeSinceLastProduction = 0;
-            Pheromone pheromone = new Pheromone(this.pheromone.type, PRODUCTION, this.pheromone.degradationRate, this.pheromone.diffusionRate, owner);
+            Pheromone pheromone = new Pheromone(this, this.pheromone.type, PRODUCTION, this.pheromone.degradationRate, this.pheromone.diffusionRate, owner);
             queuePheromone(this, pheromone);
         }
     }

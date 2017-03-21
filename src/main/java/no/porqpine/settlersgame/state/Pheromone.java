@@ -12,8 +12,10 @@ public class Pheromone {
     public final double degradationRate;
     public final double diffusionRate;
     public final Player owner;
+    public final Tile source;
 
-    public Pheromone(String type, double amount, double degradationRate, double diffusionRate, Player owner) {
+    public Pheromone(Tile source, String type, double amount, double degradationRate, double diffusionRate, Player owner) {
+        this.source = source;
         this.type = type;
         this.amount = amount;
         this.owner = owner;
@@ -22,6 +24,9 @@ public class Pheromone {
     }
 
     public void diffuse(Tile source, List<Tile> targets) {
+        if(amount > 1){
+
+
         double pheromoneToDiffuse = amount * diffusionRate;
         final double amountForEachNeighbour = pheromoneToDiffuse / targets.size();
 
@@ -29,6 +34,7 @@ public class Pheromone {
                     Pheromone sentPheromone = copyWithAmount(amountForEachNeighbour);
                     return tile.queuePheromone(source, sentPheromone);
                 }).mapToDouble(Double::doubleValue).sum();
+        }
     }
 
     public Pheromone add(Pheromone toAdd) {
@@ -44,7 +50,7 @@ public class Pheromone {
     }
 
     public Pheromone copyWithAmount(double amount) {
-        return new Pheromone(type, amount, degradationRate, diffusionRate, owner);
+        return new Pheromone(source, type, amount, degradationRate, diffusionRate, owner);
     }
 
     public Pheromone degraded() {

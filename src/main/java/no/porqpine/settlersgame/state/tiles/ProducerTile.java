@@ -35,7 +35,7 @@ public class ProducerTile extends Tile {
         }
         timeInCurrentState++;
 
-        Pheromone pheromone = new Pheromone(this.pheromone.type, PRODUCTION, this.pheromone.degradationRate, this.pheromone.diffusionRate, null);
+        Pheromone pheromone = new Pheromone(this, this.pheromone.type, PRODUCTION, this.pheromone.degradationRate, this.pheromone.diffusionRate, null);
         if (isOn) {
             queuePheromone(this, pheromone);
         }

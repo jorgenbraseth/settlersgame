@@ -50,7 +50,7 @@ public abstract class Tile extends GameObject {
         Map<Player, Long> map = new HashMap<>();
         pAmounts.stream()
                 .filter(pheromone -> pheromone.owner != null)
-                .forEach(ph -> map.put(ph.owner, (long)ph.amount));
+                .forEach(ph -> map.merge(ph.owner, (long)ph.amount, (aLong, aLong2) -> aLong + aLong2));
         return map.entrySet().stream().filter(entry -> entry.getValue() > 0L).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -81,14 +81,13 @@ public abstract class Tile extends GameObject {
     }
 
     public void calculateNewPheromoneAmounts() {
-        Map<String, Pheromone> newAmounts = new HashMap<>();
-        pQueued.stream().forEach(pheromone -> newAmounts.merge(pheromone.type, pheromone, Pheromone::add));
+        Map<Tile, Pheromone> newAmounts = new HashMap<>();
+        pQueued.stream().forEach(pheromone -> newAmounts.merge(pheromone.source, pheromone, Pheromone::add));
+
         pAmounts = newAmounts.values().stream().filter(pheromone -> pheromone.amount > 0).collect(Collectors.toList());
+
         Player highestPheromonePlayer = getHighestPheromonePlayer();
         Long leadOfHighestPheromone = getPheromoneLeadOfHighestPheromone();
-        pAmounts = pAmounts.stream().filter(pheromone -> pheromone.owner == null || pheromone.owner == highestPheromonePlayer)
-                .map(pheromone -> pheromone.owner != null ? pheromone.copyWithAmount(leadOfHighestPheromone) : pheromone)
-                .collect(Collectors.toList());
         pQueued.clear();
     }
 
@@ -155,7 +154,8 @@ public abstract class Tile extends GameObject {
     @Override
     public String toString() {
         return "Tile{" +
-                "x=" + x +
+                "type=" + getType() +
+                ", x=" + x +
                 ", y=" + y +
                 ", id=" + id +
                 '}';

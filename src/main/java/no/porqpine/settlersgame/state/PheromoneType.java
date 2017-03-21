@@ -20,7 +20,7 @@ public class PheromoneType {
     }
 
     public static PheromoneType resource(Tile source) {
-        return new PheromoneType("resource", 0.0, 6/7.0, source, null);
+        return new PheromoneType("resource", 0.001, 6/7.0, source, null);
     }
 
     public static PheromoneType playerPheromone(Tile source, Player player) {
