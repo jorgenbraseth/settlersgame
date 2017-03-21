@@ -1,7 +1,6 @@
 package no.porqpine.settlersgame.state.tiles;
 
 import no.porqpine.settlersgame.Game;
-import no.porqpine.settlersgame.state.PheromoneType;
 import no.porqpine.settlersgame.state.Player;
 
 //TODO: make this drain neighbouring tiles instead?
@@ -9,10 +8,10 @@ public class SiphonTile extends OwnedTile {
     public int storedPheromone;
 
     public static final int COST = 300;
-    public static final long MAX_SIPHON = 50;
+    public static final long MAX_SIPHON = 200;
 
     public SiphonTile(int x, int y, Player owner, Game game) {
-        super(x, y, owner, game);
+        super(x, y, owner, game, 300);
     }
 
     @Override
@@ -21,17 +20,14 @@ public class SiphonTile extends OwnedTile {
     }
 
     @Override
-    public boolean acceptsPheromone(PheromoneType pheromoneType) {
-        return true;
-    }
-
-    @Override
     public void calculateNewPheromoneAmounts() {
         super.calculateNewPheromoneAmounts();
-        Long pheromoneOnTile = getResourcePheromones().getOrDefault(PheromoneType.RESOURCE_TYPE, 0L);
-        long siphonedAmount = Math.min(pheromoneOnTile, MAX_SIPHON);
-        owner.addResource("resource", siphonedAmount/10);
-        setPheromone(PheromoneType.resource(this), -siphonedAmount);
+        getResourcePheromonesList().stream()
+                .forEach(pheromone -> {
+                    double siphonedAmount = Math.min(pheromone.amount, MAX_SIPHON);
+                    owner.addResource("resource", (long)(siphonedAmount/10));
+                    queuePheromone(this, pheromone.copyWithAmount(-siphonedAmount));
+                });
     }
 
     @Override

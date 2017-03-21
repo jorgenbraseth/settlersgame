@@ -9,14 +9,16 @@ public abstract class OwnedTile extends Tile {
     private final Game game;
 
     @JsonProperty
-    public final long MAX_HEALTH = 1000;
-    public long health = MAX_HEALTH;
+    public final long MAX_HEALTH;
+    public long health;
 
 
-    public OwnedTile(int x, int y, Player owner, Game game) {
+    public OwnedTile(int x, int y, Player owner, Game game, long maxHealth) {
         super(x, y);
         this.owner = owner;
         this.game = game;
+        health = maxHealth;
+        MAX_HEALTH = maxHealth;
     }
 
     public long getHealth(){
@@ -35,12 +37,8 @@ public abstract class OwnedTile extends Tile {
 
     @Override
     public void tick(int i) {
-        boolean hasOwnersPheromoneFromOtherSource = getPAmounts().entrySet().stream()
-                .filter(e -> e.getKey().source != this)
-                .filter(e -> e.getKey().player.isPresent() && e.getKey().player.get() == owner)
-                .findFirst().isPresent();
 
-        if ((hasOwnersPheromoneFromOtherSource || getType().equals("HOME")) && getHighestPheromonePlayer() == owner) {
+        if (getHighestPheromonePlayer() == owner) {
             health = Math.min(MAX_HEALTH, health + 5);
         }else{
             health -= 10;

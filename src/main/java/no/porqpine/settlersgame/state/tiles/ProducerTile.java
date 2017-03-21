@@ -1,16 +1,15 @@
 package no.porqpine.settlersgame.state.tiles;
 
-import no.porqpine.settlersgame.Game;
+import no.porqpine.settlersgame.state.Pheromone;
 import no.porqpine.settlersgame.state.PheromoneType;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class ProducerTile extends Tile {
 
-    private static final int TIME_ON = 15;
-    private static final int TIME_OFF = 40;
-    public static final int PRODUCTION = 1000;
+    private static final int TIME_ON = 30;
+    private static final int TIME_OFF = 170;
+    public static final int PRODUCTION = 1500;
 
     private boolean isOn = false;
     private int timeInCurrentState = 0;
@@ -36,8 +35,9 @@ public class ProducerTile extends Tile {
         }
         timeInCurrentState++;
 
+        Pheromone pheromone = new Pheromone(this.pheromone.type, PRODUCTION, this.pheromone.degradationRate, this.pheromone.diffusionRate, null);
         if (isOn) {
-            adjustPheromone(pheromone, PRODUCTION);
+            queuePheromone(this, pheromone);
         }
 
     }
@@ -45,11 +45,6 @@ public class ProducerTile extends Tile {
     @Override
     public String getType() {
         return "PRODUCER";
-    }
-
-    @Override
-    public boolean acceptsPheromone(PheromoneType pheromoneType) {
-        return true;
     }
 
 }

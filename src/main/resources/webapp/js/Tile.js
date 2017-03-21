@@ -137,7 +137,11 @@ class Tile {
             ctx.font = `${TILE_SIZE * 0.8}pt FontAwesome`;
 
             ctx.fillStyle = this.data.owner != undefined ? this.data.owner.color : TILE_TYPE_COLORS[this.data.type].foreground;
+            ctx.strokeStyle = "white";
             ctx.fillText(icon, -ctx.measureText(icon).width / 2, TILE_SIZE * 0.8 / 2);
+            if(this.type == "SIPHON" && this.data.resourcePheromones && this.data.resourcePheromones.resource > 0){
+                ctx.strokeText(icon, -ctx.measureText(icon).width / 2, TILE_SIZE * 0.8 / 2);
+            }
             ctx.restore();
         }
 
@@ -151,6 +155,11 @@ class Tile {
             ctx.fillText(icon, -ctx.measureText(icon).width / 2, TILE_SIZE * 0.8 / 2);
             ctx.restore();
         }
+
+        // if(this.data.pheromoneLeadOfHighestPheromone){
+        //     ctx.fillStyle = "white";
+        //     ctx.fillText(this.data.pheromoneLeadOfHighestPheromone, hexRectangleWidth/2-ctx.measureText(this.data.pheromoneLeadOfHighestPheromone).width/2,hexRectangleHeight/2);
+        // }
 
     }
 }

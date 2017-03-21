@@ -3,7 +3,7 @@ package no.porqpine.settlersgame.state.tiles;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import no.porqpine.settlersgame.state.GameObject;
-import no.porqpine.settlersgame.state.PheromoneType;
+import no.porqpine.settlersgame.state.Pheromone;
 import no.porqpine.settlersgame.state.Player;
 
 import java.util.ArrayList;
@@ -22,10 +22,11 @@ public abstract class Tile extends GameObject {
     @JsonIgnore
     public List<Tile> neighbours = new ArrayList<>();
 
-    private Map<PheromoneType, Long> pAmounts = new HashMap<>();
+    @JsonIgnore
+    public List<Pheromone> pAmounts = new ArrayList<>();
 
     @JsonIgnore
-    public Map<PheromoneType, Long> pQueued = new HashMap<>();
+    public List<Pheromone> pQueued = new ArrayList<>();
 
 
     public Tile(int x, int y) {
@@ -34,31 +35,45 @@ public abstract class Tile extends GameObject {
         this.y = y;
     }
 
-    public void setPheromone(PheromoneType pheromone, long amount) {
-        pAmounts.put(pheromone, amount);
+    public void setPheromone(String typeToSet, long amount) {
+        pAmounts = pAmounts.stream().map(pheromone -> {
+            if (typeToSet.equals(pheromone.type)) {
+                return pheromone.copyWithAmount(amount);
+            } else {
+                return pheromone;
+            }
+        }).collect(Collectors.toList());
     }
-
 
     @JsonIgnore
     public Map<Player, Long> getPlayerPheromones() {
         Map<Player, Long> map = new HashMap<>();
-        pAmounts.keySet().stream()
-                .filter(type -> type.player.isPresent())
-                .forEach(ph -> map.merge(ph.player.get(), pAmounts.get(ph), (aLong, aLong2) -> aLong + aLong2));
+        pAmounts.stream()
+                .filter(pheromone -> pheromone.owner != null)
+                .forEach(ph -> map.put(ph.owner, (long)ph.amount));
         return map.entrySet().stream().filter(entry -> entry.getValue() > 0L).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public Map<String, Long> getResourcePheromones() {
         Map<String, Long> map = new HashMap<>();
-        pAmounts.keySet().stream()
-                .filter(type -> !type.player.isPresent())
-                .forEach(ph -> map.merge(ph.type, pAmounts.get(ph), (aLong, aLong2) -> aLong + aLong2));
+        pAmounts.stream()
+                .filter(p -> p.owner == null)
+                .forEach(ph -> map.put(ph.type, (long)ph.amount));
         return map.entrySet().stream().filter(entry -> entry.getValue() > 0L).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @JsonIgnore
-    public Map<PheromoneType, Long> getPAmounts() {
-        return pAmounts.entrySet().stream().filter(entry -> entry.getValue() > 0L).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    public List<Pheromone> getResourcePheromonesList() {
+
+        return pAmounts.stream()
+                .filter(p -> p.owner == null)
+                .filter(p -> p.amount > 0L)
+                .collect(Collectors.toList());
+    }
+
+    @JsonIgnore
+    public List<Pheromone> getPAmounts() {
+        return pAmounts.stream().filter(pheromone -> pheromone.amount > 0L).collect(Collectors.toList());
     }
 
     public void addNeighbour(Tile t) {
@@ -66,50 +81,30 @@ public abstract class Tile extends GameObject {
     }
 
     public void calculateNewPheromoneAmounts() {
-        Map<PheromoneType, Long> newAmounts = new HashMap<>();
-
-        pQueued.forEach((pheromoneType, queuedAmount) -> {
-            Long currentAmount = pAmounts.getOrDefault(pheromoneType, 0L);
-            long newAmount = Math.max(0, currentAmount + queuedAmount);
-            if(newAmount > 0) {
-                newAmounts.put(pheromoneType, newAmount);
-            }
-        });
-        pAmounts = newAmounts;
-
+        Map<String, Pheromone> newAmounts = new HashMap<>();
+        pQueued.stream().forEach(pheromone -> newAmounts.merge(pheromone.type, pheromone, Pheromone::add));
+        pAmounts = newAmounts.values().stream().filter(pheromone -> pheromone.amount > 0).collect(Collectors.toList());
+        Player highestPheromonePlayer = getHighestPheromonePlayer();
+        Long leadOfHighestPheromone = getPheromoneLeadOfHighestPheromone();
+        pAmounts = pAmounts.stream().filter(pheromone -> pheromone.owner == null || pheromone.owner == highestPheromonePlayer)
+                .map(pheromone -> pheromone.owner != null ? pheromone.copyWithAmount(leadOfHighestPheromone) : pheromone)
+                .collect(Collectors.toList());
         pQueued.clear();
     }
 
     public void degrade() {
-        pAmounts.keySet().forEach(this::degrade);
-    }
-
-    private void degrade(PheromoneType pheromoneType) {
-        adjustPheromone(pheromoneType, (int) (-1 * Math.ceil(pAmounts.getOrDefault(pheromoneType, 0L) * pheromoneType.degradationRate)));
+        pAmounts.forEach((pheromone) -> queuePheromone(this, pheromone.degraded()));
     }
 
     public void diffuse() {
-        pAmounts.keySet().forEach(this::diffuse);
+        pAmounts.forEach(pheromone -> pheromone.diffuse(this, neighbours));
     }
 
-    private void diffuse(PheromoneType pheromoneType) {
-        Long pheromoneAmount = pAmounts.getOrDefault(pheromoneType, 0L);
-        long pheromoneToSpread = (long) (pheromoneAmount * pheromoneType.diffusionRate);
-        long acceptingNeighbours = neighbours.stream()
-                .filter(tile -> tile.acceptsPheromone(pheromoneType))
-                .count();
-        neighbours.stream()
-                .filter((tile) -> tile.acceptsPheromone(pheromoneType))
-                .forEach(neighbour ->
-                        neighbour.adjustPheromone(pheromoneType, pheromoneToSpread / acceptingNeighbours)
-                );
-
-        adjustPheromone(pheromoneType, -pheromoneToSpread);
-    }
-
-    void adjustPheromone(PheromoneType type, long amount) {
-        Long currentQueued = pQueued.getOrDefault(type, 0L);
-        pQueued.put(type, currentQueued + amount);
+    public double queuePheromone(Tile source, Pheromone pheromone) {
+        if(pheromone.amount > 0){
+            pQueued.add(pheromone);
+        }
+        return pheromone.amount;
     }
 
     public Player getHighestPheromonePlayer() {
@@ -143,8 +138,6 @@ public abstract class Tile extends GameObject {
 
 
     public abstract String getType();
-
-    public abstract boolean acceptsPheromone(PheromoneType pheromoneType);
 
     public void replaceNeighbour(Tile oldTile, Tile newTile) {
         removeNeighbour(oldTile);
